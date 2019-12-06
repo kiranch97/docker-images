@@ -14,7 +14,7 @@ services:
     #  - ./certs:/certs:ro
     #  - ./domains:/domains
      - ./logs:/var/log/nginx
-     - ./odk-streaming-app/dist:/dist
+     - ./odk-app/dist:/dist
      - ./odk-dashboard:/odk-dash
 
   api:

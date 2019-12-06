@@ -6,8 +6,5 @@ logs/
 # database
 pgdata/
 
-# other repos
-odk-api/
+# odk website
 odk-website/
-odk-streaming-client/
-odk-dashboard/

@@ -233,7 +233,7 @@ class DatabaseManager():
 
     # ----
 
-    def get_dash_stream_devices(self, app_id: list, day: str):
+    def get_dash_stream_devices(self, app_id: str, day: str):
 
         if not self.has_connection:
             self.logger.error("No connection to database! Check Settings")
@@ -244,8 +244,13 @@ class DatabaseManager():
 
         try:
             dash_stream_devices = {}
+            app_ids = []
+            if "+" in app_id:
+                app_ids = app_id.split("+")
+            else:
+                app_ids.append(app_id)
             day = day.split(" ")[0]
-            for stream_id in app_id:
+            for stream_id in app_ids:
 
                 detected_objects_by_type = {}
 
@@ -254,9 +259,18 @@ class DatabaseManager():
                         AnalysedFrame.created_by_app == stream_id).filter(
                             AnalysedFrame.created_at >= day).all()
 
+                last_analysed_frame_by_app_id = \
+                    self.db_session.query(AnalysedFrame).filter(
+                        AnalysedFrame.created_by_app == stream_id).filter(
+                            AnalysedFrame.created_at >= day).order_by(
+                                AnalysedFrame.created_at.desc()).first()
+
                 for frame in analysed_frames_by_app_id:
 
                     for detected_obj in frame.detected_objects:
+
+                        if "total" not in detected_objects_by_type.keys():
+                            detected_objects_by_type["total"] = 0
 
                         type = detected_obj.get("detected_object_type")
 
@@ -264,12 +278,7 @@ class DatabaseManager():
                             detected_objects_by_type[type] = 0
 
                         detected_objects_by_type[type] += 1
-
-                last_analysed_frame_by_app_id = \
-                    self.db_session.query(AnalysedFrame).filter(
-                        AnalysedFrame.created_by_app == stream_id).filter(
-                            AnalysedFrame.created_at >= day).order_by(
-                                AnalysedFrame.created_at.desc()).first()
+                        detected_objects_by_type["total"] += 1
 
                 dash_stream_devices[stream_id] = {
                     "_entity_name":
@@ -278,7 +287,7 @@ class DatabaseManager():
                         stream_id,
                     "day":
                         day,
-                    "img":
+                    "analysed_img":
                         last_analysed_frame_by_app_id.take_frame.get("img"),
                     "detected_objects":
                         last_analysed_frame_by_app_id.detected_objects,

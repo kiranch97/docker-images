@@ -27,9 +27,9 @@ export default {
   name: "stream-count",
   data() {
     return {
-      binCount: [],
-      trashCount: [],
-      cardboardCount: [],
+      binCount: 0,
+      trashCount: 0,
+      cardboardCount: 0,
       totalCount: 0,
       appId: null,
       analysedFrame: null,
@@ -62,13 +62,13 @@ export default {
 
           containerObs == undefined
             ? (curScope.binCount = 0)
-            : (curScope.binCount = containerObs.length);
+            : (curScope.binCount = containerObs);
           trashBagObs == undefined
             ? (curScope.trashCount = 0)
-            : (curScope.trashCount = trashBagObs.length);
+            : (curScope.trashCount = trashBagObs);
           cardBoardObs == undefined
             ? (curScope.cardboardCount = 0)
-            : (curScope.cardboardCount = cardBoardObs.length);
+            : (curScope.cardboardCount = cardBoardObs);
           curScope.totalCount = curScope.cardboardCount + curScope.trashCount + curScope.binCount
         })
 
@@ -165,8 +165,8 @@ export default {
   mounted() {
     this.appId = localStorage.appId;
     this.fetchAnalysedResults();
+    this.fetchAnalysedFrames();
     setInterval(this.fetchAnalysedFrames, 5000);
-    // FETCH ANALYSED DATA EVERY 9 SECOND
     setInterval(this.fetchAnalysedResults, 5000);
   }
 };

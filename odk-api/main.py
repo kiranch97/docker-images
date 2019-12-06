@@ -181,9 +181,9 @@ async def websocket_endpoint(websocket: WebSocket):
         # Get data from client
         frame_data = await websocket.receive_json()
 
-        streamlogger.active_streams_check(
-            frame_data, running_clients)
-        diskwriter.fill_stats_dict(stats)
+        # streamlogger.active_streams_check(
+        #     frame_data, running_clients)
+        # diskwriter.fill_stats_dict(stats)
         # diskwriter.count_all_files(stats)
         # diskwriter.count_yearly_files(stats)
         # diskwriter.count_monthly_files(stats)
@@ -248,7 +248,7 @@ def get_last_analysed_frames(app_id: str):
 
 
 @app.get("/dash_stream_devices")
-def get_dash_stream_devices(app_id: list, day: str):
+def get_dash_stream_devices(app_id: str, day: str):
     r_dsd = dbm.get_dash_stream_devices(app_id, day)
 
     return r_dsd

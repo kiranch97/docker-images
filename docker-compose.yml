@@ -14,20 +14,20 @@ services:
      - ./certs:/certs:ro
      - ./domains:/domains
      - ./logs:/var/log/nginx
-     - ./odk-client:/odk-client
+     - ./odk-streaming-app/dist:/dist
      - ./odk-dash:/odk-dash
 
   api:
     restart: always
     container_name: odk-api
-    build: ./dockerfiles/fastapi/.
+    build: ./odk-api
     environment:
         - TODO=todo
     ports:
       - "8080:80"
     volumes:
-    - ./fastapi_app:/app
-
+    - ./odk-api:/appq
+  
   rmq:
     restart: always
     container_name: odk-rmq

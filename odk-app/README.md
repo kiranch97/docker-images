@@ -1,29 +1,23 @@
-# odk-client
+# ODK App
 
-## Project setup
-```
-yarn install
-```
+_insert intro here_
 
-### Compiles and hot-reloads for development
-```
-yarn run serve
-```
+## Getting started
 
-### Compiles and minifies for production
-```
-yarn run build
-```
+### Requirements
 
-### Run your tests
-```
-yarn run test
-```
+- Node (tested with v12.2.0)
+- NPM
 
-### Lints and fixes files
-```
-yarn run lint
-```
+### Setup & run
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+```
+$ npm install
+$ npm run serve
+``` 
+
+### Build
+```
+$ npm install
+$ npm run serve
+``` 

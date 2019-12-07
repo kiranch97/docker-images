@@ -1,42 +1,58 @@
-# Object Detection Kit - ODK stack
+# Object Detection Kit
 
-* FastAPI API - handles stream of scans via websockets
-* RabbitMQ - mesage broker
-* Vue JS clients
-  - Dashboard
-  - Streaming App (Client)
+ODK (Object Detection Kit) is a project by the Municipality of Amsterdam CTO tech team. For more information about the project check odk.ai.
 
-# Developer guide
+## Content
 
-Install python requirements in your virtaulenv
+This stack contains all the elements of the ODK project: 
 
-	python -m pip -r requirements.txt
+- ODK App: Vue JS PWA for streaming frames to be analyzed
 
-Run websocket API
+- ODK Dashboard: Vue JS showing incoming frames real-time and analyzed data on an map
 
-	python main.py
+- ODK Frame Analyzer: Machine Learning Worker analyzing frames
 
-Run Mlworker
+- ODK API: Handles streams of ODK App via websockets, utilizes:
+	- PostgreSQL database for storing analyzed data
+	- RabbitMQ message broker 
 
-	cd odklib
-	python MlWorker.py
+## Getting started
 
-Run frontend Clients
+To get the whole stack up and running quickly follow these steps. To run/debug each element seperately, see the README file in their respective folders.
 
-	# Dashboard
-	cd odk-dash
-	npm install
-	npm run serve
+### Requirements
 
-	# Streaming App (Client)
-	cd odk-client
-	npm install
-	npm run serve
+- Docker
+- Node (tested with v12.2.0)
+- Python (v3.7)
+- CUDA Toolkit (optional)
 
+### Setup
 
-<!-- # Developement guide
+Build ODK app:
+```
+$ cd odk-app
+$ npm install
+$ npm run build
+``` 
 
-does not work yet.
+### Run
 
-	docker-compose pull
-	docker-compose up -->
+Start Frame Analyzer:
+```
+$ cd odk-frame-analyzer
+$ python3 -m venv venv
+$ source venv/bin/active
+(venv) $ pip install -r requirements.txt
+(venv) $ python MlWorker.py
+```
+
+Run docker-compose to start the ODK App, Dashboard and API (assuming docker daemon is active):
+```
+$ docker-compose up -d
+```
+
+Visit [localhost:8000]() to open the ODK App.
+
+Visit [localhost:8001]() for the ODK Dashboard.
+

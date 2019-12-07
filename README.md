@@ -6,13 +6,13 @@ ODK (Object Detection Kit) is a project by the Municipality of Amsterdam CTO tec
 
 This stack contains all the elements of the ODK project: 
 
-- ODK App: Vue JS PWA for streaming frames to be analyzed
+- **ODK App**: Vue JS PWA for streaming frames to be analyzed
 
-- ODK Dashboard: Vue JS showing incoming frames real-time and analyzed data on an map
+- **ODK Dashboard**: Vue JS showing incoming frames real-time and analyzed data on an map
 
-- ODK Frame Analyzer: Machine Learning Worker analyzing frames
+- **ODK Frame Analyzer**: Machine Learning Worker analyzing frames
 
-- ODK API: Handles streams of ODK App via websockets, utilizes:
+- **ODK API**: Handles streams of ODK App via websockets, utilizes:
 	- PostgreSQL database for storing analyzed data
 	- RabbitMQ message broker 
 
@@ -24,12 +24,13 @@ To get the whole stack up and running quickly follow these steps. To run/debug e
 
 - Docker
 - Node (tested with v12.2.0)
+- NPM
 - Python (v3.7)
 - CUDA Toolkit (optional)
 
 ### Setup
 
-Build ODK app:
+Build ODK App:
 ```
 $ cd odk-app
 $ npm install
@@ -47,12 +48,11 @@ $ source venv/bin/active
 (venv) $ python MlWorker.py
 ```
 
-Run docker-compose to start the ODK App, Dashboard and API (assuming docker daemon is active):
+Run docker-compose (dev file) to starts the App, Dashboard and API (assuming docker daemon is active):
 ```
-$ docker-compose up -d
+$ docker-compose -f docker-compose.dev.yml up -d
 ```
 
 Visit [localhost:8000]() to open the ODK App.
 
 Visit [localhost:8001]() for the ODK Dashboard.
-

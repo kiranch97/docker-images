@@ -2,17 +2,27 @@ version: '3'
 
 services:
 
-  proxy:
+  app:
     restart: always
     container_name: odk-proxy
     image: nginx
     ports:
       - "8000:80"
     volumes:
-     - ./nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
-     - ./logs:/var/log/nginx
-     - ./odk-app/dist:/app-dist
-     - ./odk-dashboard/dist:/dash-dist
+      - ./nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./logs:/var/log/nginx
+      - ./odk-app/dist:/dist
+
+  dashboard:
+    restart: always
+    container_name: odk-dash
+    image: nginx
+    ports:
+      - "8001:80"
+    volumes:
+      - ./nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./logs:/var/log/nginx
+      - ./odk-dashboard/dist:/dist
 
   api:
     restart: always

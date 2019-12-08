@@ -50,7 +50,7 @@ $ source venv/bin/active
 Download the model for detecting garbage:
 ```
 $ cd odk-frame-analyzer/model/weights
-$ wget _url
+$ cat download_link.txt | xargs -L 1 wget
 ```
 
 ### Run

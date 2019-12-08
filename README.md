@@ -69,3 +69,25 @@ $ docker-compose -f docker-compose.dev.yml up -d
 Visit [localhost:8000]() to open the ODK App.
 
 Visit [localhost:8001]() for the ODK Dashboard.
+
+## Tools
+
+
+### Code base
+
+- [Python](https://www.python.org/) for API & Frame Analyzer
+- [VueJS](https://vuejs.org/) for App & Dashboard
+
+### Libraries
+
+- [FastAPI](https://fastapi.tiangolo.com/) for REST + websockets
+- [aio-pika](https://aio-pika.readthedocs.io/en/latest/) for RabbitMQ communication
+- [Uvicorn](https://www.uvicorn.org/) as ASGI server
+- [Starlette](https://www.starlette.io/) as ASGI framework/toolkit
+
+### Infrastructure
+
+- [Docker](https://www.docker.com/) for deployment of services
+- [NGINX](https://www.nginx.com/) as proxy & web server
+- [PostgreSQL](https://www.postgresql.org) database
+- [RabbitMQ](https://www.rabbitmq.com/) message broker

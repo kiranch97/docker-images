@@ -49,7 +49,6 @@ services:
         - POSTGRES_HOST=db
         - POSTGRES_USER=odk
         - POSTGRES_PASSWORD=pgodk
-
     ports:
         - "5432:5432"
     volumes:

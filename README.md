@@ -1,8 +1,8 @@
 # Object Detection Kit
 
-The Object Detection Kit is a easy way to start captering frames, detecting objects on them and finally mapping them. Everything works out-of-the-box, so no special setup is needed.
+The Object Detection Kit is a easy way to start captering frames, detecting objects on them and finally mapping them. All the code is included to make ODK work out-of-the-box.
 
-ODK (Object Detection Kit) is a project by the Municipality of Amsterdam CTO tech team. For more information about the project check [odk.ai]().
+ODK (Object Detection Kit) is a project by the City of Amsterdam's 'CTO Tech Team'. For more information about the project check [odk.ai]().
 
 ## Content
 
@@ -20,15 +20,14 @@ This stack contains all the elements of the ODK project:
 
 ## Getting started
 
-To get the whole stack up and running quickly follow these steps. To run/debug each element seperately, see the README file in their respective folders.
+To get the whole stack up and running quickly follow these steps. To run/debug each element seperately, see the README files in their respective folders.
 
 ### Requirements
 
 - Docker
-- Node (tested with v12.2.0)
-- NPM
+- NPM + Node (tested with v12.2.0)
 - Python (v3.7)
-- CUDA Toolkit (optional)
+- [CUDA Toolkit](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/) (optional for running Frame Analyzer on GPU)
 
 ### Setup
 
@@ -50,7 +49,7 @@ $ source venv/bin/active
 Download the model for detecting garbage:
 ```
 $ cd odk-frame-analyzer/model/weights
-$ cat download_link.txt | xargs -L 1 wget
+$ cat download_link | xargs -L 1 wget
 ```
 
 ### Run

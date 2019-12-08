@@ -1,8 +1,8 @@
 # Object Detection Kit
 
-The Object Detection Kit is a easy way to start captering frames, detecting objects on them and finally mapping them. All the code is included to make ODK work out-of-the-box.
+The Object Detection Kit is a easy way to start captering frames, detecting objects on them and plotting the meta data on a map. All the code is included to make ODK work out-of-the-box.
 
-ODK (Object Detection Kit) is a project by the City of Amsterdam's 'CTO Tech Team'. For more information about the project check [odk.ai](http://www.odk.ai).
+ODK (Object Detection Kit) is a project by the City of Amsterdam's CTO Tech Team. For more information about the project check [odk.ai](http://www.odk.ai).
 
 ## Content
 
@@ -10,13 +10,13 @@ This stack contains all the elements of the ODK project:
 
 - **ODK App**: Vue JS PWA for streaming frames to be analyzed
 
-- **ODK Dashboard**: Vue JS showing incoming frames real-time and analyzed data on an map
+- **ODK Dashboard**: Vue JS web app showing incoming frames real-time and plotting analyzed data on a map
 
-- **ODK Frame Analyzer**: Machine Learning Worker analyzing frames
+- **ODK Frame Analyzer**: Machine learning worker analyzing frames from App stream
 
-- **ODK API**: Handles streams of ODK App via websockets, utilizes:
+- **ODK API**: Handles streams of ODK App via websockets and sets up necessary communication channels, utilizes:
 	- PostgreSQL database for storing analyzed data
-	- RabbitMQ message broker 
+	- RabbitMQ message broker
 
 ## Getting started
 

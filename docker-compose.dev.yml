@@ -7,15 +7,12 @@ services:
     container_name: odk-proxy
     image: nginx
     ports:
-      - "81:80"
-    #  - "443:443"
+      - "8000:80"
     volumes:
      - ./nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
-    #  - ./certs:/certs:ro
-    #  - ./domains:/domains
      - ./logs:/var/log/nginx
-     - ./odk-app/dist:/dist
-     - ./odk-dashboard:/odk-dash
+     - ./odk-app/dist:/app-dist
+     - ./odk-dashboard/dist:/dash-dist
 
   api:
     restart: always

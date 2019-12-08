@@ -14,8 +14,8 @@ services:
      - ./certs:/certs:ro
      - ./domains:/domains
      - ./logs:/var/log/nginx
-     - ./odk-app/dist:/dist
-     - ./odk-dash:/odk-dash
+     - ./odk-app/dist:/app-dist
+     - ./odk-dashboard/dist:/dash-dist
 
   api:
     restart: always

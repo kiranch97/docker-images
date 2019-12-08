@@ -1,6 +1,8 @@
 # Object Detection Kit
 
-ODK (Object Detection Kit) is a project by the Municipality of Amsterdam CTO tech team. For more information about the project check odk.ai.
+The Object Detection Kit is a easy way to start captering frames, detecting objects on them and finally mapping them. Everything works out-of-the-box, so no special setup is needed.
+
+ODK (Object Detection Kit) is a project by the Municipality of Amsterdam CTO tech team. For more information about the project check [odk.ai]().
 
 ## Content
 
@@ -37,18 +39,30 @@ $ npm install
 $ npm run build
 ``` 
 
-### Run
-
-Start Frame Analyzer:
+Setup virtual environment for Frame Analyzer:
 ```
 $ cd odk-frame-analyzer
 $ python3 -m venv venv
 $ source venv/bin/active
 (venv) $ pip install -r requirements.txt
+```
+
+Download the model for detecting garbage:
+```
+$ cd odk-frame-analyzer/model/weights
+$ wget _url
+```
+
+### Run
+
+Start Frame Analyzer:
+```
+$ cd odk-frame-analyzer
+$ source venv/bin/active
 (venv) $ python MlWorker.py
 ```
 
-Run docker-compose (dev file) to starts the App, Dashboard and API (assuming docker daemon is active):
+Run docker-compose (dev file) to starts the App, Dashboard, API, PostgreSQL database and RabbitMQ broker:
 ```
 $ docker-compose -f docker-compose.dev.yml up -d
 ```

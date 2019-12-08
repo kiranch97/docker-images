@@ -28,8 +28,8 @@ services:
     restart: always
     container_name: odk-api
     build: ./odk-api
-    environment:
-        - TODO=todo
+    env_file:
+      - ./env.d/odk-api.env
     ports:
       - "8080:80"
     volumes:
@@ -39,9 +39,8 @@ services:
     restart: always
     container_name: odk-rmq
     image: rabbitmq:3-management
-    environment:
-      - RABBITMQ_DEFAULT_USER=odk
-      - RABBITMQ_DEFAULT_PASS=rmqodk
+    env_file:
+      - ./env.d/odk-rmq.env
     ports:
       - "8081:8080"
       - "5672:5672"
@@ -50,12 +49,10 @@ services:
     restart: always
     container_name: odk-db
     image: mdillon/postgis:10-alpine
+    env_file:
+      - ./env.d/odk-db.env
     environment:
         - PGDATA=/pgdata
-        - POSTGRES_NAME=odk
-        - POSTGRES_HOST=db
-        - POSTGRES_USER=odk
-        - POSTGRES_PASSWORD=pgodk
     ports:
         - "5432:5432"
     volumes:

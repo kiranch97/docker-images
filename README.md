@@ -2,7 +2,7 @@
 
 The Object Detection Kit is a easy way to start captering frames, detecting objects on them and finally mapping them. All the code is included to make ODK work out-of-the-box.
 
-ODK (Object Detection Kit) is a project by the City of Amsterdam's 'CTO Tech Team'. For more information about the project check [odk.ai]().
+ODK (Object Detection Kit) is a project by the City of Amsterdam's 'CTO Tech Team'. For more information about the project check [odk.ai](http://www.odk.ai).
 
 ## Content
 

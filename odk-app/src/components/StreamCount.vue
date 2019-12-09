@@ -69,7 +69,8 @@ export default {
           cardBoardObs == undefined
             ? (curScope.cardboardCount = 0)
             : (curScope.cardboardCount = cardBoardObs);
-          curScope.totalCount = curScope.cardboardCount + curScope.trashCount + curScope.binCount
+          curScope.totalCount =
+            curScope.cardboardCount + curScope.trashCount + curScope.binCount;
         })
 
         .catch(er => {
@@ -91,7 +92,7 @@ export default {
           return response.json();
         })
         .then(results => {
-          // console.log(results)
+          console.log(results)
           let imageUrl = results.take_frame.img;
           this.analysedFrame = imageUrl;
           eventBus.$emit("frameReceived", this.analysedFrame);
@@ -100,15 +101,17 @@ export default {
           let ctx = c.getContext("2d");
 
           ctx.clearRect(0, 0, c.width, c.height);
-
+          this.frameMeta = results.frame_meta;
+          console.log(this.frameMeta)
           // loop for all boxes
-          var i;
-          for (i = 0; i < results.detected_objects.length; i++) {
-            let cord1 = results.detected_objects[i].bbox.coordinate1;
-            let cord2 = results.detected_objects[i].bbox.coordinate2;
-            let frameMeta = results.frame_meta;
-            this.drawBox(cord1, cord2, frameMeta);
-          }
+          results.detected_objects.forEach(element => {
+            let curScope = this;
+            console.log(element);
+            let cord1 = element.bbox.coordinate1;
+            let cord2 = element.bbox.coordinate2;
+
+            curScope.drawBox(cord1, cord2, curScope.frameMeta);
+          });
         })
         .catch(er => {
           console.log(er);
@@ -119,7 +122,6 @@ export default {
       let year = date.getFullYear();
       let month = this.addZero(date.getMonth()) + 1;
       let day = this.addZero(date.getDate());
-
       this.todayDate = year + "-" + month + "-" + day;
 
       return this.todayDate;
@@ -136,9 +138,10 @@ export default {
       let c = document.getElementById("stream-canvas");
       let ctx = c.getContext("2d");
 
+      // console.log(width)
       var width = frameMeta.width;
       var height = frameMeta.height;
-
+      
       var canvas_width = c.width;
       var canvas_height = c.height;
 
@@ -148,26 +151,29 @@ export default {
       var x2 = cord2[0];
       var y2 = cord2[1];
 
-      var x1_canvas = x1/width*canvas_width;
-      var y1_canvas = y1/height*canvas_height;
-
-      var box_width = (x2 - x1)/width*canvas_width;
-      var box_height = (y2 - y1)/height*canvas_height;
+      var x1_canvas = (x1 / width) * canvas_width;
+      var y1_canvas = (y1 / height) * canvas_height;
+      console.log(x1_canvas)
+      
+      var box_width = ((x2 - x1) / width) * canvas_width;
+      var box_height = ((y2 - y1) / height) * canvas_height;
 
       ctx.beginPath();
       ctx.rect(x1_canvas, y1_canvas, box_width, box_height);
-
-      ctx.strokeStyle = "blue";
+     
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = "red";
       ctx.stroke();
     }
   },
 
   mounted() {
     this.appId = localStorage.appId;
-    this.fetchAnalysedResults();
-    this.fetchAnalysedFrames();
+    // this.fetchAnalysedResults();
+    // this.fetchAnalysedFrames();
+
     setInterval(this.fetchAnalysedFrames, 5000);
-    setInterval(this.fetchAnalysedResults, 5000);
+    setInterval(this.fetchAnalysedResults, 3000);
   }
 };
 </script>

@@ -15,12 +15,13 @@ from odklib.DiskWriter import DiskWriter
 from odklib.DatabaseManager import DatabaseManager
 
 diskwriter = DiskWriter()
-dbm = DatabaseManager("postgresql://odk:pgodk@116.203.210.203:5432/odk")
+SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_CONNECTION_STRING')
+dbm = DatabaseManager(SQLALCHEMY_DATABASE_URI)
 
 SETTINGS = {
-    'RMQ_USER': os.environ.get('RMQ_USER') or 'odk',
-    'RMQ_PASSWORD': os.environ.get('RMQ_PASSWORD') or 'rmqodk',
-    'RMQ_URL': os.environ.get('RMQ_URL') or '116.203.210.203',
+    'RMQ_USER': os.environ.get('RMQ_USER'),
+    'RMQ_PASSWORD': os.environ.get('RMQ_PASSWORD'),
+    'RMQ_URL': os.environ.get('RMQ_URL'),
 
     'RMQ_QUEUE_FRAMES_FOR_DASH': 'image_frames_for_dash',
     'RMQ_EXCHANGE_FRAMES_FOR_DASH': 'exhange_broadcast_frames',

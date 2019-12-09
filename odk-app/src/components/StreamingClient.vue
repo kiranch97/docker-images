@@ -109,7 +109,7 @@ export default {
       constraints: {
         video: {
           facingMode: {
-            exact: "user"
+            exact: "environment"
           },
           width: 1280,
           height: 720
@@ -432,6 +432,12 @@ export default {
   // ---- On mount hook ----\\
 
   mounted: function() {
+    let cameraOption = process.env.VUE_APP_CAMERA_OPTION
+    console.log("Camera option set to: " + cameraOption)
+    if (cameraOption) {
+      this.constraints.video.facingMode.exact = cameraOption
+    }
+
     // init
     this.setup();
     this.showStream();

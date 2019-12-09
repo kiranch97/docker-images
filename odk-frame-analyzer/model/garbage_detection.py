@@ -104,8 +104,8 @@ class GarbageImageClassifier:
 
                 images_attributes = {}
                 # images_attributes['img'] = "Foto"
-                images_attributes['frame_meta'] = {'width': img_batch[0].shape[0],
-                                                   'height': img_batch[0].shape[1]}
+                images_attributes['frame_meta'] = {'width': img_batch[0].shape[1],
+                                                   'height': img_batch[0].shape[0]}
                 # print(images_attributes['frame_meta'])
                 images_attributes['detected_objects'] = boxes
 

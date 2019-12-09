@@ -55,10 +55,8 @@
           ref="streamtimer"
         ></stream-time>
       </div>
-      <div class="item-4">
-        <keep-alive>
-          <stream-count></stream-count>
-        </keep-alive>
+      <div class="item-4">    
+          <stream-count></stream-count>   
       </div>
     </div>
   </div>
@@ -80,6 +78,8 @@ export default {
 
   data: function() {
     return {
+      apiWebsocketUrl: process.env.VUE_APP_API_WS_URL,
+      debug: false,
       //UI properties
       recordToggle: true,
       streamStatusToggle: false,
@@ -123,10 +123,9 @@ export default {
       positionLo: null,
       timeFormat: null,
       todayDate: null,
-      imageCount: 0,
       appId: null,
       streamTime: "00:00:00",
-      analysedFrame: null
+      analysedFrame: null,
     };
   },
 
@@ -175,12 +174,61 @@ export default {
 
     // ----
 
+    startTimeTrigger: function() {
+      this.intervalHandler = setInterval(
+        this.takePicture,
+        this.SETTINGS.TAKE_PICTURE_EVERY_MS
+      );
+    },
+
+    // ----
+
+    takePicture: function() {
+      let context = this.canvas.getContext("2d");
+      if (this.width && this.height) {
+        this.canvas.width = this.width;
+        this.canvas.height = this.height;
+        context.drawImage(this.video, 0, 0, this.width, this.height);
+
+        let img = this.canvas.toDataURL("image/jpeg");
+
+        this.sendImage(img);
+      } else {
+        this.clearPhoto();
+      }
+    },
+
+    // ----
+
+    sendImage: function(base64Img) {
+      this.formatDate(new Date());
+      this.appId = localStorage.appId;
+
+      //Send data to websocket API
+      let data = {
+        img: base64Img,
+        app_id: this.appId,
+        lng: this.positionLo,
+        lat: this.positionLa,
+        timestamp: this.timeFormat,
+        state: true
+      };
+
+      // console.log('Sending data through websocket: ' + data.timestamp)
+
+      this.websocketConnection.send(JSON.stringify(data));
+    },
+
+    // ----
+
     showStream() {
       let video = this.video;
       let streaming = this.streaming;
-      // console.log(this.constraints)
+
+      let constraints = this.debug ? {video: true} : this.constraints
+
       navigator.mediaDevices
-        .getUserMedia(this.constraints)
+        .getUserMedia(constraints)
         .then(function(stream) {
           video.srcObject = stream;
           video.play();
@@ -232,27 +280,12 @@ export default {
       this.websocketConnection.send(JSON.stringify(payload));
     },
 
-    // ----
-
-    startTimeTrigger: function() {
-      this.intervalHandler = setInterval(
-        this.doJob,
-        this.SETTINGS.TAKE_PICTURE_EVERY_MS
-      );
-    },
 
     // ----
 
     updatePosition: function(position) {
       this.positionLa = position.coords.latitude;
       this.positionLo = position.coords.longitude;
-    },
-
-    // ----
-
-    doJob: function() {
-      // console.log("=> do Job! ");
-      this.takePicture();
     },
 
     // ----
@@ -287,64 +320,18 @@ export default {
 
     // ----
 
-    takePicture: function() {
-      let context = this.canvas.getContext("2d");
-      if (this.width && this.height) {
-        this.canvas.width = this.width;
-        this.canvas.height = this.height;
-        context.drawImage(this.video, 0, 0, this.width, this.height);
-
-        let img = this.canvas.toDataURL("image/jpeg");
-
-        this.sendImage(img);
-        this.imageCount += 1;
-      } else {
-        this.clearPhoto();
-      }
-    },
-
-    // ----
-
     setupWebSockets: function() {
-      // setup websocket connection
+      let websocketUrl = this.apiWebsocketUrl + '/stream'
 
-      // this.websocketUrlHandler();
-      this.websocketConnection = new WebSocket(
-        process.env.VUE_APP_WEBSOCKET_ENDPOINT
-      );
+      this.websocketConnection = new WebSocket(websocketUrl);
       this.websocketConnection.onmessage = this.receiveWebSocketsMsg;
     },
 
     // ----
 
-    sendWebSocketsMsg: function(data) {
-      let payload = data;
-      this.websocketConnection.send(JSON.stringify(payload));
-    },
-
-    // ----
-
     receiveWebSocketsMsg: function(e) {
+      console.log('Websocket connection initialized')
       console.log(e);
-    },
-
-    // ----
-
-    sendImage: function(base64Img) {
-      this.formatDate(new Date());
-      this.appId = localStorage.appId;
-
-      //Send data to websocket API
-      let data = {
-        img: base64Img,
-        app_id: this.appId,
-        lng: this.positionLo,
-        lat: this.positionLa,
-        timestamp: this.timeFormat,
-        state: true
-      };
-
-      this.sendWebSocketsMsg(data);
     },
 
     // ----
@@ -375,6 +362,9 @@ export default {
 
       return this.timeFormat;
     },
+
+    // ----
+
     todayDateFunc: function(date) {
       let year = date.getFullYear();
       let month = this.addZero(date.getMonth()) + 1;
@@ -393,6 +383,8 @@ export default {
       }
       return i;
     },
+
+    // ----
 
     addZeroMillisec: function(i) {
       if (i < 100) {

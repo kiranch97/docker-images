@@ -1,4 +1,4 @@
-v-if="cameraFlipped"<template>
+<template>
   <div>
     <div class="video-stream">
       <video id="video" autoplay="true"></video>
@@ -7,13 +7,17 @@ v-if="cameraFlipped"<template>
     <div class="container-grid">
       <div class="item-1">
         <div class="stream-toggle-settings">
-          <b-switch v-model="isSwitched" class="stream-switch" size="is-large"></b-switch>
+          <b-switch
+            v-model="isSwitched"
+            class="stream-switch"
+            size="is-large"
+          ></b-switch>
           <!-- <img
             v-if="cameraFlipped"
             class="stream-flip"
             src="../assets/flip.png"
           /> -->
-            <!-- @click="flipCamera()" -->
+          <!-- @click="flipCamera()" -->
         </div>
         <div class="stream-start-settings">
           <button
@@ -42,11 +46,19 @@ v-if="cameraFlipped"<template>
             streamstatus: streamStatusToggle,
             streamstatuspaused: streamStatusTogglePause
           }"
-        >Streaming</p>
-        <stream-time v-show="toggleTimer" class="stream-timer" ref="streamtimer"></stream-time>
+        >
+          Streaming
+        </p>
+        <stream-time
+          v-show="toggleTimer"
+          class="stream-timer"
+          ref="streamtimer"
+        ></stream-time>
       </div>
       <div class="item-4">
-        <stream-count></stream-count>
+        <keep-alive>
+          <stream-count></stream-count>
+        </keep-alive>
       </div>
     </div>
   </div>
@@ -55,7 +67,7 @@ v-if="cameraFlipped"<template>
 import StreamDetails from "./StreamDetails";
 import StreamTime from "./StreamTime";
 import StreamCount from "./StreamCount";
-import {eventBus} from '../main'
+import { eventBus } from "../main";
 
 export default {
   //// example from: https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Taking_still_photos
@@ -80,8 +92,8 @@ export default {
       SETTINGS: {
         WIDTH: 1400,
         HEIGHT: 0,
-        TAKE_PICTURE_EVERY_MS: 300,
-        // WEBSOCKET_URL: "wss://odk-video.stadswerken.amsterdam/stream"
+        TAKE_PICTURE_EVERY_MS: 300
+        // _URL: "wss://odk-video.stadswerken.amsterdam/stream"
       },
       // ---- end settings ----
       // ---- STREAM PROPERTIES ----
@@ -97,7 +109,7 @@ export default {
       constraints: {
         video: {
           facingMode: {
-            exact: "environment"
+            exact: "user"
           },
           width: 1280,
           height: 720
@@ -168,7 +180,7 @@ export default {
       let streaming = this.streaming;
       // console.log(this.constraints)
       navigator.mediaDevices
-        .getUserMedia( this.constraints )
+        .getUserMedia(this.constraints)
         .then(function(stream) {
           video.srcObject = stream;
           video.play();
@@ -297,7 +309,9 @@ export default {
       // setup websocket connection
 
       // this.websocketUrlHandler();
-      this.websocketConnection = new WebSocket(process.env.VUE_APP_WEBSOCKET_ENDPOINT);
+      this.websocketConnection = new WebSocket(
+        process.env.VUE_APP_WEBSOCKET_ENDPOINT
+      );
       this.websocketConnection.onmessage = this.receiveWebSocketsMsg;
     },
 
@@ -318,8 +332,6 @@ export default {
 
     sendImage: function(base64Img) {
       this.formatDate(new Date());
-      // this.todayDateFunc(new Date());
-
       this.appId = localStorage.appId;
 
       //Send data to websocket API
@@ -393,22 +405,6 @@ export default {
 
     // ----
 
-    // websocketUrlHandler: function() {
-    //   if (
-    //     location.hostname === "localhost" ||
-    //     location.hostname === "127.0.0.1" ||
-    //     location.hostname === ""
-    //   ) {
-    //     this.SETTINGS.WEBSOCKET_URL = "ws://localhost:8090/stream";
-    //   } else {
-    //     this.SETTINGS.WEBSOCKET_URL =
-    //       "wss://odk-video.stadswerken.amsterdam/stream";
-    //   }
-    // },
-
-
-    
-
     checkIdNull: function() {
       if (
         typeof localStorage.appId == "undefined" ||
@@ -439,7 +435,6 @@ export default {
     //   this.showStream();
     //   console.log("camera is flipped")
     // },
-
   },
 
   // ---- On mount hook ----\\
@@ -450,10 +445,9 @@ export default {
     this.showStream();
     this.appId = localStorage.appId;
     this.checkIdNull();
-    eventBus.$on('frameReceived', (analysedFrame) => {
-      this.analysedFrame = analysedFrame
-    })
-   
+    eventBus.$on("frameReceived", analysedFrame => {
+      this.analysedFrame = analysedFrame;
+    });
   }
 };
 </script>
@@ -463,7 +457,7 @@ export default {
   font-size: 16px;
 }
 
-body{
+body {
   overflow: hidden;
 }
 
@@ -480,7 +474,7 @@ body{
   width: 100vw;
   height: 100vh;
   position: absolute;
-  /* min-height: 100%; */
+  overflow: hidden;
 }
 
 .item-1 {
@@ -500,7 +494,6 @@ body{
   align-self: start;
   transform: rotate(180deg);
 }
-  
 
 .stream-flip {
   width: 1.5rem;
@@ -560,8 +553,6 @@ body{
   align-items: flex-end;
   justify-content: center;
 }
-
-
 
 .item-3 {
   justify-content: center;
@@ -674,7 +665,6 @@ body{
 .count-box-two {
   align-self: center;
 }
-
 
 video {
   max-width: none !important;

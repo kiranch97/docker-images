@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-# import os
+import os
 
 import uvicorn as uvicorn
 
@@ -29,8 +29,8 @@ from odklib.FrameBroker import FrameBroker
 
 # SETTINGS #
 
-SECRET_KEY = "fdc072c6825981hSD883425c7d9c0fd5d1d368f869f1d95f332a60e5437cb42198a8"   # noqa
-SQLALCHEMY_DATABASE_URI = "postgresql://odk:pgodk@116.203.210.203:5432/odk"
+SECRET_KEY = os.environ.get('JWT_SECRET_KEY')   # noqa
+SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_CONNECTION_STRING')
 JWT_ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 120
 CORS_ORIGINS = [

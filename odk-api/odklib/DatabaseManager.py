@@ -35,8 +35,9 @@ class DatabaseManager():
         self.setup_logger()
 
         if uri is None:
-            self.logger.error("Cannot work with DatabaseManager without a \
-                               SQLAlchemy connection URI")
+            self.logger.error(
+                """Cannot work with DatabaseManager without a SQLAlchemy connection URI
+                """)
 
         else:
             self.db_uri = uri

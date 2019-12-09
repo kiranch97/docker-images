@@ -36,16 +36,18 @@ export default {
       requestHeaders: {
         "Content-Type": "application/json",
         Authorization: "No Auth"
-      }
+      },
+      apiHttpUrl: process.env.VUE_APP_API_HTTP_URL
     };
   },
 
   methods: {
     fetchAnalysedResults: function() {
-      let curEndPoint = process.env.VUE_APP_DATE_ENDPOINT.replace(
-        "{{APP_ID}}",
-        this.appId
-      ).replace("{{DATE}}", this.todayDateFunc(new Date()));
+      let curEndPointBase = this.apiHttpUrl + '/detected_objects?app_id={{APP_ID}}&day={{DATE}}'
+
+      let curEndPoint = curEndPointBase
+        .replace("{{APP_ID}}", this.appId)
+        .replace("{{DATE}}", this.todayDateFunc(new Date()));
 
       fetch(curEndPoint, {
         method: "GET",
@@ -79,10 +81,10 @@ export default {
     },
 
     fetchAnalysedFrames() {
-      let frameEndpoint = process.env.VUE_APP_API_ENDPOINT.replace(
-        "{{APP_ID}}",
-        this.appId
-      );
+      let frameEndpointBase = this.apiHttpUrl + '/last_analysed_frames?app_id={{APP_ID}}'
+
+      let frameEndpoint = frameEndpointBase
+        .replace("{{APP_ID}}", this.appId);
 
       fetch(frameEndpoint, {
         method: "GET",
@@ -92,9 +94,10 @@ export default {
           return response.json();
         })
         .then(results => {
-          console.log(results)
-          let imageUrl = results.take_frame.img;
-          this.analysedFrame = imageUrl;
+          if (results.length == 0) return
+
+          this.analysedFrame = results.take_frame.img;
+
           eventBus.$emit("frameReceived", this.analysedFrame);
 
           let c = document.getElementById("stream-canvas");
@@ -169,8 +172,6 @@ export default {
 
   mounted() {
     this.appId = localStorage.appId;
-    // this.fetchAnalysedResults();
-    // this.fetchAnalysedFrames();
 
     setInterval(this.fetchAnalysedFrames, 5000);
     setInterval(this.fetchAnalysedResults, 3000);

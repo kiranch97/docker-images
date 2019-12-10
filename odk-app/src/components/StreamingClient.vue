@@ -135,6 +135,9 @@ export default {
 
   methods: {
     setup: function() {
+      // set camera orientation
+      this.constraints.video.facingMode.exact = this.currentCameraOption;
+
       // console.log("OdkClient init!");
       this.video = document.getElementById("video");
       this.canvas = document.getElementById("canvas");
@@ -418,8 +421,6 @@ export default {
     this.showStream();
     this.appId = localStorage.appId;
     this.checkIdNull();
-
-    this.constraints.video.facingMode.exact = this.currentCameraOption;
   }
 };
 </script>
@@ -472,7 +473,7 @@ body {
   height: 0.9969375rem;
   transform: rotate(90deg);
   margin-top: 0.625rem;
-  margin-right: 0.625rem;
+  margin-right: -0.375rem;
 }
 
 .stream-start-settings {
@@ -687,6 +688,7 @@ video {
     width: 100vw !important;
     bottom: 0;
   }
+  
 }
 
 @media (max-width: 1024px) and (orientation: portrait) {

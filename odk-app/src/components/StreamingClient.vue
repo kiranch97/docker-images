@@ -67,7 +67,7 @@ export default {
   data: function() {
     return {
       apiWebsocketUrl: process.env.VUE_APP_API_WS_URL,
-      debug: true,
+      debug: false,
       //UI properties
       recordToggle: true,
       streamStatusToggle: false,
@@ -472,6 +472,7 @@ body {
   height: 0.9969375rem;
   transform: rotate(90deg);
   margin-top: 0.625rem;
+  margin-right: 0.625rem;
 }
 
 .stream-start-settings {

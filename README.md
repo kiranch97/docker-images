@@ -42,7 +42,8 @@ Setup virtual environment for Frame Analyzer:
 ```
 $ cd odk-frame-analyzer
 $ python3 -m venv venv
-$ source venv/bin/active
+$ source venv/bin/active (Linux)
+$ venv\Scripts\activate (Windows)
 (venv) $ pip install -r requirements.txt
 ```
 
@@ -57,7 +58,8 @@ $ cat download_link | xargs -L 1 wget
 Start Frame Analyzer:
 ```
 $ cd odk-frame-analyzer
-$ source venv/bin/active
+$ source venv/bin/active (Linux)
+$ venv\Scripts\activate (Windows)
 (venv) $ python MlWorker.py
 ```
 

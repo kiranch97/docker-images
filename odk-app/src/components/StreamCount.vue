@@ -32,17 +32,17 @@ export default {
       cardboardCount: 0,
       totalCount: 0,
       appId: null,
-      analysedFrame: null,
       requestHeaders: {
         "Content-Type": "application/json",
         Authorization: "No Auth"
       },
-      apiHttpUrl: process.env.VUE_APP_API_HTTP_URL
+      apiHttpUrl: process.env.VUE_APP_API_HTTP_URL,
+      countFetchRate: 1000
     };
   },
 
   methods: {
-    fetchAnalysedResults: function() {
+    fetchAnalysedResults() {
       let curEndPointBase = this.apiHttpUrl + '/detected_objects?app_id={{APP_ID}}&day={{DATE}}'
 
       let curEndPoint = curEndPointBase
@@ -57,71 +57,22 @@ export default {
           return response.json();
         })
         .then(results => {
-          let curScope = this;
-          let containerObs = results.detected_objects_by_type.container_small;
-          let trashBagObs = results.detected_objects_by_type.garbage_bag;
-          let cardBoardObs = results.detected_objects_by_type.cardboard;
-
-          containerObs == undefined
-            ? (curScope.binCount = 0)
-            : (curScope.binCount = containerObs);
-          trashBagObs == undefined
-            ? (curScope.trashCount = 0)
-            : (curScope.trashCount = trashBagObs);
-          cardBoardObs == undefined
-            ? (curScope.cardboardCount = 0)
-            : (curScope.cardboardCount = cardBoardObs);
-          curScope.totalCount =
-            curScope.cardboardCount + curScope.trashCount + curScope.binCount;
-        })
-
-        .catch(er => {
-          console.log(er);
-        });
-    },
-
-    fetchAnalysedFrames() {
-      let frameEndpointBase = this.apiHttpUrl + '/last_analysed_frames?app_id={{APP_ID}}'
-
-      let frameEndpoint = frameEndpointBase
-        .replace("{{APP_ID}}", this.appId);
-
-      fetch(frameEndpoint, {
-        method: "GET",
-        headers: this.requestHeaders
-      })
-        .then(response => {
-          return response.json();
-        })
-        .then(results => {
           if (results.length == 0) return
 
-          this.analysedFrame = results.take_frame.img;
+          let curScope = this;
 
-          eventBus.$emit("frameReceived", this.analysedFrame);
+          curScope.binCount = results.detected_objects_by_type.container_small || 0;
+          curScope.trashCount = results.detected_objects_by_type.garbage_bag || 0;
+          curScope.cardboardCount = results.detected_objects_by_type.cardboard || 0;
 
-          let c = document.getElementById("stream-canvas");
-          let ctx = c.getContext("2d");
-
-          ctx.clearRect(0, 0, c.width, c.height);
-          this.frameMeta = results.frame_meta;
-          console.log(this.frameMeta)
-          // loop for all boxes
-          results.detected_objects.forEach(element => {
-            let curScope = this;
-            console.log(element);
-            let cord1 = element.bbox.coordinate1;
-            let cord2 = element.bbox.coordinate2;
-
-            curScope.drawBox(cord1, cord2, curScope.frameMeta);
-          });
+          curScope.totalCount  = curScope.binCount + curScope.trashCount + curScope.cardboardCount;
         })
         .catch(er => {
-          console.log(er);
+          console.log("==> Error occured in 'fetchAnalysedResults':" + er);
         });
     },
 
-    todayDateFunc: function(date) {
+    todayDateFunc(date) {
       let year = date.getFullYear();
       let month = this.addZero(date.getMonth()) + 1;
       let day = this.addZero(date.getDate());
@@ -130,51 +81,19 @@ export default {
       return this.todayDate;
     },
 
-    addZero: function(i) {
+    addZero(i) {
       if (i < 10) {
         i = "0" + i;
       }
       return i;
     },
-
-    drawBox: function(cord1, cord2, frameMeta) {
-      let c = document.getElementById("stream-canvas");
-      let ctx = c.getContext("2d");
-
-      // console.log(width)
-      var width = frameMeta.width;
-      var height = frameMeta.height;
-      
-      var canvas_width = c.width;
-      var canvas_height = c.height;
-
-      var x1 = cord1[0];
-      var y1 = cord1[1];
-
-      var x2 = cord2[0];
-      var y2 = cord2[1];
-
-      var x1_canvas = (x1 / width) * canvas_width;
-      var y1_canvas = (y1 / height) * canvas_height;
-      console.log(x1_canvas)
-      
-      var box_width = ((x2 - x1) / width) * canvas_width;
-      var box_height = ((y2 - y1) / height) * canvas_height;
-
-      ctx.beginPath();
-      ctx.rect(x1_canvas, y1_canvas, box_width, box_height);
-     
-      ctx.lineWidth = 5;
-      ctx.strokeStyle = "red";
-      ctx.stroke();
-    }
   },
 
   mounted() {
     this.appId = localStorage.appId;
 
-    setInterval(this.fetchAnalysedFrames, 5000);
-    setInterval(this.fetchAnalysedResults, 3000);
+    console.log("=> Starting 'fetchAnalysedResults' with 'countFetchRate': " + this.countFetchRate)
+    setInterval(this.fetchAnalysedResults, this.countFetchRate);
   }
 };
 </script>
@@ -194,33 +113,6 @@ export default {
   color: white;
 }
 
-#stream-frame {
-  /* width: 50% !important;
-  height: 75% !important; */
-  height: 125px;
-  width: 125px;
-  background: grey;
-  transform: rotate(90deg);
-  position: absolute;
-  /* right: 20px; */
-  /* top: 0; */
-  /* right: 0; */
-  z-index: 1;
-  /* border: 2px solid green; */
-}
-
-#stream-canvas {
-  /* background: red; */
-  transform: rotate(90deg);
-  /* border: 2px solid red; */
-  height: 125px;
-  width: 125px;
-  position: absolute;
-  /* right: 20px; */
-  /* top: 0; */
-  /* right: 0; */
-  z-index: 2;
-}
 
 .total-counts {
   font-size: 2.5rem;

@@ -7,17 +7,13 @@
     <div class="container-grid">
       <div class="item-1">
         <div class="stream-toggle-settings">
-          <b-switch
-            v-model="isSwitched"
-            class="stream-switch"
-            size="is-large"
-          ></b-switch>
-          <!-- <img
-            v-if="cameraFlipped"
+          <b-switch v-model="isSwitched" class="stream-switch" size="is-large"></b-switch>
+          <img
+            v-if="cameraIconActive"
             class="stream-flip"
             src="../assets/flip.png"
-          /> -->
-          <!-- @click="flipCamera()" -->
+            @click="flipCamera()"
+          />
         </div>
         <div class="stream-start-settings">
           <button
@@ -32,10 +28,7 @@
             <div class="inner-button"></div>
           </button>
         </div>
-        <div class="stream-frames-settings">
-          <canvas v-show="isSwitched" id="stream-canvas"></canvas>
-          <img v-show="isSwitched" id="stream-frame" :src="analysedFrame" />
-        </div>
+        <stream-analyzer></stream-analyzer>
       </div>
       <div class="item-2"></div>
       <div class="item-3">
@@ -46,17 +39,11 @@
             streamstatus: streamStatusToggle,
             streamstatuspaused: streamStatusTogglePause
           }"
-        >
-          Streaming
-        </p>
-        <stream-time
-          v-show="toggleTimer"
-          class="stream-timer"
-          ref="streamtimer"
-        ></stream-time>
+        >Streaming</p>
+        <stream-time v-show="toggleTimer" class="stream-timer" ref="streamtimer"></stream-time>
       </div>
-      <div class="item-4">    
-          <stream-count></stream-count>   
+      <div class="item-4">
+        <stream-count></stream-count>
       </div>
     </div>
   </div>
@@ -66,6 +53,7 @@ import StreamDetails from "./StreamDetails";
 import StreamTime from "./StreamTime";
 import StreamCount from "./StreamCount";
 import { eventBus } from "../main";
+import StreamAnalyzedFrame from "./StreamAnalyzedFrame";
 
 export default {
   //// example from: https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Taking_still_photos
@@ -79,14 +67,15 @@ export default {
   data: function() {
     return {
       apiWebsocketUrl: process.env.VUE_APP_API_WS_URL,
-      debug: false,
+      debug: true,
       //UI properties
       recordToggle: true,
       streamStatusToggle: false,
       streamStatusTogglePause: false,
       toggleTimer: false,
       isSwitched: true,
-      cameraFlipped: true,
+      cameraIconActive: true,
+      currentCameraOption: process.env.VUE_APP_DEFAULT_CAMERA_OPTION || "user",
 
       // ---- settings ----
       SETTINGS: {
@@ -109,7 +98,7 @@ export default {
       constraints: {
         video: {
           facingMode: {
-            exact: "environment"
+            exact: null
           },
           width: 1280,
           height: 720
@@ -124,8 +113,7 @@ export default {
       timeFormat: null,
       todayDate: null,
       appId: null,
-      streamTime: "00:00:00",
-      analysedFrame: null,
+      streamTime: "00:00:00"
     };
   },
 
@@ -134,7 +122,8 @@ export default {
   components: {
     "stream-details": StreamDetails,
     "stream-time": StreamTime,
-    "stream-count": StreamCount
+    "stream-count": StreamCount,
+    "stream-analyzer": StreamAnalyzedFrame
     // "device-login": DeviceLogin
   },
 
@@ -158,10 +147,14 @@ export default {
     // ----
 
     startStream: function() {
+      console.log(
+        "=> Starting stream to endpoint: " + process.env.VUE_APP_API_HTTP_URL
+      );
+
       //change circle to pause button when stream starts
       this.recordToggle = false;
 
-      this.cameraFlipped = false;
+      this.cameraIconActive = false;
 
       // Show the Streaming status text and timer
       this.streamStatusToggle = true;
@@ -225,7 +218,7 @@ export default {
       let video = this.video;
       let streaming = this.streaming;
 
-      let constraints = this.debug ? {video: true} : this.constraints
+      let constraints = this.debug ? { video: true } : this.constraints;
 
       navigator.mediaDevices
         .getUserMedia(constraints)
@@ -257,7 +250,7 @@ export default {
       //change pause to circle button when stream stops
       this.recordToggle = true;
 
-      this.cameraFlipped = true;
+      this.cameraIconActive = true;
 
       // show Stream paused text and keep showing timer
       this.streamStatusToggle = false;
@@ -267,7 +260,7 @@ export default {
       this.streamStatusTogglePause = true;
       this.toggleTimer = true;
 
-      console.log("Stream is stopped");
+      console.log("=> Stream is stopped");
       let data = {
         app_id: this.appId,
         lng: this.positionLo,
@@ -280,7 +273,6 @@ export default {
       this.websocketConnection.send(JSON.stringify(payload));
     },
 
-
     // ----
 
     updatePosition: function(position) {
@@ -292,7 +284,6 @@ export default {
 
     onStartedStream: function(ev) {
       // resize video
-      console.log("=> onStartedStream");
 
       if (!this.streaming) {
         this.width = this.SETTINGS.WIDTH;
@@ -321,7 +312,7 @@ export default {
     // ----
 
     setupWebSockets: function() {
-      let websocketUrl = this.apiWebsocketUrl + '/stream'
+      let websocketUrl = this.apiWebsocketUrl + "/stream";
 
       this.websocketConnection = new WebSocket(websocketUrl);
       this.websocketConnection.onmessage = this.receiveWebSocketsMsg;
@@ -330,7 +321,7 @@ export default {
     // ----
 
     receiveWebSocketsMsg: function(e) {
-      console.log('Websocket connection initialized')
+      console.log("Websocket connection initialized");
       console.log(e);
     },
 
@@ -345,20 +336,7 @@ export default {
       let sec = this.addZero(date.getSeconds());
       let millisec = this.addZeroMillisec(date.getMilliseconds());
 
-      this.timeFormat =
-        year +
-        "-" +
-        month +
-        "-" +
-        day +
-        " " +
-        hour +
-        ":" +
-        min +
-        ":" +
-        sec +
-        "." +
-        millisec;
+      this.timeFormat = `${year}-${month}-${day} ${hour}:${min}:${sec}.${millisec}`
 
       return this.timeFormat;
     },
@@ -407,45 +385,41 @@ export default {
       }
     },
 
-    // flipCamera: function() {
-    //   let video = this.video;
-    //   //Pause the stream
-    //   navigator.mediaDevices
-    //     .getUserMedia(this.constraints)
-    //     .then(function(stream) {
-    //       video.srcObject = stream;
-    //       video.pause();
-    //       console.log("stream is stopped");
-    //     })
-    //     .catch(function(err) {
-    //       console.log("An error occurred: ");
-    //       console.log(err);
-    //     });
+    flipCamera: function() {
+      let video = this.video;
 
-    //   //Change camera facingMode
-    //   this.constraints.video.facingMode.exact = "environment";
-    //   this.showStream();
-    //   console.log("camera is flipped")
-    // },
+      //Pause the stream
+      navigator.mediaDevices
+        .getUserMedia(this.constraints)
+        .then(function(stream) {
+          video.srcObject = stream;
+          video.pause();
+          console.log("=> Stream is stopped");
+        })
+        .catch(function(err) {
+          console.log("An error occurred: " + err);
+        });
+
+      if (this.currentCameraOption == "user") {
+        this.currentCameraOption = "environment";
+      } else {
+        this.currentCameraOption = "user";
+      }
+
+      this.constraints.video.facingMode.exact = this.currentCameraOption;
+
+      this.showStream();
+      console.log("Switched to camera option: " + this.currentCameraOption);
+    }
   },
 
-  // ---- On mount hook ----\\
-
   mounted: function() {
-    let cameraOption = process.env.VUE_APP_CAMERA_OPTION
-    console.log("Camera option set to: " + cameraOption)
-    if (cameraOption) {
-      this.constraints.video.facingMode.exact = cameraOption
-    }
-
-    // init
     this.setup();
     this.showStream();
     this.appId = localStorage.appId;
     this.checkIdNull();
-    eventBus.$on("frameReceived", analysedFrame => {
-      this.analysedFrame = analysedFrame;
-    });
+
+    this.constraints.video.facingMode.exact = this.currentCameraOption;
   }
 };
 </script>
@@ -543,12 +517,6 @@ body {
   position: relative;
   z-index: 2;
   display: flex;
-  justify-content: center;
-}
-
-.stream-frames-settings {
-  display: flex;
-  align-items: flex-end;
   justify-content: center;
 }
 

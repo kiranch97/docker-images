@@ -347,3 +347,68 @@ class DatabaseManager():
             return []
 
     # ----
+
+    def get_dash_map_data(self, day: str):
+
+        if not self.has_connection:
+            self.logger.error("No connection to database! Check Settings")
+            return {"status": "error",
+                    "code": self.RETURN_CODES['ERROR_SERVER_ERROR'],
+                    "message": "Cannot get analysed frames. \
+                                Problem with server!"}
+
+        try:
+            dash_map_data = {}
+            day = day.split(" ")[0]
+            analysed_frames = \
+                self.db_session.query(AnalysedFrame).filter(
+                    AnalysedFrame.created_at >= day).all()
+
+            for frame in analysed_frames:
+
+                location = {}
+                
+                if "lat" not in location.keys():
+                    location["lat"] = ""
+
+                if "lng" not in location.keys():
+                    location["lng"] = ""
+                
+                location["lat"] = frame.take_frame.get("lat")
+                location["lng"] = frame.take_frame.get("lng")
+
+                detected_objects_by_type = {}
+
+                for detected_obj in frame.detected_objects:
+
+                    if "total" not in detected_objects_by_type.keys():
+                        detected_objects_by_type["total"] = 0
+
+                    type = detected_obj.get("detected_object_type")
+
+                    if type not in detected_objects_by_type.keys():
+                        detected_objects_by_type[type] = 0
+
+                    detected_objects_by_type[type] += 1
+                    detected_objects_by_type["total"] += 1
+                
+                dash_map_data[frame.id] = {
+                    "_entity_name":
+                        "dash_map_data",
+                    "app_id":
+                        frame.created_by_app,
+                    "created_at":
+                        frame.created_at,
+                    # "analysed_img":
+                    #     frame.take_frame.get("img"),
+                    "location":
+                        location,
+                    "detected_objects_by_type": 
+                        detected_objects_by_type
+                }
+
+            return dash_map_data
+        
+        except Exception as e:
+            self.logger.error(e)
+            return []

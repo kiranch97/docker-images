@@ -75,7 +75,6 @@ export default {
       toggleTimer: false,
       isSwitched: true,
       cameraIconActive: true,
-      currentCameraOption: process.env.VUE_APP_DEFAULT_CAMERA_OPTION || "user",
 
       // ---- settings ----
       SETTINGS: {
@@ -94,18 +93,15 @@ export default {
       photo: null,
       websocketConnection: null,
       intervalHandler: null,
-      // ---- STREAM CONSTRAITS ----
-      constraints: {
-        video: {
-          facingMode: {
-            exact: null
-          },
-          width: 1280,
-          height: 720
-        },
-
-        audio: false
+      // ---- CAMERA CONSTRAITS ----
+      prefCameraOption: process.env.VUE_APP_DEFAULT_CAMERA_OPTION, // 'environment' or 'user'
+      currentCameraOption: null,
+      rearCamResolution: {
+        width: 1280,
+        height: 720
       },
+      currentConstraints: null,
+      currentStream: null,
 
       // ---- image files properties
       positionLa: null,
@@ -135,8 +131,8 @@ export default {
 
   methods: {
     setup: function() {
-      // set camera orientation
-      this.constraints.video.facingMode.exact = this.currentCameraOption;
+      // set current camera orientation
+      this.currentCameraOption = this.prefCameraOption;
 
       // console.log("OdkClient init!");
       this.video = document.getElementById("video");
@@ -221,18 +217,35 @@ export default {
       let video = this.video;
       let streaming = this.streaming;
 
-      let constraints = this.debug ? { video: true } : this.constraints;
+      this.currentConstraints = {
+        video: {
+          facingMode: this.currentCameraOption,
+          width: this.rearCamResolution.width,
+          height: this.rearCamResolution.height
+        },
+        audio: false
+      }
+
+      console.log("Preferred video constraints:")
+      console.log(this.currentConstraints.video)
+
+      let curScope = this;
 
       navigator.mediaDevices
-        .getUserMedia(constraints)
+        .getUserMedia(this.currentConstraints)
         .then(function(stream) {
+          curScope.currentStream = stream;
           video.srcObject = stream;
           video.play();
+          console.log("=> Video started:")
+          console.log(video)
         })
         .catch(function(err) {
-          console.log("An error occurred: ");
-          console.log(err);
+          console.log("==> Error occured in 'showStream':");
+          console.error(err)
         });
+
+      video.addEventListener("canplay", this.onStartedStream, false);
 
       //Asks User for location permission
       if (navigator.geolocation) {
@@ -241,8 +254,6 @@ export default {
         locationNode.innerHTML =
           "Geolocation wordt niet ondersteund door deze browser";
       }
-
-      video.addEventListener("canplay", this.onStartedStream, false);
     },
 
     // ----
@@ -287,7 +298,6 @@ export default {
 
     onStartedStream: function(ev) {
       // resize video
-
       if (!this.streaming) {
         this.width = this.SETTINGS.WIDTH;
         this.height =
@@ -388,31 +398,23 @@ export default {
       }
     },
 
+    stopMediaTracks: function(stream) {
+      stream.getTracks().forEach(track => {
+        console.log("=> Stopping media track")
+        track.stop();
+      })
+    },
+
     flipCamera: function() {
-      let video = this.video;
-
-      //Pause the stream
-      navigator.mediaDevices
-        .getUserMedia(this.constraints)
-        .then(function(stream) {
-          video.srcObject = stream;
-          video.pause();
-          console.log("=> Stream is stopped");
-        })
-        .catch(function(err) {
-          console.log("An error occurred: " + err);
-        });
-
       if (this.currentCameraOption == "user") {
         this.currentCameraOption = "environment";
       } else {
         this.currentCameraOption = "user";
       }
+      console.log("=> Camera option changed to: " + this.currentCameraOption)
 
-      this.constraints.video.facingMode.exact = this.currentCameraOption;
-
+      this.stopMediaTracks(this.currentStream);
       this.showStream();
-      console.log("Switched to camera option: " + this.currentCameraOption);
     }
   },
 

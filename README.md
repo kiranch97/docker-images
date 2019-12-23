@@ -58,7 +58,7 @@ $ cat download_link | xargs -L 1 wget
 Start Frame Analyzer:
 ```
 $ cd odk-frame-analyzer
-$ source venv/bin/active (Linux)
+$ source venv/bin/active (Linux & Mac)
 $ venv\Scripts\activate (Windows)
 (venv) $ python MlWorker.py
 ```
@@ -79,6 +79,10 @@ Visit [localhost:8001]() for the ODK Dashboard.
 
 - [Python](https://www.python.org/) for API & Frame Analyzer
 - [VueJS](https://vuejs.org/) for App & Dashboard
+
+### Machine learning
+
+- [YOLOv3](https://pjreddie.com/darknet/yolo/) for Object Detection
 
 ### Libraries
 

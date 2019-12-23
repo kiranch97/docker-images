@@ -265,6 +265,15 @@ def get_dash_total(day: str):
 
 # ----
 
+@app.get("/dash_map_data")
+def get_dash_map_data(day: str):
+    r_dmd = dbm.get_dash_map_data(day)
+
+    return r_dmd
+
+# ----
+
+
 # TEST SERVER
 if __name__ == "__main__":
     uvicorn.run(app,

@@ -74,7 +74,7 @@ export default {
 
     todayDateFunc(date) {
       let year = date.getFullYear();
-      let month = this.addZero(date.getMonth()) + 1;
+      let month = this.addZero(date.getMonth() + 1);
       let day = this.addZero(date.getDate());
       this.todayDate = year + "-" + month + "-" + day;
 

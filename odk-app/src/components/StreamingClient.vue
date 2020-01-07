@@ -342,7 +342,7 @@ export default {
 
     formatDate: function(date) {
       let year = date.getFullYear();
-      let month = this.addZero(date.getMonth()) + 1;
+      let month = this.addZero(date.getMonth() + 1);
       let day = this.addZero(date.getDate());
       let hour = this.addZero(date.getHours());
       let min = this.addZero(date.getMinutes());
@@ -358,7 +358,7 @@ export default {
 
     todayDateFunc: function(date) {
       let year = date.getFullYear();
-      let month = this.addZero(date.getMonth()) + 1;
+      let month = this.addZero(date.getMonth() + 1);
       let day = this.addZero(date.getDate());
 
       this.todayDate = year + "-" + month + "-" + day;

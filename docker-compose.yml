@@ -16,15 +16,8 @@ services:
      - ./logs:/var/log/nginx
      - ./odk-app/dist:/app-dist
      - ./odk-dashboard/dist:/dash-dist
-    
-  website:
-    restart: always
-    container_name: odk-website
-    image: nginx
-    ports:
-      - "8000:80"
-    volumes:
-      - ./odk-website/dist:/dist
+     #- ./tmp-website/dist:/tmp-dist
+     - ./odk-website/dist:/website-dist    
 
   api:
     restart: always

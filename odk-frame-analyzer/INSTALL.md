@@ -9,12 +9,14 @@ https://askubuntu.com/questions/841876/how-to-disable-nouveau-kernel-driver
 CUDA:
 https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html
 
-Durinf CUDA install some files could not be deleted:
+During CUDA install some files could not be deleted:
 cat /var/log/nvidia-uninstall.log
 
 Post install CUDA asked to set path to:
+```
 $ export PATH=/usr/local/cuda-10.2/bin:/usr/local/cuda-10.2/NsightCompute-2019.1${PATH:+:${PATH}}
 but there is no 'NsightCompute-2019.1' after the install
+```
 
 ## Mirror files to GPU server 2
 

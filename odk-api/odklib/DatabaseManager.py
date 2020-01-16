@@ -1,29 +1,18 @@
-""" avatarslib.AvatarManager
-
-"""
+import logging
 
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 
 from odklib.AnalysedFrame import AnalysedFrame
-# import AnalysedFrame
 
 
-import logging
-
-
-class DatabaseManager():
-
-    # SETTINGS #
+class DatabaseManager:
 
     RETURN_CODES = {'ERROR': 1,
                     'ERROR_SERVER_ERROR': 2,
                     'ERROR_INVALID_INPUT': 3
                     }
 
-    # END SETTINGS #
-
-    # postgresql://{{USER}}:{{PASSWORD}}@{{IP}}:{{PORT}}/{{DB_NAME}}
     db_uri = None
     db_engine = None
     db_session = None
@@ -121,8 +110,10 @@ class DatabaseManager():
         """
 
         if not self.has_connection:
-            return {"status": "error", "message": "There is a server problem! \
-                     Please contact administrator"}
+            return {
+                "status": "error",
+                "message": "There is a server problem! Please contact administrator"
+            }
 
         if type(analysed_frame_data) is dict:
 

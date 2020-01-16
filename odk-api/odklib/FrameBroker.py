@@ -1,21 +1,22 @@
 import os
 import logging
-
 import time
-
 from typing import List
-from starlette.websockets import WebSocket
 
 import simplejson as json
-
 import asyncio
+from starlette.websockets import WebSocket
 from aio_pika import connect, Message, IncomingMessage, ExchangeType
 
 from odklib.DiskWriter import DiskWriter
 from odklib.DatabaseManager import DatabaseManager
 
-diskwriter = DiskWriter()
+
+# TODO: Get DB connection string from main
 SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_CONNECTION_STRING')
+
+diskwriter = DiskWriter()
+# TODO: setup DBM inside FrameBroker-class
 dbm = DatabaseManager(SQLALCHEMY_DATABASE_URI)
 
 SETTINGS = {
@@ -86,35 +87,43 @@ class FrameBroker:
 
         self.analysed_queue_name = None
         self.exchange_analysed = None
-        # self.queues = {}
-        # self.exchanges = {}
-
-    # ----
 
     def setup_logger(self):
 
         self.logger = logging.getLogger(__name__)
 
         if not self.logger.handlers:
-            logging.basicConfig(level=logging.INFO, format='%(asctime)s' +
-                                                           '%(name)s' +
-                                                           '%(levelname)-4s' +
-                                                           '%(message)s')
+            logging.basicConfig(level=logging.INFO,
+                                format='%(asctime)s %(name)s %(levelname)-4s %(message)s')
 
-    # ----
-
+    """
+    TODO: refactor!
+    
+    first of all; should setting up queues happen in de init fase?
+    input of function should be a list of dictionaries:
+    [
+        {
+            "queue_name": "raw_frames_queue",
+            "exchange_name": "raw_frames_exchange",
+            "exchange_type": ExchangeType.DIRECT,
+            "consume_self": False
+        },
+        {
+            "queue_name": "analyzed_frames_queue",
+            "exchange_name": "analyzed_frames_exchange",
+            "exchange_type": ExchangeType.DIRECT,
+            "consume_self": True
+        },
+    ]
+    
+    start each queue by looping through list
+    
+    """
     async def setup_all_queues(self,
                                dash_queue_name: str,
                                dash_analysed_queue_name: str,
                                ml_queue_name: str,
                                analysed_queue_name: str):
-
-        # QUEUES : [
-        #       { name: "analused_frame_for_dash", "FANOUT" },
-        #       { name: "images_for_ml", "DIRECT" },
-        #        { name: "analysed_frames", "FANOUT" }
-        # ]
-        # @ queue_list: [ { "name", "exchange_type" : FANOUT|DIRECT } ]
 
         # TODO: catch error on wrong RMQ credentials !
         self.rmq_conn = await connect(
@@ -158,22 +167,18 @@ class FrameBroker:
         self.analysed_queue_name = analysed_queue_name
         self.exchange_analysed = await self.channel.declare_exchange(
             SETTINGS['RMQ_EXCHANGE_FRAMES_ANALYSED'], ExchangeType.DIRECT)
-        queue_analysed = await self.channel.declare_queue(
-            self.analysed_queue_name)
+
+        queue_analysed = await self.channel.declare_queue(self.analysed_queue_name)
         await queue_analysed.bind(self.exchange_analysed)
         await queue_analysed.consume(self.handle_analysed_frame, no_ack=True)
 
         self.is_ready = True
-
-    # ----
 
     async def connect_to_websocket(self, websocket: WebSocket):
         await websocket.accept()
         self.logger.info("Added websocket connection to connections")
         self.logger.info(websocket)
         self.connections.append(websocket)
-
-    # ----
 
     async def send_message_on_queues(self,
                                      frame_data: dict,
@@ -191,24 +196,12 @@ class FrameBroker:
                 SETTINGS["RMQ_QUEUE_ANALYSED_FRAMES"])
 
         frameJson = json.dumps(frame_data).encode()
-        # statsJson = json.dumps(stats).encode()
-        # running_clientsJson = json.dumps(running_clients).encode()
 
         # send messages to Dashboard
         await self.exchange_dash.publish(
             Message(frameJson),
             routing_key=self.dash_queue_name,
         )
-
-        # await self.exchange_dash.publish(
-        #     Message(statsJson),
-        #     routing_key=self.dash_queue_name,
-        # )
-
-        # await self.exchange_dash.publish(
-        #     Message(running_clientsJson),
-        #     routing_key=self.dash_queue_name,
-        # )
 
         await self.exchange_ml.publish(
             Message(frameJson),
@@ -218,12 +211,8 @@ class FrameBroker:
         self.logger.debug("=> Broker: queue new frame - app_id : '{0}'".format(
             frame_data['app_id']))
 
-    # ----
-
     def remove_websocket(self, websocket: WebSocket):
         self.connections.remove(websocket)
-
-    # ----
 
     async def handle_new_frame_on_dash_queue(self, message: IncomingMessage):
 
@@ -247,8 +236,6 @@ class FrameBroker:
 
         self.connections = living_connections
 
-    # ----
-
     async def handle_analysed_frame(self, message: IncomingMessage):
 
         # Get new analysed frame from MlWorker
@@ -267,8 +254,6 @@ class FrameBroker:
         # Save frame in 'frames-analysed' Folder
         await diskwriter.save_file(analysed_frame_data)
 
-    # ----
-
     async def handle_new_analysed_frame_on_dash_queue(
       self,
       message: IncomingMessage):
@@ -278,7 +263,3 @@ class FrameBroker:
         analysed_frame_data = json.dumps(analysed_frame_data_dict)
 
         return
-
-        # # Print incoming message
-        # print(analysed_frame_data)
-        # print("did fanout analysed")

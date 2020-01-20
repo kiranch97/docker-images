@@ -48,6 +48,8 @@ class MlWorker:
             loop=asyncio.get_running_loop()
         )
 
+        print("Connecting to RMQ at URL: {0}".format(SETTINGS['RMQ_URL']))
+
         self.channel = await self.rmq_conn.channel()
 
         self.ml_queue_name = ml_queue_name

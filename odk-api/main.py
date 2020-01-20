@@ -1,4 +1,5 @@
 import os
+import logging
 
 import uvicorn
 from fastapi import FastAPI
@@ -51,16 +52,18 @@ def index():
 
 
 @app.websocket("/stream")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    # TODO: add try/except > WebSocketDisconnect
-    while True:
-        # Get data from client
-        frame_data = await websocket.receive_json()
+async def websocket_endpoint(ws: WebSocket):
+    await ws.accept()
+    try:
+        while True:
+            # Get data from client
+            frame_data = await ws.receive_json()
 
-        if frame_data["img"] is not False:
-            await broker.send_message_on_queues(
-                frame_data, stats, running_clients)
+            if frame_data["img"] is not False:
+                await broker.send_message_on_queues(
+                    frame_data, stats, running_clients)
+    except WebSocketDisconnect:
+        logging.info("WebSocket /stream [disconnect]")
 
 
 # @app.websocket("/dash_stream")

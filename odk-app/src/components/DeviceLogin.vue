@@ -42,7 +42,7 @@
   </div>
 </template>
 <script>
-import { required, minLength, maxLength } from "vuelidate/lib/validators";
+import { required, minLength } from "vuelidate/lib/validators";
 
 export default {
   name: "login",
@@ -70,7 +70,7 @@ export default {
 
     checkExistingId: function() {
       if (localStorage.appId) {
-        router.push({ path: "/login" });
+        this.$router.push({ path: "/login" });
         this.appId = localStorage.appId;
       }
     },

@@ -1,20 +1,13 @@
 <template>
   <div id="app">
-    <!-- <onboarding></onboarding> -->
     <router-view></router-view>
   </div>
 </template>
 
 <script>
 
-import Onboarding from './components/Onboarding';
-
 export default {
   name: 'app',
-  components: {
-    "onboarding": Onboarding
-  },
-
 }
 </script>
 

@@ -1,0 +1,16 @@
+test-api:
+  image: python:3.6
+  stage: test
+  script:
+    - apt-get update -qy
+    - cd odk-api
+    - pip install -r requirements.txt
+    - pytest
+
+test-app:
+  image: node:latest
+  stage: test
+  script:
+    - cd odk-app
+    - npm install --progress=false
+    - npm run lint

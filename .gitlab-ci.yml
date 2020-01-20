@@ -4,7 +4,6 @@ test-api:
   script:
   # this configures
   - apt-get update -qy
-  - apt-get install -y python-dev python-pip
   - cd odk-api
   - pip install -r requirements.txt
   - pytest

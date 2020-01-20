@@ -1,6 +1,9 @@
-// RUN WITH NODE!
-
-// send test data to the api websocket endpoint
+// ----------------------------------------------------------------------
+// used for sending test data to the ODK API websocket endpoint '/stream'
+// else: the ODK app would have to be started to produce an image...
+//
+// run with node: $ node testStreamWebSocket.js
+// ----------------------------------------------------------------------
 
 const fs = require('fs');
 const WebSocket = require('ws')
@@ -23,9 +26,9 @@ let data = {
 
 // setup connection
 
-const websocket_url = "ws://localhost:8080/stream";
-console.log(`Starting connection to: ${websocket_url}`)
-const websocketConnection = new WebSocket(websocket_url);
+const websocketUrl = "ws://localhost:8080/stream";
+console.log(`Starting connection to: ${websocketUrl}`)
+const websocketConnection = new WebSocket(websocketUrl);
 
 // send message
 

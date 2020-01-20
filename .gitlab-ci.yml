@@ -11,5 +11,6 @@ test-app:
   image: node:latest
   stage: test
   script:
+    - cd odk-app
     - npm install --progress=false
     - npm run lint

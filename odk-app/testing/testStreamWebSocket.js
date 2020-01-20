@@ -2,7 +2,9 @@
 // used for sending test data to the ODK API websocket endpoint '/stream'
 // else: the ODK app would have to be started to produce an image...
 //
-// run with node: $ node testStreamWebSocket.js
+// run with node:
+// $ export RMQ_URL=localhost
+// $ node testStreamWebSocket.js
 // ----------------------------------------------------------------------
 
 const fs = require('fs');
@@ -15,9 +17,10 @@ function base64_encode(file) {
 
 // setup data structure
 
-const base64Img = base64_encode('./garbage-1.jpg');
+const base64Img = base64_encode('./garbage-2.jpg');
 
 let data = { 
+    app_id: '123456',
     img: base64Img, 
     createdAt: new Date().toString(),
     lng: 5.3,

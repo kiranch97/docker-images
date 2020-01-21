@@ -13,7 +13,7 @@ class DiskWriter:
 
         if 'frame_meta' in frame_data.keys():
             # Data from MlWorker
-            FRAME_DIR = "../frames-analysed"
+            FRAME_DIR = "frames-analysed"
 
             img = frame_data.get(
                 'take_frame', {}).get(

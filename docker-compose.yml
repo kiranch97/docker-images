@@ -28,6 +28,7 @@ services:
       - "8080:80"
     volumes:
       - ./odk-api:/app
+      - ./frames-analysed:/frames-analysed
   
   rmq:
     restart: always

@@ -16,7 +16,6 @@ services:
      - ./logs:/var/log/nginx
      - ./odk-app/dist:/app-dist
      - ./odk-dashboard/dist:/dash-dist
-     #- ./tmp-website/dist:/tmp-dist
      - ./odk-website/dist:/website-dist    
 
   api:

@@ -91,10 +91,11 @@ class FrameBroker:
     def setup_logger(self):
 
         self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(level=logging.DEBUG)
 
-        if not self.logger.handlers:
-            logging.basicConfig(level=logging.INFO,
-                                format='%(asctime)s %(name)s %(levelname)-4s %(message)s')
+        # if not self.logger.handlers:
+        #     logging.basicConfig(level=logging.DEBUG,
+        #                         format='%(asctime)s %(name)s %(levelname)-4s %(message)s')
 
     """
     TODO: refactor!
@@ -146,17 +147,17 @@ class FrameBroker:
             self.handle_new_frame_on_dash_queue,
             no_ack=True)
 
-        # dash analysed channel
-        self.dash_analysed_queue_name = dash_analysed_queue_name
-        self.exchange_dash_analysed = await self.channel.declare_exchange(
-            SETTINGS['RMQ_EXCHANGE_ANALYSED_FRAMES_FOR_DASH'],
-            ExchangeType.FANOUT)
-        queue_analysed_dash = await self.channel.declare_queue(
-            self.dash_analysed_queue_name)
-        await queue_analysed_dash.bind(self.exchange_dash_analysed)
-        await queue_analysed_dash.consume(
-            self.handle_new_analysed_frame_on_dash_queue,
-            no_ack=True)
+        # DISABLES: dash analysed channel
+        # self.dash_analysed_queue_name = dash_analysed_queue_name
+        # self.exchange_dash_analysed = await self.channel.declare_exchange(
+        #     SETTINGS['RMQ_EXCHANGE_ANALYSED_FRAMES_FOR_DASH'],
+        #     ExchangeType.FANOUT)
+        # queue_analysed_dash = await self.channel.declare_queue(
+        #     self.dash_analysed_queue_name)
+        # await queue_analysed_dash.bind(self.exchange_dash_analysed)
+        # await queue_analysed_dash.consume(
+        #     self.handle_new_analysed_frame_on_dash_queue,
+        #     no_ack=True)
 
         # to ml channel (to be analysed)
         self.ml_queue_name = ml_queue_name
@@ -180,20 +181,17 @@ class FrameBroker:
         self.logger.info(websocket)
         self.connections.append(websocket)
 
-    async def send_message_on_queues(self,
-                                     frame_data: dict,
-                                     stats: dict,
-                                     running_clients: dict):
+    async def send_message_on_queues(self, frame_data: dict):
 
         # add time on queue
         frame_data['_debug_rmq_time_on_queue'] = int(round(time.time() * 1000))
 
         if not self.is_ready:
             await self.setup_all_queues(
-                SETTINGS["RMQ_QUEUE_FRAMES_FOR_DASH"],
-                SETTINGS["RMQ_QUEUE_ANALYSED_FRAMES_FOR_DASH"],
-                SETTINGS["RMQ_QUEUE_FRAMES_FOR_ML"],
-                SETTINGS["RMQ_QUEUE_ANALYSED_FRAMES"])
+                # SETTINGS["RMQ_QUEUE_FRAMES_FOR_DASH"],
+                # SETTINGS["RMQ_QUEUE_ANALYSED_FRAMES_FOR_DASH"],
+                ml_queue_name = SETTINGS["RMQ_QUEUE_FRAMES_FOR_ML"],
+                analysed_queue_name = SETTINGS["RMQ_QUEUE_ANALYSED_FRAMES"])
 
         frameJson = json.dumps(frame_data).encode()
 

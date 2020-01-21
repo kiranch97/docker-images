@@ -25,11 +25,13 @@ broker = FrameBroker()
 diskwriter = DiskWriter()
 streamlogger = StreamLogger()
 
+logger = logging.getLogger(__name__)
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(name)s %(levelname)-4s %(message)s')
+
 # TODO: move to init function, include: setup queues + setup logging
 dbm = DatabaseManager(SQLALCHEMY_DATABASE_URI)
-
-running_clients = {}  # Dictionary for running streams
-stats = {}  # Dictionary for frame statistics
 
 # set cors
 app.add_middleware(
@@ -60,12 +62,11 @@ async def websocket_endpoint(ws: WebSocket):
             frame_data = await ws.receive_json()
 
             if frame_data["img"] is not False:
-                await broker.send_message_on_queues(
-                    frame_data, stats, running_clients)
+                await broker.send_message_on_queues(frame_data)
     except WebSocketDisconnect:
-        logging.info("WebSocket /stream [disconnect]")
+        logger.info("WebSocket /stream [disconnect]")
 
-
+# DISABLED
 # @app.websocket("/dash_stream")
 # async def websocket_dash_endpoint(websocket: WebSocket):
 #     await broker.connect_to_websocket(websocket)

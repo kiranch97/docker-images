@@ -15,7 +15,7 @@ from odklib.DatabaseManager import DatabaseManager
 # TODO: Get DB connection string from main
 SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_CONNECTION_STRING')
 
-diskwriter = DiskWriter()
+disk_writer = DiskWriter()
 # TODO: setup DBM inside FrameBroker-class
 dbm = DatabaseManager(SQLALCHEMY_DATABASE_URI)
 
@@ -121,8 +121,8 @@ class FrameBroker:
     
     """
     async def setup_all_queues(self,
-                               dash_queue_name: str,
-                               dash_analysed_queue_name: str,
+                               # dash_queue_name: str,
+                               # dash_analysed_queue_name: str,
                                ml_queue_name: str,
                                analysed_queue_name: str):
 
@@ -137,17 +137,17 @@ class FrameBroker:
         # setup channels
         self.channel = await self.rmq_conn.channel()
 
-        # dash channel
-        self.dash_queue_name = dash_queue_name
-        self.exchange_dash = await self.channel.declare_exchange(
-            SETTINGS['RMQ_EXCHANGE_FRAMES_FOR_DASH'], ExchangeType.FANOUT)
-        queue_dash = await self.channel.declare_queue(self.dash_queue_name)
-        await queue_dash.bind(self.exchange_dash)
-        await queue_dash.consume(
-            self.handle_new_frame_on_dash_queue,
-            no_ack=True)
+        # DISABLED: dash channel
+        # self.dash_queue_name = dash_queue_name
+        # self.exchange_dash = await self.channel.declare_exchange(
+        #     SETTINGS['RMQ_EXCHANGE_FRAMES_FOR_DASH'], ExchangeType.FANOUT)
+        # queue_dash = await self.channel.declare_queue(self.dash_queue_name)
+        # await queue_dash.bind(self.exchange_dash)
+        # await queue_dash.consume(
+        #     self.handle_new_frame_on_dash_queue,
+        #     no_ack=True)
 
-        # DISABLES: dash analysed channel
+        # DISABLED: dash analysed channel
         # self.dash_analysed_queue_name = dash_analysed_queue_name
         # self.exchange_dash_analysed = await self.channel.declare_exchange(
         #     SETTINGS['RMQ_EXCHANGE_ANALYSED_FRAMES_FOR_DASH'],
@@ -190,19 +190,19 @@ class FrameBroker:
             await self.setup_all_queues(
                 # SETTINGS["RMQ_QUEUE_FRAMES_FOR_DASH"],
                 # SETTINGS["RMQ_QUEUE_ANALYSED_FRAMES_FOR_DASH"],
-                ml_queue_name = SETTINGS["RMQ_QUEUE_FRAMES_FOR_ML"],
-                analysed_queue_name = SETTINGS["RMQ_QUEUE_ANALYSED_FRAMES"])
+                ml_queue_name=SETTINGS["RMQ_QUEUE_FRAMES_FOR_ML"],
+                analysed_queue_name=SETTINGS["RMQ_QUEUE_ANALYSED_FRAMES"])
 
-        frameJson = json.dumps(frame_data).encode()
+        frame_json = json.dumps(frame_data).encode()
 
-        # send messages to Dashboard
-        await self.exchange_dash.publish(
-            Message(frameJson),
-            routing_key=self.dash_queue_name,
-        )
+        # DISABLED: send messages to Dashboard
+        # await self.exchange_dash.publish(
+        #     Message(frameJson),
+        #     routing_key=self.dash_queue_name,
+        # )
 
         await self.exchange_ml.publish(
-            Message(frameJson),
+            Message(frame_json),
             routing_key=self.ml_queue_name,
         )
 
@@ -225,12 +225,12 @@ class FrameBroker:
         living_connections = []
 
         while len(self.connections) > 0:
-            websocket = self.connections.pop()
+            ws = self.connections.pop()
             # self.logger.info("=> Got message from queue")
             # self.logger.info(message)
             # print("=> Got message from queue")
-            await websocket.send_text(frame_data)
-            living_connections.append(websocket)
+            await ws.send_text(frame_data)
+            living_connections.append(ws)
 
         self.connections = living_connections
 
@@ -238,19 +238,19 @@ class FrameBroker:
 
         # Get new analysed frame from MlWorker
         analysed_frame_data = json.loads(message.body.decode("utf-8"))
-        analysed_frameJson = json.dumps(analysed_frame_data).encode()
+        analysed_frame_json = json.dumps(analysed_frame_data).encode()
 
-        # send analysed frame to Dashboard
-        await self.exchange_dash_analysed.publish(
-            Message(analysed_frameJson),
-            routing_key=self.dash_analysed_queue_name,
-        )
+        # DISABLED: send analysed frame to Dashboard
+        # await self.exchange_dash_analysed.publish(
+        #     Message(analysed_frame_json),
+        #     routing_key=self.dash_analysed_queue_name,
+        # )
 
         # Persist analysed frame on database
         dbm.add_analysed_frame(analysed_frame_data)
 
         # Save frame in 'frames-analysed' Folder
-        await diskwriter.save_file(analysed_frame_data)
+        await disk_writer.save_file(analysed_frame_data)
 
     async def handle_new_analysed_frame_on_dash_queue(
       self,

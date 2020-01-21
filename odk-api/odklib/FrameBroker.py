@@ -91,7 +91,7 @@ class FrameBroker:
     def setup_logger(self):
 
         self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(level=logging.DEBUG)
+        self.logger.setLevel(level=logging.INFO)
 
         # if not self.logger.handlers:
         #     logging.basicConfig(level=logging.DEBUG,

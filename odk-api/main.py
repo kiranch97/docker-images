@@ -17,12 +17,12 @@ WAIT_FRAME_BROKER = 0.01  # in seconds 0.01 = 10 ms
 
 app = FastAPI()
 broker = FrameBroker()
-diskwriter = DiskWriter()
-streamlogger = StreamLogger()
+# disk_writer = DiskWriter()
+# stream_logger = StreamLogger()
 
 logger = logging.getLogger(__name__)
 
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(name)s %(levelname)-4s %(message)s')
 
 # TODO: move to init function, include: setup queues + setup logging
@@ -49,7 +49,7 @@ def index():
 
 
 @app.websocket("/stream")
-async def websocket_endpoint(ws: WebSocket):
+async def ws_stream(ws: WebSocket):
     await ws.accept()
     try:
         while True:
@@ -63,7 +63,7 @@ async def websocket_endpoint(ws: WebSocket):
 
 # DISABLED
 # @app.websocket("/dash_stream")
-# async def websocket_dash_endpoint(websocket: WebSocket):
+# async def ws_dashboard(websocket: WebSocket):
 #     await broker.connect_to_websocket(websocket)
 #     try:
 #         while True:
@@ -86,8 +86,10 @@ def get_detected_objects(app_id: str, day: str):
 
 @app.get("/last_analysed_frames")
 def get_last_analysed_frames(app_id: str):
-    r_laf = dbm.get_last_analysed_frames(app_id)
-    return r_laf
+    # TODO: store a single analysed frame in server memory which app can retrieve
+    # r_laf = dbm.get_last_analysed_frames(app_id)
+    # return r_laf
+    return None
 
 
 @app.get("/dash_stream_devices")

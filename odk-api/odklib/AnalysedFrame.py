@@ -37,7 +37,7 @@ class AnalysedFrame(DBObj):
     created_at = Column(DateTime())
     created_by_app = Column(String())
     frame_meta = Column(JSONB())
-    detected_objects = Column(JSONB())  # hashed passphrase
+    detected_objects = Column(JSONB())
     counts = Column(JSONB())
     ml_done_at = Column(DateTime())
     ml_time_taken = Column(String())
@@ -53,7 +53,7 @@ class AnalysedFrame(DBObj):
                  counts={},
                  ml_done_at=None,
                  ml_time_taken=None,
-                 take_frame={}
+                 take_frame=None
                  ):
 
         self.id = str(uuid.uuid4())

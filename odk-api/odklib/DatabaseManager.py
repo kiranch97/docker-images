@@ -131,8 +131,8 @@ class DatabaseManager:
                     'ml_done_at'),
                 ml_time_taken=analysed_frame_data.get(
                     'ml_time_taken'),
-                take_frame=analysed_frame_data.get(
-                    'take_frame'),
+                # take_frame=analysed_frame_data.get(
+                #     'take_frame'),
                 )
 
             try:

@@ -1,9 +1,3 @@
-""" avatarslib.Avatar.py
-
-SQLAlchemy ORM model for Avatar
-
-"""
-
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Boolean, Text, DateTime, Numeric
 from sqlalchemy.dialects.postgresql import JSONB
@@ -65,7 +59,7 @@ class AnalysedFrame(DBObj):
         self.counts = counts
         self.ml_done_at = ml_done_at
         self.ml_time_taken = ml_time_taken
-        self.take_frame = take_frame
+        self.take_frame = None
 
     # ----
 

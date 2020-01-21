@@ -49,10 +49,10 @@
   </div>
 </template>
 <script>
-import StreamDetails from "./StreamDetails";
+//import StreamDetails from "./StreamDetails";
 import StreamTime from "./StreamTime";
 import StreamCount from "./StreamCount";
-import { eventBus } from "../main";
+//import { eventBus } from "../main";
 import StreamAnalyzedFrame from "./StreamAnalyzedFrame";
 
 export default {
@@ -116,7 +116,7 @@ export default {
   // ==== Components ====
 
   components: {
-    "stream-details": StreamDetails,
+    // "stream-details": StreamDetails,
     "stream-time": StreamTime,
     "stream-count": StreamCount,
     "stream-analyzer": StreamAnalyzedFrame
@@ -215,7 +215,6 @@ export default {
 
     showStream() {
       let video = this.video;
-      let streaming = this.streaming;
 
       this.currentConstraints = {
         video: {
@@ -251,6 +250,7 @@ export default {
       if (navigator.geolocation) {
         navigator.geolocation.watchPosition(this.updatePosition);
       } else {
+        var locationNode = document.getElementById("location");
         locationNode.innerHTML =
           "Geolocation wordt niet ondersteund door deze browser";
       }
@@ -296,7 +296,7 @@ export default {
 
     // ----
 
-    onStartedStream: function(ev) {
+    onStartedStream: function() {
       // resize video
       if (!this.streaming) {
         this.width = this.SETTINGS.WIDTH;
@@ -316,9 +316,9 @@ export default {
     clearPhoto: function() {
       let context = this.canvas.getContext("2d");
       context.fillStyle = "#AAA";
-      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-      let data = canvas.toDataURL("image/jpeg");
+      let data = this.canvas.toDataURL("image/jpeg");
       this.photo.setAttribute("src", data);
     },
 

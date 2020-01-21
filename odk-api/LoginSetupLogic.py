@@ -20,6 +20,12 @@ JWT_ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 120
 TEST_USER_PASSWORD = "testodk"
 
+CORS_ORIGINS = [
+    "http://localhost",
+    "http://localhost:8080",
+    "http://localhost:8090"
+]
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token")
 

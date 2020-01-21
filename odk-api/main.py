@@ -13,11 +13,6 @@ from odklib.FrameBroker import FrameBroker
 
 # TODO: change from string to dict with user, password, domain...
 SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_CONNECTION_STRING')
-CORS_ORIGINS = [
-    "http://localhost",
-    "http://localhost:8080",
-    "http://localhost:8090"
-]
 WAIT_FRAME_BROKER = 0.01  # in seconds 0.01 = 10 ms
 
 app = FastAPI()

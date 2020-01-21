@@ -17,7 +17,7 @@ function base64_encode(file) {
 
 // setup data structure
 
-const base64Img = base64_encode('./garbage-2.jpg');
+const base64Img = base64_encode('./garbage-3.jpg');
 
 let data = { 
     app_id: '123456',
@@ -29,7 +29,7 @@ let data = {
 
 // setup connection
 
-const websocketUrl = "ws://localhost:8080/stream";
+const websocketUrl = "ws://localhost:8090/stream";
 console.log(`Starting connection to: ${websocketUrl}`)
 const websocketConnection = new WebSocket(websocketUrl);
 

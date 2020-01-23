@@ -1,5 +1,5 @@
 test-api:
-  image: python:3.6
+  image: python:3.7
   stage: test
   script:
     - apt-get update -qy

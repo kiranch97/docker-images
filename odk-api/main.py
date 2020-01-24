@@ -2,10 +2,10 @@ import os
 import logging
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from starlette.middleware.cors import CORSMiddleware
 from starlette.websockets import WebSocket, WebSocketDisconnect
-
+from starlette.responses import JSONResponse
 from odklib.DatabaseManager import DatabaseManager
 from odklib.DiskWriter import DiskWriter
 from odklib.StreamLogger import StreamLogger
@@ -13,6 +13,7 @@ from odklib.FrameBroker import FrameBroker
 
 # TODO: change from string to dict with user, password, domain...
 SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_CONNECTION_STRING')
+print(SQLALCHEMY_DATABASE_URI)
 WAIT_FRAME_BROKER = 0.01  # in seconds 0.01 = 10 ms
 
 app = FastAPI()
@@ -80,8 +81,11 @@ async def ws_stream(ws: WebSocket):
 
 @app.get("/detected_objects")
 def get_detected_objects(app_id: str, day: str):
+    status_code = 200
     r_do = dbm.get_detected_objects(app_id, day)
-    return r_do
+    if r_do["status"] == "error":
+        status_code = 500
+    return JSONResponse(content = r_do, status_code = status_code)
 
 
 @app.get("/last_analysed_frames")
@@ -94,20 +98,29 @@ def get_last_analysed_frames(app_id: str):
 
 @app.get("/dash_stream_devices")
 def get_dash_stream_devices(app_id: str, day: str):
+    status_code = 200
     r_dsd = dbm.get_dash_stream_devices(app_id, day)
-    return r_dsd
+    if r_dsd["status"] == "error":
+        status_code = 500
+    return JSONResponse(content = r_dsd,status_code = status_code)
 
 
 @app.get("/dash_total")
 def get_dash_total(day: str):
+    status_code = 200
     r_dt = dbm.get_dash_total(day)
-    return r_dt
+    if r_dt["status"] == "error":
+        status_code = 500
+    return JSONResponse(content = r_dt,status_code = status_code)
 
 
 @app.get("/dash_map_data")
 def get_dash_map_data(day: str):
+    status_code = 200
     r_dmd = dbm.get_dash_map_data(day)
-    return r_dmd
+    if r_dmd["status"] == "error":
+        status_code = 500
+    return JSONResponse(content = r_dmd,status_code = status_code)
 
 
 if __name__ == "__main__":

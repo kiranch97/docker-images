@@ -1,9 +1,15 @@
+import os
 from starlette.testclient import TestClient
 from starlette.websockets import WebSocket
+
+#db_uri = 'sqlite:///'
+#db_env_var = 'DATABASE_CONNECTION_STRING'
+#os.environ[db_env_var] = db_uri
+#print(f'{db_env_var}={os.environ[db_env_var]} environment variable has been set.')
+
 from main import app
 
 client = TestClient(app)
-
 
 def test_get_main():
     response = client.get("/")
@@ -20,7 +26,7 @@ def test_get_detected_objects_no_day():
 
 def test_get_detected_objects_invalid_data():
     response = client.get("/detected_objects?app_id=1&day=1")
-    assert response.status_code == 200
+    assert response.status_code == 500
     assert response.json() == {"code": 2, "message": "Cannot get analysed frames. \
                                 Problem with server!", "status": "error"}
 
@@ -31,19 +37,19 @@ def test_last_analysed_frames():
 
 def test_dash_stream_devices():
     response = client.get("/dash_stream_devices?app_id=1&day=1")
-    assert response.status_code == 200
+    assert response.status_code == 500
     assert response.json() == {"code": 2, "message": "Cannot get analysed frames. \
                                 Problem with server!", "status": "error"}
 
 def test_dash_total():
     response = client.get("/dash_total?day=1")
-    assert response.status_code == 200
+    assert response.status_code == 500
     assert response.json() == {"code": 2, "message": "Cannot get analysed frames. \
                                 Problem with server!", "status": "error"}
 
 def test_dash_map_data():
     response = client.get("/dash_map_data?day=1")
-    assert response.status_code == 200
+    assert response.status_code == 500
     assert response.json() == {"code": 2, "message": "Cannot get analysed frames. \
                                 Problem with server!", "status": "error"}
 

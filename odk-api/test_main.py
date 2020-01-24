@@ -1,5 +1,5 @@
 from starlette.testclient import TestClient
-
+from starlette.websockets import WebSocket
 from main import app
 
 client = TestClient(app)
@@ -23,3 +23,28 @@ def test_get_detected_objects_invalid_data():
     assert response.status_code == 200
     assert response.json() == {"code": 2, "message": "Cannot get analysed frames. \
                                 Problem with server!", "status": "error"}
+
+def test_last_analysed_frames():
+    response = client.get("/last_analysed_frames?app_id=1")
+    assert response.status_code == 200
+    assert response.json() == None
+
+def test_dash_stream_devices():
+    response = client.get("/dash_stream_devices?app_id=1&day=1")
+    assert response.status_code == 200
+    assert response.json() == {"code": 2, "message": "Cannot get analysed frames. \
+                                Problem with server!", "status": "error"}
+
+def test_dash_total():
+    response = client.get("/dash_total?day=1")
+    assert response.status_code == 200
+    assert response.json() == {"code": 2, "message": "Cannot get analysed frames. \
+                                Problem with server!", "status": "error"}
+
+def test_dash_map_data():
+    response = client.get("/dash_map_data?day=1")
+    assert response.status_code == 200
+    assert response.json() == {"code": 2, "message": "Cannot get analysed frames. \
+                                Problem with server!", "status": "error"}
+
+

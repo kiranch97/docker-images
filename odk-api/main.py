@@ -7,7 +7,6 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.websockets import WebSocket, WebSocketDisconnect
 from starlette.responses import JSONResponse
 from odklib.DatabaseManager import DatabaseManager
-from odklib.DiskWriter import DiskWriter
 from odklib.StreamLogger import StreamLogger
 from odklib.FrameBroker import FrameBroker
 
@@ -18,7 +17,6 @@ WAIT_FRAME_BROKER = 0.01  # in seconds 0.01 = 10 ms
 
 app = FastAPI()
 broker = FrameBroker()
-# disk_writer = DiskWriter()
 # stream_logger = StreamLogger()
 
 logger = logging.getLogger(__name__)

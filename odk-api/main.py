@@ -88,7 +88,7 @@ async def ws_stream(ws: WebSocket):
 def get_detected_objects(app_id: str, day: str):
     status_code = 200
     r_do = dbm.get_detected_objects(app_id, day)
-    if r_do["status"] == "error":
+    if "status" in r_do and r_do["status"] == "error":
         status_code = 500
     return JSONResponse(content = r_do, status_code = status_code)
 
@@ -105,7 +105,7 @@ def get_last_analysed_frames(app_id: str):
 def get_dash_stream_devices(app_id: str, day: str):
     status_code = 200
     r_dsd = dbm.get_dash_stream_devices(app_id, day)
-    if r_dsd["status"] == "error":
+    if "status" in r_dsd and r_dsd["status"] == "error":
         status_code = 500
     return JSONResponse(content = r_dsd,status_code = status_code)
 
@@ -114,7 +114,7 @@ def get_dash_stream_devices(app_id: str, day: str):
 def get_dash_total(day: str):
     status_code = 200
     r_dt = dbm.get_dash_total(day)
-    if r_dt["status"] == "error":
+    if "status" in r_dt and r_dt["status"] == "error":
         status_code = 500
     return JSONResponse(content = r_dt,status_code = status_code)
 
@@ -123,7 +123,7 @@ def get_dash_total(day: str):
 def get_dash_map_data(day: str):
     status_code = 200
     r_dmd = dbm.get_dash_map_data(day)
-    if r_dmd["status"] == "error":
+    if "status" in r_dmd and r_dmd["status"] == "error":
         status_code = 500
     return JSONResponse(content = r_dmd,status_code = status_code)
 

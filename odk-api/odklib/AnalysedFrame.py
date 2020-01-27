@@ -35,6 +35,7 @@ class AnalysedFrame(DBObj):
     counts = Column(JSONB())
     ml_done_at = Column(DateTime())
     ml_time_taken = Column(String())
+    frame_name = Column(String())
     take_frame = Column(JSONB())
 
     # ----
@@ -47,6 +48,7 @@ class AnalysedFrame(DBObj):
                  counts={},
                  ml_done_at=None,
                  ml_time_taken=None,
+                 frame_name=None,
                  take_frame=None
                  ):
 
@@ -59,6 +61,7 @@ class AnalysedFrame(DBObj):
         self.counts = counts
         self.ml_done_at = ml_done_at
         self.ml_time_taken = ml_time_taken
+        self.frame_name = frame_name
         self.take_frame = None
 
     # ----
@@ -79,6 +82,7 @@ class AnalysedFrame(DBObj):
                 "counts": self.counts,
                 "ml_done_at": self.ml_done_at,
                 "ml_time_taken": self.ml_done_at,
+                "frame_name": self.frame_name,
                 "take_frame": self.take_frame
                 }
 
@@ -94,6 +98,7 @@ class AnalysedFrame(DBObj):
                 "counts": self.counts,
                 "ml_done_at": self.ml_done_at,
                 "ml_time_taken": self.ml_done_at,
+                "frame_name": self.frame_name,
                 "take_frame": self.take_frame
                 }
 

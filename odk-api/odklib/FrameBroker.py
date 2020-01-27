@@ -8,14 +8,12 @@ import asyncio
 from starlette.websockets import WebSocket
 from aio_pika import connect, Message, IncomingMessage, ExchangeType
 
-from odklib.DiskWriter import DiskWriter
 from odklib.DatabaseManager import DatabaseManager
 
 
 # TODO: Get DB connection string from main
 SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_CONNECTION_STRING')
 
-disk_writer = DiskWriter()
 # TODO: setup DBM inside FrameBroker-class
 dbm = DatabaseManager(SQLALCHEMY_DATABASE_URI)
 
@@ -32,8 +30,8 @@ SETTINGS = {
     'RMQ_EXCHANGE_ANALYSED_FRAMES_FOR_DASH':
         'exhange_broadcast_analysed_frames',
 
-    'RMQ_EXCHANGE_FRAMES_FOR_ML': 'exhange_ml_frames',
     'RMQ_QUEUE_FRAMES_FOR_ML': 'image_frames_for_ml',
+    'RMQ_EXCHANGE_FRAMES_FOR_ML': 'exhange_ml_frames',
 
     'RMQ_QUEUE_ANALYSED_FRAMES': 'analysed_frames',
     'RMQ_EXCHANGE_FRAMES_ANALYSED': 'exchange_analysed_frames'
@@ -235,22 +233,18 @@ class FrameBroker:
         self.connections = living_connections
 
     async def handle_analysed_frame(self, message: IncomingMessage):
-
         # Get new analysed frame from MlWorker
         analysed_frame_data = json.loads(message.body.decode("utf-8"))
-        analysed_frame_json = json.dumps(analysed_frame_data).encode()
+        # analysed_frame_json = json.dumps(analysed_frame_data).encode()
+
+        # Persist analysed frame on database
+        dbm.add_analysed_frame(analysed_frame_data)
 
         # DISABLED: send analysed frame to Dashboard
         # await self.exchange_dash_analysed.publish(
         #     Message(analysed_frame_json),
         #     routing_key=self.dash_analysed_queue_name,
         # )
-
-        # Persist analysed frame on database
-        dbm.add_analysed_frame(analysed_frame_data)
-
-        # Save frame in 'frames-analysed' Folder
-        await disk_writer.save_file(analysed_frame_data)
 
     async def handle_new_analysed_frame_on_dash_queue(
       self,

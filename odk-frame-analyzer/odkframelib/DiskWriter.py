@@ -13,7 +13,7 @@ class DiskWriter:
 
         if 'frame_name' in analysed_frame_data.keys():
             # Frame with objects
-            FRAME_DIR = "C:/ODK-frames/objects/"
+            FRAME_DIR = "/data/odk/images/objects/"
 
             img = analysed_frame_data.get(
                 'take_frame', {}).get(
@@ -33,7 +33,7 @@ class DiskWriter:
                         ':', '-')
         else:
             # Frame without objects
-            FRAME_DIR = "C:/ODK-frames/no-objects/"
+            FRAME_DIR = "/data/odk/images/no-objects/"
 
             img = analysed_frame_data.get(
                 'img')

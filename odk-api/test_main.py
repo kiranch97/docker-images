@@ -2,10 +2,10 @@ import os
 from starlette.testclient import TestClient
 from starlette.websockets import WebSocket
 
-#db_uri = 'sqlite:///'
-#db_env_var = 'DATABASE_CONNECTION_STRING'
-#os.environ[db_env_var] = db_uri
-#print(f'{db_env_var}={os.environ[db_env_var]} environment variable has been set.')
+#os.environ['DATABASE_CONNECTION_STRING'] = 'sqlite:///'
+#os.environ['RMQ_USER'] = '<>'
+#os.environ['RMQ_PASSWORD'] = '<>'
+#os.environ['RMQ_URL'] = '<>'
 
 from main import app
 
@@ -53,4 +53,14 @@ def test_dash_map_data():
     assert response.json() == {"code": 2, "message": "Cannot get analysed frames. \
                                 Problem with server!", "status": "error"}
 
+"""
+Test the websocket without setting the connection. It should return: Not available
+"""
+def test_stream():
+    client = TestClient(app)
+    with client.websocket_connect("/stream") as websocket:
+        # trigger the message queue by sending it a message
+        websocket.send_json({"img": "Hello WebSocket"})
+        # wait for response
+        assert websocket.receive_json() == {"error": "MessageServer Not Available"}
 

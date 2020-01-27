@@ -199,7 +199,10 @@ class DatabaseManager:
 
         except Exception as e:
             self.logger.error(e)
-            return []
+            return {"status": "error",
+                    "code": self.RETURN_CODES['ERROR_SERVER_ERROR'],
+                    "message": e
+                   }
 
     # ----
 
@@ -223,7 +226,10 @@ class DatabaseManager:
 
         except Exception as e:
             self.logger.error(e)
-            return []
+            return {"status": "error",
+                    "code": self.RETURN_CODES['ERROR_SERVER_ERROR'],
+                    "message": e
+                   }
 
     # ----
 
@@ -293,7 +299,10 @@ class DatabaseManager:
 
         except Exception as e:
             self.logger.error(e)
-            return []
+            return {"status": "error",
+                    "code": self.RETURN_CODES['ERROR_SERVER_ERROR'],
+                    "message": e
+                   }
 
     # ----
 
@@ -337,7 +346,10 @@ class DatabaseManager:
 
         except Exception as e:
             self.logger.error(e)
-            return []
+            return {"status": "error",
+                    "code": self.RETURN_CODES['ERROR_SERVER_ERROR'],
+                    "message": e
+                   }
 
     # ----
 
@@ -404,4 +416,7 @@ class DatabaseManager:
         
         except Exception as e:
             self.logger.error(e)
-            return []
+            return {"status": "error",
+                    "code": self.RETURN_CODES['ERROR_SERVER_ERROR'],
+                    "message": e
+                   }

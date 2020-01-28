@@ -87,56 +87,52 @@ class MlWorker:
     async def queue_analysed_frame(self, analysed_frame_data: dict):
         if not analysed_frame_data:
             return
-            
-        # add time on queue
-        tseconds = int(round(time.time() * 1000))
-        analysed_frame_data['_debug_rmq_time_on_queue_analysed'] = tseconds
 
         if not self.is_ready:
             await self.setup_queue(SETTINGS["RMQ_QUEUE_ANALYSED_FRAMES"])
 
-        # place frame on queue
-        analysed_frameJson = json.dumps(analysed_frame_data).encode()
+        analysed_frame_data_Json = json.dumps(analysed_frame_data).encode()
 
         await self.exchange_analysed.publish(
-            Message(analysed_frameJson),
+            Message(analysed_frame_data_Json),
             routing_key=self.analysed_queue_name,
         )
 
     async def handle_new_frame_on_ml_queue(self, message: IncomingMessage):
-        # Setup RMQ
         if not self.is_ready:
             await self.setup_queue(SETTINGS["RMQ_QUEUE_ANALYSED_FRAMES"])
+        
         frame_data_dict = json.loads(message.body.decode("utf-8"))
-        if frame_data_dict['img'] is not None:
-            frame_data = json.dumps(frame_data_dict)
-            analysed_frame_data = \
-                GarbageImageClassifier.detect_image(frame_data)
+        frame_data = json.dumps(frame_data_dict)
+        
+        analysed_frame_data = \
+            GarbageImageClassifier.detect_image(frame_data)
 
-            if analysed_frame_data:
-                analysed_frame_data = analysed_frame_data[0]
-                analysed_frame_data["app_id"] = frame_data_dict["app_id"]
-                analysed_frame_data["take_frame"] = frame_data_dict
+        if analysed_frame_data:
+            print("Something detected")
+            analysed_frame_data = analysed_frame_data[0]
+            analysed_frame_data["app_id"] = frame_data_dict["app_id"]
+            analysed_frame_data["take_frame"] = frame_data_dict
 
-                if analysed_frame_data.get("app_id")[:4] == "demo":
-                    analysed_frame_data["frame_name"] = None
-
-                else:
-                    analysed_frame_data["frame_name"] = "{0} {1}, {2}.jpeg".format(
-                        frame_data_dict.get("timestamp"),
-                        frame_data_dict.get("lat"), 
-                        frame_data_dict.get("lng")
-                    )
-
-                    await disk_writer.save_file(analysed_frame_data)
-
-                    send_analysed_task = asyncio.create_task(
-                        self.queue_analysed_frame(analysed_frame_data))
-                    await send_analysed_task
+            if analysed_frame_data.get("app_id")[:4] == "demo":
+                analysed_frame_data["frame_name"] = None
 
             else:
-                print("Nothing detected")
-                await disk_writer.save_file(frame_data_dict)
+                analysed_frame_data["frame_name"] = "{0} {1}, {2}.jpeg".format(
+                    frame_data_dict.get("timestamp"),
+                    frame_data_dict.get("lat"), 
+                    frame_data_dict.get("lng")
+                )
+
+                await disk_writer.save_file(analysed_frame_data)
+
+            send_analysed_task = asyncio.create_task(
+                self.queue_analysed_frame(analysed_frame_data))
+            await send_analysed_task
+
+        else:
+            print("Nothing detected")
+            await disk_writer.save_file(frame_data_dict)
 
 
 if __name__ == "__main__":

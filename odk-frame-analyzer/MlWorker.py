@@ -119,23 +119,20 @@ class MlWorker:
                 analysed_frame_data["take_frame"] = frame_data_dict
 
                 if analysed_frame_data.get("app_id")[:4] == "demo":
-                    print("demo user")
                     analysed_frame_data["frame_name"] = None
 
                 else:
-                    print("not demo user")
                     analysed_frame_data["frame_name"] = "{0} {1}, {2}.jpeg".format(
                         frame_data_dict.get("timestamp"),
                         frame_data_dict.get("lat"), 
                         frame_data_dict.get("lng")
                     )
+
                     await disk_writer.save_file(analysed_frame_data)
 
-                print(analysed_frame_data["frame_name"])
-
-                send_analysed_task = asyncio.create_task(
-                    self.queue_analysed_frame(analysed_frame_data))
-                await send_analysed_task
+                    send_analysed_task = asyncio.create_task(
+                        self.queue_analysed_frame(analysed_frame_data))
+                    await send_analysed_task
 
             else:
                 print("Nothing detected")

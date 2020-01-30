@@ -133,6 +133,8 @@ class DatabaseManager:
                     'ml_time_taken'),
                 frame_name=analysed_frame_data.get(
                     'frame_name'),
+                user_type=analysed_frame_data.get(
+                    'user_type'),
                 take_frame=analysed_frame_data.get(
                     'take_frame'),
                 )

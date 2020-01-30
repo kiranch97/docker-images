@@ -110,15 +110,13 @@ class MlWorker:
 
         if analysed_frame_data:
             print("Something detected")
+            
             analysed_frame_data = analysed_frame_data[0]
             analysed_frame_data["app_id"] = frame_data_dict["app_id"]
             analysed_frame_data["take_frame"] = frame_data_dict
 
-            if analysed_frame_data.get("app_id")[:4] == "demo":
-                analysed_frame_data["frame_name"] = None
-
-            else:
-                analysed_frame_data["frame_name"] = "{0} {1}, {2}.jpeg".format(
+            if analysed_frame_data.get("user_type") == "waste department":
+                analysed_frame_data["frame_name"] = "{0} {1}, {2}.jpg".format(
                     frame_data_dict.get("timestamp"),
                     frame_data_dict.get("lat"), 
                     frame_data_dict.get("lng")
@@ -126,13 +124,22 @@ class MlWorker:
 
                 await disk_writer.save_file(analysed_frame_data)
 
+            else:
+                analysed_frame_data["frame_name"] = None
+
             send_analysed_task = asyncio.create_task(
                 self.queue_analysed_frame(analysed_frame_data))
             await send_analysed_task
 
         else:
             print("Nothing detected")
-            await disk_writer.save_file(frame_data_dict)
+            
+            if frame_data_dict.get("user_type") == "waste department":
+                await disk_writer.save_file(frame_data_dict)
+
+            else:
+                pass
+
 
 
 if __name__ == "__main__":

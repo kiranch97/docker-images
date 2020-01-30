@@ -55,6 +55,8 @@ async def ws_stream(ws: WebSocket):
             # Get data from client
             frame_data = await ws.receive_json()
 
+            print(frame_data["user_type"])
+
             if frame_data["img"] is not None:
                 try:
                     await broker.send_message_on_queues(frame_data)

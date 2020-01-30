@@ -36,6 +36,7 @@ class AnalysedFrame(DBObj):
     ml_done_at = Column(DateTime())
     ml_time_taken = Column(String())
     frame_name = Column(String())
+    user_type = Column(String())
     take_frame = Column(JSONB())
 
     # ----
@@ -49,6 +50,7 @@ class AnalysedFrame(DBObj):
                  ml_done_at=None,
                  ml_time_taken=None,
                  frame_name=None,
+                 user_type=None,
                  take_frame=None
                  ):
 
@@ -62,6 +64,7 @@ class AnalysedFrame(DBObj):
         self.ml_done_at = ml_done_at
         self.ml_time_taken = ml_time_taken
         self.frame_name = frame_name
+        self.user_type = user_type
         self.take_frame = None
 
     # ----
@@ -83,6 +86,7 @@ class AnalysedFrame(DBObj):
                 "ml_done_at": self.ml_done_at,
                 "ml_time_taken": self.ml_done_at,
                 "frame_name": self.frame_name,
+                "user_type": self.user_type,
                 "take_frame": self.take_frame
                 }
 
@@ -99,6 +103,7 @@ class AnalysedFrame(DBObj):
                 "ml_done_at": self.ml_done_at,
                 "ml_time_taken": self.ml_done_at,
                 "frame_name": self.frame_name,
+                "user_type": self.user_type,
                 "take_frame": self.take_frame
                 }
 

@@ -182,7 +182,7 @@ export default {
         this.canvas.height = this.height;
         context.drawImage(this.video, 0, 0, this.width, this.height);
 
-        let img = this.canvas.toDataURL("image/jpeg");
+        let img = this.canvas.toDataURL("image/jpg");
 
         this.sendImage(img);
       } else {
@@ -200,6 +200,7 @@ export default {
       let data = {
         img: base64Img,
         app_id: this.appId,
+        user_type: "waste department",
         lng: this.positionLo,
         lat: this.positionLa,
         timestamp: this.timeFormat,
@@ -277,6 +278,7 @@ export default {
       console.log("=> Stream is stopped");
       let data = {
         app_id: this.appId,
+        user_type: "waste department",
         lng: this.positionLo,
         lat: this.positionLa,
         timestamp: this.timeFormat,
@@ -318,7 +320,7 @@ export default {
       context.fillStyle = "#AAA";
       context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-      let data = this.canvas.toDataURL("image/jpeg");
+      let data = this.canvas.toDataURL("image/jpg");
       this.photo.setAttribute("src", data);
     },
 

@@ -64,7 +64,7 @@ class DiskWriter:
                 os.makedirs(filepath)
                 # print("made new directory called {}".format(filepath))
 
-            filename = "{0}-{1}.jpeg".format(timestamp, gps_location)
+            filename = "{0}-{1}.jpg".format(timestamp, gps_location)
             full_filename = "{0}/{1}".format(filepath, filename)
 
             with open(full_filename, 'wb') as f:

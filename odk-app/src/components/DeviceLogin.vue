@@ -103,5 +103,6 @@ button {
 
 .login-button {
   background: transparent !important;
+  border: none!important;
 }
 </style>

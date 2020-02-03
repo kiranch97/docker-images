@@ -86,12 +86,13 @@ export default {
 
   mounted() {
     this.appId = localStorage.appId;
+    this.userType - localStorage.userType;
 
-    console.log(
-      "=> Starting 'fetchAnalysedFrames' with 'frameFetchRate': " +
-        this.frameFetchRate
-    );
-    setInterval(this.fetchAnalysedFrames, this.frameFetchRate);
+    // console.log(
+    //   "=> Starting 'fetchAnalysedFrames' with 'frameFetchRate': " +
+    //     this.frameFetchRate
+    // );
+    // setInterval(this.fetchAnalysedFrames, this.frameFetchRate);
   }
 };
 </script>

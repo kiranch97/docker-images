@@ -209,8 +209,6 @@ export default {
         state: true
       };
 
-      console.log(data)
-
       // console.log('Sending data through websocket: ' + data.timestamp)
 
       this.websocketConnection.send(JSON.stringify(data));
@@ -279,7 +277,6 @@ export default {
       this.streamStatusTogglePause = true;
       this.toggleTimer = true;
 
-      console.log("=> Stream is stopped");
       let data = {
         app_id: this.appId,
         user_type: this.userType,
@@ -289,6 +286,7 @@ export default {
         img: "None",
         state: false
       };
+      
       let payload = data;
       this.websocketConnection.send(JSON.stringify(payload));
     },

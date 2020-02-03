@@ -64,9 +64,11 @@ async def ws_stream(ws: WebSocket):
                     content = {"error": "MessageServer Not Available"}
                     await ws.send_json(content)
     except WebSocketDisconnect:
+        logger.info("WebSocket /stream [disconnect]")
+
         # TODO: Send response on error
-        content = {"error": "WebSocket /stream [disconnect]"}
-        await ws.send_json(content)
+        # content = {"error": "WebSocket /stream [disconnect]"}
+        # await ws.send_json(content)
 
 
 # DISABLED

@@ -91,8 +91,9 @@ export default {
 
   mounted() {
     this.appId = localStorage.appId;
+    this.userType = localStorage.userType;
 
-    console.log("=> Starting 'fetchAnalysedResults' with 'countFetchRate': " + this.countFetchRate)
+    // console.log("=> Starting 'fetchAnalysedResults' with 'countFetchRate': " + this.countFetchRate)
     setInterval(this.fetchAnalysedResults, this.countFetchRate);
   }
 };

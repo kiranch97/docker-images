@@ -115,7 +115,7 @@ class MlWorker:
             analysed_frame_data["app_id"] = frame_data_dict["app_id"]
             analysed_frame_data["take_frame"] = frame_data_dict
 
-            if analysed_frame_data.get("user_type") == "waste department":
+            if analysed_frame_data.get("user_type") == "waste_department":
                 analysed_frame_data["frame_name"] = "{0} {1}, {2}.jpg".format(
                     frame_data_dict.get("timestamp"),
                     frame_data_dict.get("lat"), 
@@ -134,7 +134,7 @@ class MlWorker:
         else:
             print("Nothing detected")
             
-            if frame_data_dict.get("user_type") == "waste department":
+            if frame_data_dict.get("user_type") == "waste_department":
                 await disk_writer.save_file(frame_data_dict)
 
             else:

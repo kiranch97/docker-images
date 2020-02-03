@@ -109,6 +109,7 @@ export default {
       timeFormat: null,
       todayDate: null,
       appId: null,
+      userType: null,
       streamTime: "00:00:00"
     };
   },
@@ -146,9 +147,9 @@ export default {
     // ----
 
     startStream: function() {
-      console.log(
-        "=> Starting stream to endpoint: " + process.env.VUE_APP_API_HTTP_URL
-      );
+      // console.log(
+      //   "=> Starting stream to endpoint: " + process.env.VUE_APP_API_HTTP_URL
+      // );
 
       //change circle to pause button when stream starts
       this.recordToggle = false;
@@ -195,17 +196,20 @@ export default {
     sendImage: function(base64Img) {
       this.formatDate(new Date());
       this.appId = localStorage.appId;
+      this.userType = localStorage.userType;
 
       //Send data to websocket API
       let data = {
         img: base64Img,
         app_id: this.appId,
-        user_type: "waste department",
+        user_type: this.userType,
         lng: this.positionLo,
         lat: this.positionLa,
         timestamp: this.timeFormat,
         state: true
       };
+
+      console.log(data)
 
       // console.log('Sending data through websocket: ' + data.timestamp)
 
@@ -224,10 +228,10 @@ export default {
           height: this.rearCamResolution.height
         },
         audio: false
-      }
+      };
 
-      console.log("Preferred video constraints:")
-      console.log(this.currentConstraints.video)
+      // console.log("Preferred video constraints:");
+      // console.log(this.currentConstraints.video);
 
       let curScope = this;
 
@@ -237,12 +241,12 @@ export default {
           curScope.currentStream = stream;
           video.srcObject = stream;
           video.play();
-          console.log("=> Video started:")
-          console.log(video)
+          // console.log("=> Video started:");
+          // console.log(video);
         })
         .catch(function(err) {
           console.log("==> Error occured in 'showStream':");
-          console.error(err)
+          console.error(err);
         });
 
       video.addEventListener("canplay", this.onStartedStream, false);
@@ -278,7 +282,7 @@ export default {
       console.log("=> Stream is stopped");
       let data = {
         app_id: this.appId,
-        user_type: "waste department",
+        user_type: this.userType,
         lng: this.positionLo,
         lat: this.positionLa,
         timestamp: this.timeFormat,
@@ -351,7 +355,7 @@ export default {
       let sec = this.addZero(date.getSeconds());
       let millisec = this.addZeroMillisec(date.getMilliseconds());
 
-      this.timeFormat = `${year}-${month}-${day} ${hour}:${min}:${sec}.${millisec}`
+      this.timeFormat = `${year}-${month}-${day} ${hour}:${min}:${sec}.${millisec}`;
 
       return this.timeFormat;
     },
@@ -402,9 +406,9 @@ export default {
 
     stopMediaTracks: function(stream) {
       stream.getTracks().forEach(track => {
-        console.log("=> Stopping media track")
+        console.log("=> Stopping media track");
         track.stop();
-      })
+      });
     },
 
     flipCamera: function() {
@@ -413,7 +417,7 @@ export default {
       } else {
         this.currentCameraOption = "user";
       }
-      console.log("=> Camera option changed to: " + this.currentCameraOption)
+      console.log("=> Camera option changed to: " + this.currentCameraOption);
 
       this.stopMediaTracks(this.currentStream);
       this.showStream();
@@ -424,6 +428,7 @@ export default {
     this.setup();
     this.showStream();
     this.appId = localStorage.appId;
+    this.userType = localStorage.userType;
     this.checkIdNull();
   }
 };
@@ -692,7 +697,6 @@ video {
     width: 100vw !important;
     bottom: 0;
   }
-  
 }
 
 @media (max-width: 1024px) and (orientation: portrait) {

@@ -54,7 +54,7 @@ class DiskWriter:
             # print("No GPS data, file not saved")
             pass
         else:
-            imgdata = base64.b64decode(img)
+            imgdata = base64.b64decode(img.replace("data:image/jpeg;base64,", ""))
             gps_location = "{0}, {1}".format(gps_lat, gps_lng)
             filepath = "{0}/{1}/{2}".format(FRAME_DIR,
                                             frame_date,

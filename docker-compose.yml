@@ -56,3 +56,13 @@ services:
        options:
          max-size: 50m
 
+  email:
+    restart: always
+    container_name: odk-email
+    build: ./odk-website/server
+    env_file:
+      - ./odk-website/server/.env
+    ports:
+      - "3000:3000"
+
+    

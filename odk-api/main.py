@@ -50,6 +50,7 @@ def index():
 @app.websocket("/stream")
 async def ws_stream(ws: WebSocket):
     await ws.accept()
+    print(ws)
     try:
         while True:
             # Get data from client

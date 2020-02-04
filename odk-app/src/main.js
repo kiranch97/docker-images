@@ -10,12 +10,12 @@ import VueAwesomeSwiper from 'vue-awesome-swiper'
 import 'swiper/dist/css/swiper.css'
 import DrawerLayout from 'vue-drawer-layout'
 import VieOtpInput from "@bachdgvn/vue-otp-input";
-import { makeServer } from './server'
+// import { makeServer } from './server'
 
-if(process.env.NODE_ENV == "development") {
-  console.log("I am in development mode")
-  makeServer()
-}
+// if(process.env.NODE_ENV == "development") {
+//   console.log("I am in development mode")
+//   makeServer()
+// }
 Vue.component("vie-otp-input", VieOtpInput);
 export const eventBus = new Vue(); 
 

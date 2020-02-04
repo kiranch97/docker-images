@@ -1,1 +1,1 @@
-To run predictions, download the cfg and weights from https://drive.google.com/opn?id=1DjeNxdaF7AW3Nu54_3oRw_1SeYJtOvNL and put them in the correct folders.
+To run predictions, download the cfg and weights from https://drive.google.com/drive/folders/1DjeNxdaF7AW3Nu54_3oRw_1SeYJtOvNL and put them in the correct folders.

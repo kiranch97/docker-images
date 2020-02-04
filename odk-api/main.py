@@ -54,10 +54,10 @@ async def ws_stream(ws: WebSocket):
         while True:
             # Get data from client
             frame_data = await ws.receive_json()
+            if "user_type" in frame_data:
+                print(frame_data["user_type"])
 
-            print(frame_data["user_type"])
-
-            if frame_data["img"] is not None:
+            if "img" in frame_data:
                 try:
                     await broker.send_message_on_queues(frame_data)
                 except ConnectionError:

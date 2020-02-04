@@ -80,7 +80,7 @@ export default {
       SETTINGS: {
         WIDTH: 1400,
         HEIGHT: 0,
-        TAKE_PICTURE_EVERY_MS: 300
+        TAKE_PICTURE_EVERY_MS: 1000
         // _URL: "wss://odk-video.stadswerken.amsterdam/stream"
       },
       // ---- end settings ----

@@ -176,7 +176,7 @@ export default {
         });
     },
     checkAppOrientation() {
-      if (window.matchMedia("(orientation: landscape)").matches) {
+      if (window.innerWidth > window.innerHeight) {
         // you're in landscape mode
         console.log("orientation = landscape");
         this.landscapeOrientation = !this.landscapeOrientation;

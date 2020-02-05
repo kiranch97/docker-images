@@ -1,6 +1,6 @@
-import Onboarding from './components/Onboarding.vue';
+// import Onboarding from './components/Onboarding.vue';
 import StreamingClient from './components/StreamingClient';
-import DeviceLogin from './components/DeviceLogin.vue';
+// import DeviceLogin from './components/DeviceLogin.vue';
 import BrowserStartPage from './components/BrowserStartPage.vue';
 import PwaStartPage from './components/PwaStartPage.vue';
 import RecommendationPage from './components/RecommendationPage.vue';

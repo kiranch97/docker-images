@@ -32,7 +32,7 @@
       </div>
       <div id="buttons-section">
         <b-button @click="switchRmd()" rounded id="cto-button" size="is-medium">Volgende</b-button>
-        <router-link to="/client">
+        <router-link to="/checklist">
           <b-button rounded id="gitlab-button" size="is-medium">Overspringen</b-button>
         </router-link>
       </div>

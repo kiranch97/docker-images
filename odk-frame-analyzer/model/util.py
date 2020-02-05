@@ -212,11 +212,10 @@ def draw_bbox(imgs, bbox, colors, classes, read_frames, output_path):
     p4 = (p1[0] + text_size[0] + 4, p1[1])
     cv2.rectangle(img, p3, p4, color, -1)
 
-    cv2.putText(
-        img, label, p1, cv2.FONT_HERSHEY_SIMPLEX, 1, [225, 255, 255], 1)
+    cv2.putText(img, label, p1, cv2.FONT_HERSHEY_SIMPLEX, 1, [225, 255, 255], 1)
 
 
-def create_output_json(img, bbox, colors, classes):
+def create_output_json(img, bbox):
     """
     Create_output_json
     """
@@ -228,11 +227,17 @@ def create_output_json(img, bbox, colors, classes):
     p1 = [int(x) for x in tuple(bbox[1:3].int())]
     p2 = [int(x) for x in tuple(bbox[3:5].int())]
 
+    if 'privacy' in label:
+
+        color = (0,0,0)
+        cv2.rectangle(img, p1, p2, color, -1)
+
     return {
         'detected_object_type': label,
         'confidence': confidence,
         'bbox': {
             'coordinate1': p1,
             'coordinate2': p2
-        }
+        },
+        'anonymous_img' : img
     }

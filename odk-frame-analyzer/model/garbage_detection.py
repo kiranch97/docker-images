@@ -61,12 +61,20 @@ class GarbageImageClassifier:
 
     # ----
 
-    def detect_image(self,data_frame,colors=[(39, 129, 113), (164, 80, 133), (83, 122, 114)],classes=['container_small', 'garbage_bag', 'cardboard']):
+    def load_classes(namesfile):
+        fp = open(namesfile, "r")
+        names = fp.read().split("\n")
+        return names
+
+    # ----
+
+    def detect_image(self,data_frame):
 
         print('Loading input image(s)...')
         input_size = [int(self.model.net_info['height']), int(self.model.net_info['width'])]
         batch_size = int(self.model.net_info['batch'])
 
+        classes = load_classes("cfg/garb.names")
         try:
             imgs = [load_data_frame(data_frame)]
             print('Input image(s) loaded')

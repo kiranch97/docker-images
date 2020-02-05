@@ -125,7 +125,7 @@ export default {
         console.log("This is running as standalone/PWA.");
       } else {
         console.log("This is running on the browser");
-        // this.$router.push({ path: "/browser" });
+        this.$router.push({ path: "/" });
       }
     },
     askLocPermission() {

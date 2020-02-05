@@ -49,7 +49,6 @@
   </div>
 </template>
 <script>
-//import StreamDetails from "./StreamDetails";
 import StreamTime from "./StreamTime";
 import StreamCount from "./StreamCount";
 //import { eventBus } from "../main";
@@ -397,8 +396,7 @@ export default {
         typeof localStorage.appId == "undefined" ||
         localStorage.appId == null
       ) {
-        this.$router.push("/login");
-        console.log("working!!");
+        this.$router.push("/pwa");
       }
     },
 
@@ -698,7 +696,6 @@ video {
 }
 
 @media (max-width: 1024px) and (orientation: portrait) {
-  /* html, body{height: 100%;} */
 
   .video-stream {
     position: absolute;

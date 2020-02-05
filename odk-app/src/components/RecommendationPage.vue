@@ -258,7 +258,7 @@ export default {
   }
 
     #header-section{
-    height: 50%;
+    height: 55%;
   }
 
     #buttons-section{

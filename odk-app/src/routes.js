@@ -25,7 +25,7 @@ export const routes = [
     //     component: DeviceLogin
     // },
     {
-        path: '/browser',
+        path: '/',
         name: 'browser-startpage',
         component: BrowserStartPage
     },

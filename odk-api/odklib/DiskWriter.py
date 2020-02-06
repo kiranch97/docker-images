@@ -58,7 +58,7 @@ class DiskWriter:
             img_data = base64.b64decode(pure_base64)
 
             gps_location = "{0}-{1}".format(gps_lat, gps_lng)
-            filename = "{0}-{1}.png".format(timestamp, gps_location)
+            filename = "{0}-{1}.jpeg".format(timestamp, gps_location)
 
             dir_path = "{0}/{1}/{2}".format(FRAME_DIR, frame_date, app_id)
 

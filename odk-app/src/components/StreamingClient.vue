@@ -78,8 +78,8 @@ export default {
 
       // ---- settings ----
       SETTINGS: {
-        imageWidth: 720,
-        // imageHeight: 720,
+        minImageWidth: 608,
+        minImageHeight: 608,
         TAKE_PICTURE_EVERY_MS: 3000
       },
       // ---- end settings ----
@@ -97,8 +97,8 @@ export default {
       prefCameraOption: process.env.VUE_APP_DEFAULT_CAMERA_OPTION, // 'environment' or 'user'
       currentCameraOption: null,
       rearCamResolution: {
-        width: 2048,
-        height: 1200
+        width: 1280,
+        height: 720
       },
       currentConstraints: null,
       currentStream: null,
@@ -303,14 +303,17 @@ export default {
     onStartedStream: function() {
       // resize video
       if (!this.streaming) {
-        this.width = this.SETTINGS.imageWidth;
-        this.height = this.video.videoHeight / (this.video.videoWidth / this.width);
+        // this.width = this.SETTINGS.minImageWidth;
+        // this.height = this.video.videoHeight / (this.video.videoWidth / this.width);
+
+        this.height = this.SETTINGS.minImageHeight;
+        this.width = (this.video.videoWidth / this.video.videoHeight) * this.height;
 
         console.log("VIDEO W: " + this.video.videoWidth)
         console.log("VIDEO H: " + this.video.videoHeight)
 
-        console.log("WIDTH: " + this.width)
-        console.log("HEIGHT: " + this.height)
+        console.log("IMAGE W: " + this.width)
+        console.log("IMAGE H: " + this.height)
 
         this.video.setAttribute("width", this.width);
         this.video.setAttribute("height", this.height);

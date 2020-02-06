@@ -2,6 +2,7 @@
 certs/
 domains/
 logs/
+.idea/
 
 # database
 pgdata/

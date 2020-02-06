@@ -32,7 +32,7 @@ export default {
         console.log("This is running as standalone.");
       } else {
         console.log("This is running on the browser");
-        this.$router.push({ path: "/" });
+        // this.$router.push({ path: "/" });
       }
     },
     checkExistingId: function() {

@@ -162,6 +162,8 @@ class FrameBroker:
         self.exchange_ml = await self.channel.declare_exchange(
             SETTINGS['RMQ_EXCHANGE_FRAMES_FOR_ML'], ExchangeType.DIRECT)
 
+        await self.channel.declare_queue(self.ml_queue_name)
+
         # from ml channel (analysed)
         self.analysed_queue_name = analysed_queue_name
         self.exchange_analysed = await self.channel.declare_exchange(

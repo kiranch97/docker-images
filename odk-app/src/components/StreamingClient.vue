@@ -182,7 +182,7 @@ export default {
         this.canvas.height = this.height;
         context.drawImage(this.video, 0, 0, this.width, this.height);
 
-        let img = this.canvas.toDataURL("image/jpg");
+        let img = this.canvas.toDataURL("image/jpeg");
 
         this.sendImage(img);
       } else {

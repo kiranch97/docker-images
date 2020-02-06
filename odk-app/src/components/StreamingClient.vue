@@ -78,12 +78,12 @@ export default {
 
       // ---- settings ----
       SETTINGS: {
-        WIDTH: 1400,
-        HEIGHT: 0,
-        TAKE_PICTURE_EVERY_MS: 1000
-        // _URL: "wss://odk-video.stadswerken.amsterdam/stream"
+        imageWidth: 720,
+        // imageHeight: 720,
+        TAKE_PICTURE_EVERY_MS: 3000
       },
       // ---- end settings ----
+
       // ---- STREAM PROPERTIES ----
       streaming: false,
       width: null,
@@ -97,8 +97,8 @@ export default {
       prefCameraOption: process.env.VUE_APP_DEFAULT_CAMERA_OPTION, // 'environment' or 'user'
       currentCameraOption: null,
       rearCamResolution: {
-        width: 1280,
-        height: 720
+        width: 2048,
+        height: 1200
       },
       currentConstraints: null,
       currentStream: null,
@@ -303,14 +303,20 @@ export default {
     onStartedStream: function() {
       // resize video
       if (!this.streaming) {
-        this.width = this.SETTINGS.WIDTH;
-        this.height =
-          this.video.videoHeight / (this.video.videoWidth / this.width);
+        this.width = this.SETTINGS.imageWidth;
+        this.height = this.video.videoHeight / (this.video.videoWidth / this.width);
+
+        console.log("VIDEO W: " + this.video.videoWidth)
+        console.log("VIDEO H: " + this.video.videoHeight)
+
+        console.log("WIDTH: " + this.width)
+        console.log("HEIGHT: " + this.height)
 
         this.video.setAttribute("width", this.width);
         this.video.setAttribute("height", this.height);
         this.canvas.setAttribute("width", this.width);
         this.canvas.setAttribute("height", this.height);
+        
         this.streaming = true;
       }
     },

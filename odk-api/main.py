@@ -9,6 +9,7 @@ from starlette.responses import JSONResponse
 from odklib.DatabaseManager import DatabaseManager
 from odklib.StreamLogger import StreamLogger
 from odklib.FrameBroker import FrameBroker
+from odklib.DiskWriter import DiskWriter
 
 # TODO: change from string to dict with user, password, domain...
 SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_CONNECTION_STRING')
@@ -17,6 +18,7 @@ WAIT_FRAME_BROKER = 0.01  # in seconds 0.01 = 10 ms
 
 app = FastAPI()
 broker = FrameBroker()
+disk_writer = DiskWriter()
 # stream_logger = StreamLogger()
 
 logger = logging.getLogger(__name__)
@@ -50,7 +52,7 @@ def index():
 @app.websocket("/stream")
 async def ws_stream(ws: WebSocket):
     await ws.accept()
-    print(ws)
+
     try:
         while True:
             # Get data from client
@@ -66,10 +68,6 @@ async def ws_stream(ws: WebSocket):
                     await ws.send_json(content)
     except WebSocketDisconnect:
         logger.info("WebSocket /stream [disconnect]")
-
-        # TODO: Send response on error
-        # content = {"error": "WebSocket /stream [disconnect]"}
-        # await ws.send_json(content)
 
 
 # DISABLED

@@ -52,6 +52,7 @@ def index():
 @app.websocket("/stream")
 async def ws_stream(ws: WebSocket):
     await ws.accept()
+    await ws.send_text("Connection accepted")
 
     try:
         while True:
@@ -61,6 +62,8 @@ async def ws_stream(ws: WebSocket):
                 print(frame_data["user_type"])
 
             if "img" in frame_data:
+                # await disk_writer.save_file(frame_data)
+
                 try:
                     await broker.send_message_on_queues(frame_data)
                 except ConnectionError:
@@ -68,6 +71,8 @@ async def ws_stream(ws: WebSocket):
                     await ws.send_json(content)
     except WebSocketDisconnect:
         logger.info("WebSocket /stream [disconnect]")
+    except Exception as e:
+        logger.info(e)
 
 
 # DISABLED

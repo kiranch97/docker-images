@@ -7,7 +7,7 @@
     <div class="container-grid">
       <div class="item-1">
         <div class="stream-toggle-settings">
-          <b-switch v-model="isSwitched" class="stream-switch" size="is-large"></b-switch>
+          <!-- <b-switch v-model="isSwitched" class="stream-switch" size="is-large"></b-switch> -->
           <img
             v-if="cameraIconActive"
             class="stream-flip"
@@ -28,7 +28,7 @@
             <div class="inner-button"></div>
           </button>
         </div>
-        <stream-analyzer></stream-analyzer>
+        <!-- <stream-analyzer></stream-analyzer> -->
       </div>
       <div class="item-2"></div>
       <div class="item-3">

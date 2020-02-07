@@ -28,7 +28,9 @@ export default {
       animationData: animationData
     };
 
-    this.robotAnim = bodymovin.loadAnimation(setupAnimData);
+    console.log(setupAnimData);
+
+    // this.robotAnim = bodymovin.loadAnimation(setupAnimData);
 
 
   }

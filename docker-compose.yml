@@ -6,6 +6,8 @@ services:
     restart: always
     container_name: odk-proxy
     image: nginx
+    depends_on:
+      - api
     ports:
       - "80:80"
       - "443:443"
@@ -22,6 +24,9 @@ services:
     restart: always
     container_name: odk-api
     build: ./odk-api
+    depends_on:
+      - db
+      - rmq
     env_file: 
       - ./env_files/odk-api.env
     ports:

@@ -79,7 +79,7 @@ export default {
       SETTINGS: {
         minImageWidth: 608,
         minImageHeight: 608,
-        TAKE_PICTURE_EVERY_MS: 3000
+        TAKE_PICTURE_EVERY_MS: 300
       },
       // ---- end settings ----
 

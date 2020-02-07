@@ -70,6 +70,11 @@ export default {
   },
   mounted() {
     this.checkAppMode();
+
+    // Fix to disable checklist and continue to client when pwa is opened
+    this.checkExistingId();
+    this.saveDemoId();
+    this.$router.push({ path: "/client" });
   }
 };
 </script>

@@ -98,33 +98,74 @@ class MlWorker:
             routing_key=self.analysed_queue_name,
         )
 
+    '''
+
+    Example of frame data dictionary as it is retrieved from the queue:
+
+    frame_data_dict = {
+        '_debug_rmq_time_on_queue': 1581347922959,
+        'app_id': 'cgar53mb78',
+        'img': 'data:image/jpeg:base64,/9j/rtPcyeyAs1KrYPzSksm...',
+        'lat': 52.3736064,
+        'lng': 4.9145957,
+        'state': True,
+        'timestamp': '2020-02-10 16:18:41.0089',
+        'user_type': 'demo'
+    }
+
+    Will be transformed into 'analysed_frame':
+
+    analaysed_frame_data = {
+        'counts': {'cardboard': 0, 'garbage_bag': 1, ..., 'total': 1},
+        'detected_objects': [{'bbox': {...}, 'confidence': 99, 'detected_object_type': 'garbage_bag'}],
+        'frame_meta': {'height': 608, 'width': 1080},
+        'ml_done_at': '2020-02-10 16:26:49.240261',
+        'ml_time_taken': '0:00:01.515924'
+        'take_frame': {
+            'img': 'data:image/jpeg:base64,/9j/rtPcyeyAs1KrYPzSksm...',
+            'timestamp': '2020-02-10 16:18:41.0089'
+        },
+        'frame_name': '',
+        'user_type': 'demo'
+    }
+    
+    '''
+
     async def handle_new_frame_on_ml_queue(self, message: IncomingMessage):
         if not self.is_ready:
             await self.setup_queue(SETTINGS["RMQ_QUEUE_ANALYSED_FRAMES"])
-        
+
         frame_data_dict = json.loads(message.body.decode("utf-8"))
         frame_data = json.dumps(frame_data_dict)
         
-        analysed_frame_data = \
+        analysed_frame_data= \
             GarbageImageClassifier.detect_image(frame_data)
 
+
+
         if analysed_frame_data:
-            print("Something detected")
+            
             
             analysed_frame_data = analysed_frame_data[0]
+
+            print("Something detected",analysed_frame_data['counts'])
+
+
             analysed_frame_data["app_id"] = frame_data_dict["app_id"]
-            analysed_frame_data["take_frame"] = frame_data_dict
+            
+            analysed_frame_data['timestamp'] = frame_data_dict["timestamp"]
+            analysed_frame_data['location'] = {}
+            analysed_frame_data['location']['lat'] = frame_data_dict['lat']
+            analysed_frame_data['location']['lng'] = frame_data_dict['lng']
 
-            if analysed_frame_data.get("user_type") == "waste_department":
-                analysed_frame_data["frame_name"] = "{0} {1}, {2}.jpg".format(
-                    frame_data_dict.get("timestamp"),
-                    frame_data_dict.get("lat"), 
-                    frame_data_dict.get("lng")
-                )
 
-                await disk_writer.save_file(analysed_frame_data)
+            # if analysed_frame_data.get('user_type') != 'demo'
+            #     await disk_writer.save_file(analysed_frame_data)
 
-            else:
+            await disk_writer.save_file(analysed_frame_data, './data/detected')
+
+
+            if analysed_frame_data.get('user_type') == 'demo':
                 analysed_frame_data["frame_name"] = None
 
             send_analysed_task = asyncio.create_task(
@@ -134,12 +175,8 @@ class MlWorker:
         else:
             print("Nothing detected")
             
-            if frame_data_dict.get("user_type") == "waste_department":
-                await disk_writer.save_file(frame_data_dict)
-
-            else:
-                pass
-
+            if frame_data_dict.get("user_type") != "demo":
+                await disk_writer.save_file(frame_data_dict, './data/nothing-detected')
 
 
 if __name__ == "__main__":

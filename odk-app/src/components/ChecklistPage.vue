@@ -131,7 +131,9 @@ export default {
         console.log("This is running as standalone.");
       } else {
         console.log("This is running on the browser");
-       process.env.VUE_APP_APP_MODE ? console.log("development mode") : this.$router.push({ path: "/" });
+        process.env.VUE_APP_APP_MODE
+          ? console.log("development mode")
+          : this.$router.push({ path: "/" });
       }
     },
 
@@ -224,7 +226,6 @@ export default {
     //-------
   },
   mounted() {
-
     // Init
     // check if locationPermission, camPermission en landscape orientation is active
     this.checkAppMode();

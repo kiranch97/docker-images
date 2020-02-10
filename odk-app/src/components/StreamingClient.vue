@@ -7,7 +7,7 @@
     <div class="container-grid">
       <div class="item-1">
         <div class="stream-toggle-settings">
-          <b-switch v-model="isSwitched" class="stream-switch" size="is-large"></b-switch>
+          <!-- <b-switch v-model="isSwitched" class="stream-switch" size="is-large"></b-switch> -->
           <img
             v-if="cameraIconActive"
             class="stream-flip"
@@ -28,7 +28,7 @@
             <div class="inner-button"></div>
           </button>
         </div>
-        <stream-analyzer></stream-analyzer>
+        <!-- <stream-analyzer></stream-analyzer> -->
       </div>
       <div class="item-2"></div>
       <div class="item-3">
@@ -79,12 +79,12 @@ export default {
 
       // ---- settings ----
       SETTINGS: {
-        WIDTH: 1400,
-        HEIGHT: 0,
+        minImageWidth: 608,
+        minImageHeight: 608,
         TAKE_PICTURE_EVERY_MS: 300
-        // _URL: "wss://odk-video.stadswerken.amsterdam/stream"
       },
       // ---- end settings ----
+
       // ---- STREAM PROPERTIES ----
       streaming: false,
       width: null,
@@ -304,14 +304,23 @@ export default {
     onStartedStream: function() {
       // resize video
       if (!this.streaming) {
-        this.width = this.SETTINGS.WIDTH;
-        this.height =
-          this.video.videoHeight / (this.video.videoWidth / this.width);
+        // this.width = this.SETTINGS.minImageWidth;
+        // this.height = this.video.videoHeight / (this.video.videoWidth / this.width);
+
+        this.height = this.SETTINGS.minImageHeight;
+        this.width = (this.video.videoWidth / this.video.videoHeight) * this.height;
+
+        console.log("VIDEO W: " + this.video.videoWidth)
+        console.log("VIDEO H: " + this.video.videoHeight)
+
+        console.log("IMAGE W: " + this.width)
+        console.log("IMAGE H: " + this.height)
 
         this.video.setAttribute("width", this.width);
         this.video.setAttribute("height", this.height);
         this.canvas.setAttribute("width", this.width);
         this.canvas.setAttribute("height", this.height);
+        
         this.streaming = true;
       }
     },

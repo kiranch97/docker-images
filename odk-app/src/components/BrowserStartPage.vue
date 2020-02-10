@@ -27,12 +27,12 @@ export default {
         console.log("This is running as standalone.");
       } else {
         console.log("This is running on the browser");
-        if (process.env.VUE_APP_APP_MODE) {
-          console.log("development mode");
-          this.$router.push({ path: "/pwa" });
-        } else {
-          this.$router.push({ path: "/" });
-        }
+        // if (process.env.VUE_APP_APP_MODE) {
+        //   console.log("development mode");
+        //   this.$router.push({ path: "/pwa" });
+        // } else {
+        //   // this.$router.push({ path: "/" });
+        // }
       }
     }
   },

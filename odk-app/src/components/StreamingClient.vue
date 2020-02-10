@@ -53,7 +53,7 @@
 import StreamTime from "./StreamTime";
 import StreamCount from "./StreamCount";
 //import { eventBus } from "../main";
-import StreamAnalyzedFrame from "./StreamAnalyzedFrame";
+// import StreamAnalyzedFrame from "./StreamAnalyzedFrame";
 
 export default {
   //// example from: https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Taking_still_photos
@@ -120,8 +120,8 @@ export default {
   components: {
     // "stream-details": StreamDetails,
     "stream-time": StreamTime,
-    "stream-count": StreamCount,
-    "stream-analyzer": StreamAnalyzedFrame
+    "stream-count": StreamCount
+    // "stream-analyzer": StreamAnalyzedFrame
     // "device-login": DeviceLogin
   },
 
@@ -209,8 +209,7 @@ export default {
         user_type: this.userType,
         lng: this.positionLo,
         lat: this.positionLa,
-        timestamp: this.timeFormat,
-        message: "ping"
+        timestamp: this.timeFormat
       };
 
       // On websocket disconecction change stream-status UI state
@@ -308,19 +307,20 @@ export default {
         // this.height = this.video.videoHeight / (this.video.videoWidth / this.width);
 
         this.height = this.SETTINGS.minImageHeight;
-        this.width = (this.video.videoWidth / this.video.videoHeight) * this.height;
+        this.width =
+          (this.video.videoWidth / this.video.videoHeight) * this.height;
 
-        console.log("VIDEO W: " + this.video.videoWidth)
-        console.log("VIDEO H: " + this.video.videoHeight)
+        console.log("VIDEO W: " + this.video.videoWidth);
+        console.log("VIDEO H: " + this.video.videoHeight);
 
-        console.log("IMAGE W: " + this.width)
-        console.log("IMAGE H: " + this.height)
+        console.log("IMAGE W: " + this.width);
+        console.log("IMAGE H: " + this.height);
 
         this.video.setAttribute("width", this.width);
         this.video.setAttribute("height", this.height);
         this.canvas.setAttribute("width", this.width);
         this.canvas.setAttribute("height", this.height);
-        
+
         this.streaming = true;
       }
     },
@@ -350,13 +350,13 @@ export default {
 
     receiveWebSocketsMsg: function(e) {
       console.log("Websocket connection initialized");
-      console.log(e);
+      console.log(e.data)
     },
 
     // ----
 
     receiveWebSocketsMsgOnOpen: function(e) {
-      console.log("Websocket connection Connected")
+      console.log("Websocket connection Connected");
       this.recordToggle = true;
       document.getElementById("stream-status").innerHTML = "Reconnected";
       console.log(e);

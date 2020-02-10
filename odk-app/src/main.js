@@ -16,6 +16,7 @@ import VieOtpInput from "@bachdgvn/vue-otp-input";
 //   console.log("I am in development mode")
 //   makeServer()
 // }
+
 Vue.component("vie-otp-input", VieOtpInput);
 export const eventBus = new Vue(); 
 

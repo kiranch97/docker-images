@@ -120,13 +120,14 @@ class MlWorker:
         'detected_objects': [{'bbox': {...}, 'confidence': 99, 'detected_object_type': 'garbage_bag'}],
         'frame_meta': {'height': 608, 'width': 1080},
         'ml_done_at': '2020-02-10 16:26:49.240261',
-        'ml_time_taken': '0:00:01.515924'
+        'ml_time_taken': '0:00:01.515924',
         'take_frame': {
             'img': 'data:image/jpeg:base64,/9j/rtPcyeyAs1KrYPzSksm...', # blurred frame
             'timestamp': '2020-02-10 16:18:41.0089'
         },
         'frame_name': '', #TODO: change mapping of lat lng to seperate value
-        'user_type': 'demo'
+        'user_type': 'demo',
+        'created_by_app': 'cgar53mb78'
     }
     
     '''
@@ -138,35 +139,33 @@ class MlWorker:
         frame_data_dict = json.loads(message.body.decode("utf-8"))
         frame_data = json.dumps(frame_data_dict)
         
-        analysed_frame_data= \
-            GarbageImageClassifier.detect_image(frame_data)
-
-
+        analysed_frame_data= GarbageImageClassifier.detect_image(frame_data)
 
         if analysed_frame_data:
-            
-            
             analysed_frame_data = analysed_frame_data[0]
 
-            print("Something detected",analysed_frame_data['counts'])
+            print("Something detected", analysed_frame_data['counts'])
 
-
-            analysed_frame_data["app_id"] = frame_data_dict["app_id"]
-            
-            analysed_frame_data['timestamp'] = frame_data_dict["timestamp"]
+            analysed_frame_data["user_type"] = frame_data_dict["user_type"]
+            analysed_frame_data['take_frame']['timestamp'] = frame_data_dict["timestamp"]
+            analysed_frame_data['take_frame']['app_id'] = frame_data_dict["app_id"]
             analysed_frame_data['location'] = {}
             analysed_frame_data['location']['lat'] = frame_data_dict['lat']
             analysed_frame_data['location']['lng'] = frame_data_dict['lng']
 
+            # TODO: turn check if demo on when going live
 
             # if analysed_frame_data.get('user_type') != 'demo'
-            #     await disk_writer.save_file(analysed_frame_data)
+            #    file_location = disk_writer.save_file(analysed_frame_data, something_detected=true)
 
-            await disk_writer.save_file(analysed_frame_data, './data/detected')
+            file_location = disk_writer.save_file(analysed_frame_data, something_detected=True)
 
+            analysed_frame_data['frame_name'] = file_location
 
-            if analysed_frame_data.get('user_type') == 'demo':
-                analysed_frame_data["frame_name"] = None
+            # TODO: turn check if demo on when going live
+
+            # if analysed_frame_data.get('user_type') == 'demo':
+            #     analysed_frame_data["frame_name"] = None
 
             send_analysed_task = asyncio.create_task(
                 self.queue_analysed_frame(analysed_frame_data))
@@ -176,7 +175,7 @@ class MlWorker:
             print("Nothing detected")
             
             if frame_data_dict.get("user_type") != "demo":
-                await disk_writer.save_file(frame_data_dict, './data/nothing-detected')
+                disk_writer.save_file(frame_data_dict, something_detected=False)
 
 
 if __name__ == "__main__":

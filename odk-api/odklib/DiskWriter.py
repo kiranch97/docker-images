@@ -54,21 +54,22 @@ class DiskWriter:
             # print("No GPS data, file not saved")
             pass
         else:
-            imgdata = base64.b64decode(img)
-            gps_location = "{0}-{1}".format(gps_lat, gps_lng)
-            filepath = "{0}/{1}/{2}".format(FRAME_DIR,
-                                            frame_date,
-                                            app_id)
+            pure_base64 = img.replace("data:image/jpeg;base64,", "")
+            img_data = base64.b64decode(pure_base64)
 
-            if not os.path.exists(filepath):
-                os.makedirs(filepath)
+            gps_location = "{0}-{1}".format(gps_lat, gps_lng)
+            filename = "{0}-{1}.jpeg".format(timestamp, gps_location)
+
+            dir_path = "{0}/{1}/{2}".format(FRAME_DIR, frame_date, app_id)
+
+            if not os.path.exists(dir_path):
+                os.makedirs(dir_path)
                 # print("made new directory called {}".format(filepath))
 
-            filename = "{0}-{1}.jpg".format(timestamp, gps_location)
-            full_filename = "{0}/{1}".format(filepath, filename)
+            file_path = "{0}/{1}".format(dir_path, filename)
 
-            with open(full_filename, 'wb') as f:
-                f.write(imgdata)
+            with open(file_path, 'wb') as f:
+                f.write(img_data)
                 # print("file saved called {}".format(full_filename))
 
             # await websocket.send_text("thanks for data!")

@@ -10,4 +10,6 @@ pgdata/
 # odk website
 odk-website/
 
+# odk api
 frames-analysed/
+frames/

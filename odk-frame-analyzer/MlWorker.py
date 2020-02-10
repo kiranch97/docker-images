@@ -105,7 +105,7 @@ class MlWorker:
     frame_data_dict = {
         '_debug_rmq_time_on_queue': 1581347922959,
         'app_id': 'cgar53mb78',
-        'img': 'data:image/jpeg:base64,/9j/rtPcyeyAs1KrYPzSksm...',
+        'img': 'data:image/jpeg:base64,/9j/rtPcyeyAs1KrYPzSksm...', # raw frame
         'lat': 52.3736064,
         'lng': 4.9145957,
         'state': True,
@@ -122,10 +122,10 @@ class MlWorker:
         'ml_done_at': '2020-02-10 16:26:49.240261',
         'ml_time_taken': '0:00:01.515924'
         'take_frame': {
-            'img': 'data:image/jpeg:base64,/9j/rtPcyeyAs1KrYPzSksm...',
+            'img': 'data:image/jpeg:base64,/9j/rtPcyeyAs1KrYPzSksm...', # blurred frame
             'timestamp': '2020-02-10 16:18:41.0089'
         },
-        'frame_name': '',
+        'frame_name': '', #TODO: change mapping of lat lng to seperate value
         'user_type': 'demo'
     }
     

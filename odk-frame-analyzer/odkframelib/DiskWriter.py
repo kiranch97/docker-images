@@ -7,12 +7,16 @@ class DiskWriter:
     def __init__(self):
         pass
 
-    def save_file(self, analysed_frame_data: dict, something_detected):
+    def save_file(self, analysed_frame_data: dict, something_detected=False):
+
+        machine_hostname = os.uname()[1]
+
+        folder_path = './{0}'.format(machine_hostname)
 
         if something_detected:
-            folder_path = './data/something_detected'
+            folder_path = '{0}/something'.format(folder_path)
         else:
-            folder_path = './data/nothing_detected'
+            folder_path = '{0}/nothing'.format(folder_path)
 
         # Setup all the needed variables
         app_id = analysed_frame_data['take_frame']['app_id']

@@ -124,10 +124,14 @@ class MlWorker:
         'take_frame': {
             'img': 'data:image/jpeg:base64,/9j/rtPcyeyAs1KrYPzSksm...', # blurred frame
             'timestamp': '2020-02-10 16:18:41.0089'
+            'app_id: 'cgar53mb78'
         },
-        'frame_name': '', #TODO: change mapping of lat lng to seperate value
+        # TODO:
+        # - change mapping of lat lng to seperate value
+        # - change frame id to random value?
+        # - add name of frame analyzer
+        'frame_name': 'timestamp_lat_lng.jpg',
         'user_type': 'demo',
-        'created_by_app': 'cgar53mb78'
     }
     
     '''

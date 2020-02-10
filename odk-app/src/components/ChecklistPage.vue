@@ -104,12 +104,15 @@ export default {
   name: "checklist-page",
   data() {
     return {
+      ///UI properties
       landscapeOrientation: false,
       locationPermission: false,
       camPermission: false,
+      //GEOLOCATION COORDINATES
       positionLa: null,
       positionLo: null,
       currentCameraOption: null,
+      //FRONT CAMERA RESOLUTION
       rearCamResolution: {
         width: 1280,
         height: 720
@@ -120,14 +123,20 @@ export default {
     "onboarding-animation": OnboardingAnimation
   },
   methods: {
+    //-------
+
     checkAppMode() {
-      if (window.matchMedia("(display-mode: standalone)").matches) {
-        console.log("This is running as standalone/PWA.");
+      let checkMedia = window.matchMedia("(display-mode: standalone)").matches;
+      if (checkMedia) {
+        console.log("This is running as standalone.");
       } else {
         console.log("This is running on the browser");
-        this.$router.push({ path: "/" });
+       process.env.VUE_APP_APP_MODE ? console.log("development mode") : this.$router.push({ path: "/" });
       }
     },
+
+    //-------
+
     askLocPermission() {
       // console.log(navigator.geolocation)
       if (navigator.geolocation) {
@@ -141,15 +150,24 @@ export default {
       }
       this.checkAllPermission();
     },
+
+    //-------
+
     accesDenied(error) {
       if (error.code == error.PERMISSION_DENIED)
         this.locationPermission = false;
       console.log("you denied the geolocation permission :-(");
     },
+
+    //-------
+
     updatePosition: function(position) {
       this.positionLa = position.coords.latitude;
       this.positionLo = position.coords.longitude;
     },
+
+    //-------
+
     askCamPermission() {
       this.currentConstraints = {
         video: {
@@ -159,7 +177,7 @@ export default {
         },
         audio: false
       };
-
+      //INNER SCOPE
       let curScope = this;
       navigator.mediaDevices
         .getUserMedia(this.currentConstraints)
@@ -175,6 +193,9 @@ export default {
           console.error(err);
         });
     },
+
+    //-------
+
     checkAppOrientation() {
       if (window.innerWidth > window.innerHeight) {
         // you're in landscape mode
@@ -187,6 +208,9 @@ export default {
       }
       this.checkAllPermission();
     },
+
+    //-------
+
     checkAllPermission() {
       if (
         this.locationPermission &&
@@ -196,11 +220,17 @@ export default {
         this.$router.push({ path: "/client" });
       }
     }
+
+    //-------
   },
   mounted() {
+
+    // Init
+    // check if locationPermission, camPermission en landscape orientation is active
     this.checkAppMode();
     this.checkAppOrientation();
-    /* TO DO : SEND LOCATION COORDINATES TO STREAMING CLIENT */
+
+    //TODO: IF THIS.checkAppOrientation = TRUE  then go to /client immedietly
   }
 };
 </script>

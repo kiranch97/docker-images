@@ -36,8 +36,9 @@
           v-show="streamStatusToggle"
           id="stream-status"
           v-bind:class="{
-            streamstatus: streamStatusToggle,
-            streamstatuspaused: streamStatusTogglePause
+            'stream-status': streamStatusToggle,
+            'stream-status-paused': streamStatusTogglePause,
+            'stream-status-disconnected': streamStatusToggleDisconnect,
           }"
         >Streaming</p>
         <stream-time v-show="toggleTimer" class="stream-timer" ref="streamtimer"></stream-time>
@@ -71,6 +72,7 @@ export default {
       recordToggle: true,
       streamStatusToggle: false,
       streamStatusTogglePause: false,
+      streamStatusToggleDisconnect: false,
       toggleTimer: false,
       isSwitched: true,
       cameraIconActive: true,
@@ -79,7 +81,7 @@ export default {
       SETTINGS: {
         WIDTH: 1400,
         HEIGHT: 0,
-        TAKE_PICTURE_EVERY_MS: 1000
+        TAKE_PICTURE_EVERY_MS: 300
         // _URL: "wss://odk-video.stadswerken.amsterdam/stream"
       },
       // ---- end settings ----
@@ -158,8 +160,11 @@ export default {
       // Show the Streaming status text and timer
       this.streamStatusToggle = true;
       this.toggleTimer = true;
+
+      //$refs is used when calling functions from child components
       this.$refs.streamtimer.start();
       this.streamStatusTogglePause = false;
+      this.streamStatusToggleDisconnect = false;
       document.getElementById("stream-status").innerHTML = "Streaming";
       this.startTimeTrigger();
     },
@@ -182,7 +187,7 @@ export default {
         this.canvas.height = this.height;
         context.drawImage(this.video, 0, 0, this.width, this.height);
 
-        let img = this.canvas.toDataURL("image/jpg");
+        let img = this.canvas.toDataURL("image/jpeg");
 
         this.sendImage(img);
       } else {
@@ -205,9 +210,11 @@ export default {
         lng: this.positionLo,
         lat: this.positionLa,
         timestamp: this.timeFormat,
-        state: true
+        message: "ping"
       };
 
+      // On websocket disconecction change stream-status UI state
+      // On websocket disconnection try and reconnect with server
       // console.log('Sending data through websocket: ' + data.timestamp)
 
       this.websocketConnection.send(JSON.stringify(data));
@@ -227,9 +234,6 @@ export default {
         audio: false
       };
 
-      // console.log("Preferred video constraints:");
-      // console.log(this.currentConstraints.video);
-
       let curScope = this;
 
       navigator.mediaDevices
@@ -238,8 +242,6 @@ export default {
           curScope.currentStream = stream;
           video.srcObject = stream;
           video.play();
-          // console.log("=> Video started:");
-          // console.log(video);
         })
         .catch(function(err) {
           console.log("==> Error occured in 'showStream':");
@@ -285,7 +287,7 @@ export default {
         img: "None",
         state: false
       };
-      
+
       let payload = data;
       this.websocketConnection.send(JSON.stringify(payload));
     },
@@ -321,7 +323,7 @@ export default {
       context.fillStyle = "#AAA";
       context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-      let data = this.canvas.toDataURL("image/jpg");
+      let data = this.canvas.toDataURL("image/jpeg");
       this.photo.setAttribute("src", data);
     },
 
@@ -329,9 +331,10 @@ export default {
 
     setupWebSockets: function() {
       let websocketUrl = this.apiWebsocketUrl + "/stream";
-
       this.websocketConnection = new WebSocket(websocketUrl);
       this.websocketConnection.onmessage = this.receiveWebSocketsMsg;
+      this.websocketConnection.onopen = this.receiveWebSocketsMsgOnOpen;
+      this.websocketConnection.onclose = this.receiveWebSocketsMsgOnClose;
     },
 
     // ----
@@ -339,6 +342,27 @@ export default {
     receiveWebSocketsMsg: function(e) {
       console.log("Websocket connection initialized");
       console.log(e);
+    },
+
+    // ----
+
+    receiveWebSocketsMsgOnOpen: function(e) {
+      console.log("Websocket connection Connected")
+      this.recordToggle = true;
+      document.getElementById("stream-status").innerHTML = "Reconnected";
+      console.log(e);
+    },
+
+    // ----
+
+    receiveWebSocketsMsgOnClose: function(e) {
+      console.log("Websocket connection disconnected");
+      console.log(e);
+      this.streamStatusToggleDisconnect = true;
+      this.recordToggle = true;
+      document.getElementById("stream-status").innerHTML = "Disconnected";
+      this.websocketConnection = null;
+      setTimeout(this.setupWebSockets, 5000);
     },
 
     // ----
@@ -397,6 +421,7 @@ export default {
         localStorage.appId == null
       ) {
         this.$router.push("/pwa");
+        console.log("id undefined");
       }
     },
 
@@ -421,10 +446,15 @@ export default {
   },
 
   mounted: function() {
+    //Init
     this.setup();
     this.showStream();
+
+    //Retrieve localstorage appID and userType
     this.appId = localStorage.appId;
     this.userType = localStorage.userType;
+
+    //IF USER DOENST HAVE ID REDIRECT THEM TO PWA START PAGE
     this.checkIdNull();
   }
 };
@@ -494,6 +524,7 @@ body {
   background: none;
   transition: all 0.5s;
   display: flex;
+  outline: none;
   justify-content: center;
 }
 
@@ -501,6 +532,7 @@ body {
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
+  outline: none;
   background: white;
   transition: all 0.5s;
 }
@@ -517,6 +549,7 @@ body {
 .pause-box {
   width: 4rem;
   height: 4rem;
+  outline: none;
   border-radius: 50%;
   border: 2px solid white;
   background: none;
@@ -534,7 +567,7 @@ body {
   padding: 1.875rem;
 }
 
-.streamstatus {
+.stream-status {
   align-self: start;
   margin-top: 3rem;
   transform: rotate(90deg);
@@ -545,7 +578,7 @@ body {
   /* text-shadow: 1px 1px 5px #000; */
 }
 
-.streamstatus::before {
+.stream-status::before {
   content: "";
   width: 15px;
   height: 15px;
@@ -558,7 +591,7 @@ body {
   animation: blink 1.5s infinite both;
 }
 
-.streamstatuspaused {
+.stream-status-paused {
   align-self: start;
   margin-top: 3rem;
   transform: rotate(90deg);
@@ -569,7 +602,28 @@ body {
   /* text-shadow: 1px 1px 5px #000; */
 }
 
-.streamstatuspaused::before {
+.stream-status-paused::before {
+  content: "";
+  width: 15px;
+  height: 15px;
+  background: url("../assets/pause.png");
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 0.5rem;
+  left: -1rem;
+}
+
+.stream-status-disconnected {
+  align-self: start;
+  margin-top: 3rem;
+  transform: rotate(90deg);
+  font-size: 18px;
+  color: white;
+  justify-self: center;
+  width: 8.125rem;
+}
+
+.stream-status-disconnected::before {
   content: "";
   width: 15px;
   height: 15px;
@@ -696,7 +750,6 @@ video {
 }
 
 @media (max-width: 1024px) and (orientation: portrait) {
-
   .video-stream {
     position: absolute;
     width: 100vw !important;

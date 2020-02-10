@@ -52,6 +52,7 @@ export default {
   },
   methods: {
     switchRmd() {
+      //SWITCH THROUGH THE OPTIONS AND REDIRECT THE USERS TO THE CHECKLIST PAGE
       if (this.rmdOne) {
         this.rmdOne = !this.rmdOne;
         this.rmdTwo = !this.rmdTwo;

@@ -92,6 +92,7 @@ export default {
       video: null,
       canvas: null,
       photo: null,
+      webSocketCounter: 0,
       websocketConnection: null,
       intervalHandler: null,
       // ---- CAMERA CONSTRAITS ----
@@ -217,6 +218,7 @@ export default {
       // console.log('Sending data through websocket: ' + data.timestamp)
 
       this.websocketConnection.send(JSON.stringify(data));
+      console.log(this.websocketConnection);
     },
 
     // ----
@@ -350,15 +352,25 @@ export default {
 
     receiveWebSocketsMsg: function(e) {
       console.log("Websocket connection initialized");
-      console.log(e.data)
+      console.log(e.data);
     },
 
     // ----
 
     receiveWebSocketsMsgOnOpen: function(e) {
       console.log("Websocket connection Connected");
-      this.recordToggle = true;
-      document.getElementById("stream-status").innerHTML = "Reconnected";
+      //Play/pause stream button toggle
+      // this.recordToggle = true;
+      console.log("ON OPEN WEBSOCKETCOUNTER: " + this.webSocketCounter);
+      if (this.webSocketCounter === 1) {
+        this.recordToggle = false;
+        this.$refs.streamtimer.start();
+        this.streamStatusToggleDisconnect = false;
+        this.streamStatusToggle = true;
+        document.getElementById("stream-status").innerHTML = "Streaming";
+
+        console.log("Reconnected");
+      }
       console.log(e);
     },
 
@@ -370,6 +382,9 @@ export default {
       this.streamStatusToggleDisconnect = true;
       this.recordToggle = true;
       document.getElementById("stream-status").innerHTML = "Disconnected";
+      this.$refs.streamtimer.stop();
+      this.webSocketCounter = 1;
+      // console.log("Websocket counter : " + this.webSocketCounter)
       this.websocketConnection = null;
       setTimeout(this.setupWebSockets, 5000);
     },
@@ -465,6 +480,9 @@ export default {
 
     //IF USER DOENST HAVE ID REDIRECT THEM TO PWA START PAGE
     this.checkIdNull();
+
+    //
+    console.log("Websocket counter :" + this.webSocketCounter);
   }
 };
 </script>

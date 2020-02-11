@@ -137,6 +137,9 @@ class DatabaseManager:
         #
         # }
 
+        location_data = analysed_frame_data.get('location')
+        analysed_frame_data['take_frame']['location'] = location_data
+
         new_analysed_frame = AnalysedFrame(
             created_at=analysed_frame_data.get(
                 'take_frame', {}).get(
@@ -156,7 +159,7 @@ class DatabaseManager:
             user_type=analysed_frame_data.get(
                 'user_type'),
             take_frame=analysed_frame_data.get(
-                'user_type'),
+                'take_frame'),
         )
 
         try:

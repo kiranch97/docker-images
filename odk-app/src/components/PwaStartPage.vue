@@ -90,7 +90,7 @@ export default {
   mounted() {
     // Init
     //IF USER IN BROWSER AND development mode is off redirect them to BrowserStartPage
-    // this.checkAppMode();
+    this.checkAppMode();
     //IF USER DOESNT HAVE ID YET GENERATE ON FOR THEM
     this.checkExistingId();
   }

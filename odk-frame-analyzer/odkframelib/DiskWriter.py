@@ -11,7 +11,7 @@ class DiskWriter:
 
         machine_hostname = os.uname()[1]
 
-        folder_path = './{0}'.format(machine_hostname)
+        folder_path = './frames/{0}'.format(machine_hostname)
 
         if something_detected:
             folder_path = '{0}/something'.format(folder_path)

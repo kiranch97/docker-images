@@ -32,7 +32,7 @@ export default {
           console.log("development mode");
           this.$router.push({ path: "/pwa" });
         } else {
-          // this.$router.push({ path: "/" });
+          this.$router.push({ path: "/" });
         }
       }
     }
@@ -40,8 +40,8 @@ export default {
   mounted() {
     // Init
     // IF USER DONT HAVE PWA DOWNLOADED ON MOBILE, TABLET OR PC/LAPTOP DEVICE THEY CANT ACCESS THE VIDEO STREAM
-    // this.checkAppMode();
-          this.$router.push({ path: "/pwa" });
+    this.checkAppMode();
+    // this.$router.push({ path: "/pwa" });
   }
 };
 </script>

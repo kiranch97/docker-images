@@ -228,7 +228,7 @@ export default {
   mounted() {
     // Init
     // check if locationPermission, camPermission en landscape orientation is active
-    this.checkAppMode();
+    // this.checkAppMode();
     this.checkAppOrientation();
 
     //TODO: IF THIS.checkAppOrientation = TRUE  then go to /client immedietly

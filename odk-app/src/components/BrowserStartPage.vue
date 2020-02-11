@@ -25,21 +25,23 @@ export default {
       let checkMedia = window.matchMedia("(display-mode: standalone)").matches;
       if (checkMedia) {
         console.log("This is running as standalone.");
+        this.$router.push({ path: "/pwa" });
       } else {
         console.log("This is running on the browser");
-        // if (process.env.VUE_APP_APP_MODE) {
-        //   console.log("development mode");
-        //   this.$router.push({ path: "/pwa" });
-        // } else {
-        //   // this.$router.push({ path: "/" });
-        // }
+        if (process.env.VUE_APP_APP_MODE) {
+          console.log("development mode");
+          this.$router.push({ path: "/pwa" });
+        } else {
+          // this.$router.push({ path: "/" });
+        }
       }
     }
   },
   mounted() {
     // Init
     // IF USER DONT HAVE PWA DOWNLOADED ON MOBILE, TABLET OR PC/LAPTOP DEVICE THEY CANT ACCESS THE VIDEO STREAM
-    this.checkAppMode();
+    // this.checkAppMode();
+          this.$router.push({ path: "/pwa" });
   }
 };
 </script>

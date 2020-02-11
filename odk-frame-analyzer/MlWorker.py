@@ -1,6 +1,9 @@
 import os
 import logging
 import time
+import signal
+import sys
+
 import simplejson as json
 import asyncio
 from odkframelib.DiskWriter import DiskWriter
@@ -157,7 +160,7 @@ class MlWorker:
             analysed_frame_data['location']['lat'] = frame_data_dict['lat']
             analysed_frame_data['location']['lng'] = frame_data_dict['lng']
 
-            # TODO: turn check if demo on when going live
+            # TODO: turn check 'if demo' on when going live
 
             # if analysed_frame_data.get('user_type') != 'demo'
             #    file_location = disk_writer.save_file(analysed_frame_data, something_detected=true)
@@ -166,7 +169,7 @@ class MlWorker:
 
             analysed_frame_data['frame_name'] = file_location
 
-            # TODO: turn check if demo on when going live
+            # TODO: turn check 'if demo' on when going live
 
             # if analysed_frame_data.get('user_type') == 'demo':
             #     analysed_frame_data["frame_name"] = None
@@ -183,13 +186,16 @@ class MlWorker:
 
 
 if __name__ == "__main__":
+
+    def signal_handler(signal, frame):
+        print("Exciting...")
+        sys.exit(0)
+
+    # Handle exit through CTRL+C gracefully
+    signal.signal(signal.SIGINT, signal_handler)
+
     loop = asyncio.get_event_loop()
-
     mlworker = MlWorker()
-
-    loop.create_task(
-        mlworker.setup_consumer(SETTINGS["RMQ_QUEUE_FRAMES_FOR_ML"]))
-
+    loop.create_task(mlworker.setup_consumer(SETTINGS["RMQ_QUEUE_FRAMES_FOR_ML"]))
     print(' [*] Waiting for frames. To exit press CTRL+C')
-
     loop.run_forever()

@@ -65,7 +65,7 @@ class AnalysedFrame(DBObj):
         self.ml_time_taken = ml_time_taken
         self.frame_name = frame_name
         self.user_type = user_type
-        self.take_frame = None
+        self.take_frame = take_frame
 
     # ----
 

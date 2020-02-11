@@ -66,14 +66,14 @@ class GarbageImageClassifier:
 
     def detect_image(self,data_frame):
 
-        print('Loading input image(s)...')
+        # print('Loading input image(s)...')
         input_size = [int(self.model.net_info['height']), int(self.model.net_info['width'])]
         batch_size = int(self.model.net_info['batch'])
 
         classes = load_classes("model/cfg/garb.names")
 
         imgs = [load_data_frame(data_frame)]
-        print('Input image(s) loaded')
+        # print('Input image(s) loaded')
 
 
 

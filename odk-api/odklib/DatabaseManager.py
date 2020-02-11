@@ -118,25 +118,6 @@ class DatabaseManager:
         # TODO: for now storing location data here,
         #  data model should be reviewed to handle more variable information from services
 
-        # new_analysed_frame_data = {
-        #     'id': 'random string by server',
-        #     'created_at': 'created on init AnalysedFrame class',
-        #     'streaming_app_data': {
-        #         'app_id': 'something',
-        #         'user_type': 'something',
-        #         ... space for more
-        #     },
-        #     'ml_worker_data': {
-        #         'detected_objects': 'list',
-        #         'counts': 'list',
-        #         'ml_done_at': 'timestamp',
-        #         'ml_time_taken': 'ms',
-        #         'frame_name': 'file path',
-        #         ... space for more
-        #     },
-        #
-        # }
-
         location_data = analysed_frame_data.get('location')
         analysed_frame_data['take_frame']['location'] = location_data
 
@@ -209,18 +190,19 @@ class DatabaseManager:
                     detected_objects_by_type[type] += 1
 
             return {
-                    "_entity_name": "detected_objects",
-                    "app_id": app_id,
-                    "day": day,
-                    "detected_objects_by_type": detected_objects_by_type
-                   }
+                "_entity_name": "detected_objects",
+                "app_id": app_id,
+                "day": day,
+                "detected_objects_by_type": detected_objects_by_type
+            }
 
         except Exception as e:
             self.logger.error(e)
-            return {"status": "error",
-                    "code": self.RETURN_CODES['ERROR_SERVER_ERROR'],
-                    "message": e
-                   }
+            return {
+                "status": "error",
+                "code": self.RETURN_CODES['ERROR_SERVER_ERROR'],
+                "message": e
+             }
 
     # ----
 

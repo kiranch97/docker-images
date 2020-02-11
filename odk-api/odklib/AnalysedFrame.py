@@ -14,19 +14,6 @@ class AnalysedFrame(DBObj):
 
     __tablename__ = "analysed_frames"
 
-    """
-
-    id : str # uuid
-    frameMeta: dict = {}
-    detectedObjects: list = []
-    counts : dict = {}
-    mlDoneAt : datetime = None
-    mlTimeTaken : datetime = None
-    take_frame : dict = {}
-
-
-    """
-
     id = Column(String(), primary_key=True)
     created_at = Column(DateTime())
     created_by_app = Column(String())
@@ -124,5 +111,4 @@ class AnalysedFrame(DBObj):
             DBObj.metadata.create_all(engine)
 
         except Exception as e:
-            print("ERROR: Can't create table for ApiCentral: {0}".format(
-                unicode(e)))
+            print("ERROR: Can't create table: {0}".format(e))

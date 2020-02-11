@@ -103,63 +103,80 @@ class DatabaseManager:
 
     def add_analysed_frame(self, analysed_frame_data):
 
-        """ Add analysed frame
-
-        :return: status dict { status : ['error','succes'], message }
-
-        """
-
+        # TODO: should this check be here?
         if not self.has_connection:
             return {
                 "status": "error",
                 "message": "There is a server problem! Please contact administrator"
             }
 
-        if type(analysed_frame_data) is dict:
-
-            new_analysed_frame = AnalysedFrame(
-                created_at=analysed_frame_data.get(
-                    'take_frame', {}).get(
-                        'timestamp'),
-                frame_meta=analysed_frame_data.get(
-                    'frame_meta'),
-                detected_objects=analysed_frame_data.get(
-                    'detected_objects'),
-                counts=analysed_frame_data.get(
-                    'counts'),
-                ml_done_at=analysed_frame_data.get(
-                    'ml_done_at'),
-                ml_time_taken=analysed_frame_data.get(
-                    'ml_time_taken'),
-                frame_name=analysed_frame_data.get(
-                    'frame_name'),
-                user_type=analysed_frame_data.get(
-                    'user_type'),
-                take_frame=analysed_frame_data.get(
-                    'take_frame'),
-                )
-
-            try:
-                self.db_session.add(new_analysed_frame)
-                self.db_session.commit()
-
-                new_analysed_dict = new_analysed_frame.to_public_dict()
-
-                return {"status": "success",
-                        "message": "Created frame!",
-                        "data": new_analysed_dict}
-                # This time only we send over the raw passphrase
-
-            except Exception as e:
-                self.logger.error(e)
-                return {"status": "error",
-                        "message": "There is a server problem! \
-                                    Please contact administrator"}
-
-        else:
+        if type(analysed_frame_data) is not dict:
             return {"status": "error",
                     "code": self.RETURN_CODES['ERROR_INVALID_INPUT'],
                     "message": "Cannot create analysed frame: invalid input!"}
+
+        # TODO: for now storing location data here,
+        #  data model should be reviewed to handle more variable information from services
+
+        # new_analysed_frame_data = {
+        #     'id': 'random string by server',
+        #     'created_at': 'created on init AnalysedFrame class',
+        #     'streaming_app_data': {
+        #         'app_id': 'something',
+        #         'user_type': 'something',
+        #         ... space for more
+        #     },
+        #     'ml_worker_data': {
+        #         'detected_objects': 'list',
+        #         'counts': 'list',
+        #         'ml_done_at': 'timestamp',
+        #         'ml_time_taken': 'ms',
+        #         'frame_name': 'file path',
+        #         ... space for more
+        #     },
+        #
+        # }
+
+        location_data = analysed_frame_data['location']
+        take_frame = {
+            'location': location_data
+        }
+
+        new_analysed_frame = AnalysedFrame(
+            created_at=analysed_frame_data.get(
+                'take_frame', {}).get(
+                    'timestamp'),
+            frame_meta=analysed_frame_data.get(
+                'frame_meta'),
+            detected_objects=analysed_frame_data.get(
+                'detected_objects'),
+            counts=analysed_frame_data.get(
+                'counts'),
+            ml_done_at=analysed_frame_data.get(
+                'ml_done_at'),
+            ml_time_taken=analysed_frame_data.get(
+                'ml_time_taken'),
+            frame_name=analysed_frame_data.get(
+                'frame_name'),
+            user_type=analysed_frame_data.get(
+                'user_type'),
+            take_frame=take_frame,
+        )
+
+        try:
+            self.db_session.add(new_analysed_frame)
+            self.db_session.commit()
+
+            new_analysed_dict = new_analysed_frame.to_public_dict()
+
+            return {"status": "success",
+                    "message": "Created frame!",
+                    "data": new_analysed_dict}
+
+        except Exception as e:
+            self.logger.error(e)
+            return {"status": "error",
+                    "message": "There is a server problem! Please contact administrator"}
 
     # ----
 

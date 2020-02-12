@@ -1,6 +1,6 @@
 {
-    "name": "odk-pwa",
-    "short_name": "odk-pwa",
+    "name": "ODK",
+    "short_name": "ODK",
     "icons": [
       {
         "src": "./img/icons/android-chrome-192x192.png",

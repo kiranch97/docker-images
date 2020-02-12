@@ -10,10 +10,20 @@
       </div>
       <div id="buttons-section">
         <router-link to="/recommendation">
-          <b-button @click="saveWorkerId()" rounded id="cto-button" size="is-medium">Ik ben een gemeente chauffer</b-button>
+          <b-button
+            @click="saveWorkerId()"
+            rounded
+            id="cto-button"
+            size="is-medium"
+          >Ik ben een gemeente chauffer</b-button>
         </router-link>
         <router-link to="/recommendation">
-          <b-button @click="saveDemoId()" rounded id="gitlab-button" size="is-medium">Ik ben een demo gebruiker</b-button>
+          <b-button
+            @click="saveDemoId()"
+            rounded
+            id="gitlab-button"
+            size="is-medium"
+          >Ik ben een demo gebruiker</b-button>
         </router-link>
       </div>
     </div>
@@ -27,21 +37,30 @@ export default {
     return {};
   },
   methods: {
+    //-------
+
     checkAppMode() {
-      if (window.matchMedia("(display-mode: standalone)").matches) {
+      let checkMedia = window.matchMedia("(display-mode: standalone)").matches;
+      if (checkMedia) {
         console.log("This is running as standalone.");
       } else {
         console.log("This is running on the browser");
-        this.$router.push({ path: "/" });
+        process.env.VUE_APP_APP_MODE
+          ? console.log("development mode")
+          : this.$router.push({ path: "/" });
       }
     },
+
+    //-------
+
     checkExistingId: function() {
       if (localStorage.appId && localStorage.userType) {
-        this.$router.push({ path: "/client" });
+        this.$router.push({ path: "/checklist" });
         this.appId = localStorage.appId;
         this.userType = localStorage.userType;
       } else {
         this.generateId();
+        console.log("ID Generated")
       }
     },
 
@@ -58,18 +77,22 @@ export default {
 
     saveWorkerId: function() {
       localStorage.userType = "waste_department";
-      console.log("submitted!");
+      console.log("Worker id generated!");
     },
 
     // ----
 
     saveDemoId() {
       localStorage.userType = "demo";
-      console.log("submitted!");
+      console.log("Demo id generated");
     }
   },
   mounted() {
+    // Init
+    //IF USER IN BROWSER AND development mode is off redirect them to BrowserStartPage
     this.checkAppMode();
+    //IF USER DOESNT HAVE ID YET GENERATE ON FOR THEM
+    this.checkExistingId();
   }
 };
 </script>
@@ -130,8 +153,8 @@ export default {
   justify-content: center;
   align-items: center;
   background: var(--second-white-color);
-  max-height: 500px;
-  max-width: 900px;
+  max-height: 414px;
+  max-width: 896px;
   margin: 0 auto;
   position: relative;
   top: 3rem;
@@ -202,6 +225,5 @@ export default {
     max-width: none;
     max-height: none;
   }
-
 }
 </style>

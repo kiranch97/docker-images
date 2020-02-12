@@ -28,6 +28,8 @@ export default {
       animationData: animationData
     };
 
+    // console.log(setupAnimData);
+
     this.robotAnim = bodymovin.loadAnimation(setupAnimData);
 
 

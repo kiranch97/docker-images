@@ -33,7 +33,7 @@
       <div id="buttons-section">
         <b-button @click="switchRmd()" rounded id="cto-button" size="is-medium">Volgende</b-button>
         <router-link to="/checklist">
-          <b-button rounded id="gitlab-button" size="is-medium">Overspringen</b-button>
+          <b-button rounded id="gitlab-button" size="is-medium">Overslaan</b-button>
         </router-link>
       </div>
     </div>
@@ -52,6 +52,7 @@ export default {
   },
   methods: {
     switchRmd() {
+      //SWITCH THROUGH THE OPTIONS AND REDIRECT THE USERS TO THE CHECKLIST PAGE
       if (this.rmdOne) {
         this.rmdOne = !this.rmdOne;
         this.rmdTwo = !this.rmdTwo;

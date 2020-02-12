@@ -36,8 +36,9 @@
           v-show="streamStatusToggle"
           id="stream-status"
           v-bind:class="{
-            streamstatus: streamStatusToggle,
-            streamstatuspaused: streamStatusTogglePause
+            'stream-status': streamStatusToggle,
+            'stream-status-paused': streamStatusTogglePause,
+            'stream-status-disconnected': streamStatusToggleDisconnect,
           }"
         >Streaming</p>
         <stream-time v-show="toggleTimer" class="stream-timer" ref="streamtimer"></stream-time>
@@ -52,7 +53,7 @@
 import StreamTime from "./StreamTime";
 import StreamCount from "./StreamCount";
 //import { eventBus } from "../main";
-import StreamAnalyzedFrame from "./StreamAnalyzedFrame";
+// import StreamAnalyzedFrame from "./StreamAnalyzedFrame";
 
 export default {
   //// example from: https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Taking_still_photos
@@ -60,19 +61,21 @@ export default {
 
   name: "streaming-client",
   // ----
-
-  // ----
-
   data: function() {
     return {
       apiWebsocketUrl: process.env.VUE_APP_API_WS_URL,
       debug: false,
       //UI properties
+      //PLAY/PAUSE BUTTON
       recordToggle: true,
+      //STREAM STATUS STATES
       streamStatusToggle: false,
       streamStatusTogglePause: false,
+      streamStatusToggleDisconnect: false,
       toggleTimer: false,
+      //AUTO/MANUAL MODE SWITCH
       isSwitched: true,
+      //FLIP CAMERA
       cameraIconActive: true,
 
       // ---- settings ----
@@ -90,6 +93,11 @@ export default {
       video: null,
       canvas: null,
       photo: null,
+      websocketStreamState: null,
+      streamState: {
+        ON: "on",
+        OFF: "off"
+      },
       websocketConnection: null,
       intervalHandler: null,
       // ---- CAMERA CONSTRAITS ----
@@ -118,8 +126,8 @@ export default {
   components: {
     // "stream-details": StreamDetails,
     "stream-time": StreamTime,
-    "stream-count": StreamCount,
-    "stream-analyzer": StreamAnalyzedFrame
+    "stream-count": StreamCount
+    // "stream-analyzer": StreamAnalyzedFrame
     // "device-login": DeviceLogin
   },
 
@@ -133,33 +141,28 @@ export default {
     setup: function() {
       // set current camera orientation
       this.currentCameraOption = this.prefCameraOption;
-
-      // console.log("OdkClient init!");
       this.video = document.getElementById("video");
       this.canvas = document.getElementById("canvas");
       this.photo = document.getElementById("photo");
-
-      //Setup connection with WebSocket API
-      this.setupWebSockets();
     },
 
     // ----
 
     startStream: function() {
-      // console.log(
-      //   "=> Starting stream to endpoint: " + process.env.VUE_APP_API_HTTP_URL
-      // );
-
-      //change circle to pause button when stream starts
+      //Setup connection with Websocket server
+      this.setupWebSockets();
+      //Change circle to pause button when stream starts
       this.recordToggle = false;
-
+      //Hide camera flip so user can switch orientation while streaming
       this.cameraIconActive = false;
-
-      // Show the Streaming status text and timer
+      //Show the Streaming status text and timer
       this.streamStatusToggle = true;
       this.toggleTimer = true;
+      //$refs is used when calling functions from child components (In this case to start the timer function)
       this.$refs.streamtimer.start();
+      // Make sure other stream status states are off while streaming
       this.streamStatusTogglePause = false;
+      this.streamStatusToggleDisconnect = false;
       document.getElementById("stream-status").innerHTML = "Streaming";
       this.startTimeTrigger();
     },
@@ -167,6 +170,7 @@ export default {
     // ----
 
     startTimeTrigger: function() {
+      //Interval function to take screenshots of Video stream canvas
       this.intervalHandler = setInterval(
         this.takePicture,
         this.SETTINGS.TAKE_PICTURE_EVERY_MS
@@ -204,13 +208,11 @@ export default {
         user_type: this.userType,
         lng: this.positionLo,
         lat: this.positionLa,
-        timestamp: this.timeFormat,
-        state: true
+        timestamp: this.timeFormat
       };
 
-      // console.log('Sending data through websocket: ' + data.timestamp)
-
       this.websocketConnection.send(JSON.stringify(data));
+      console.log(this.websocketConnection);
     },
 
     // ----
@@ -227,9 +229,6 @@ export default {
         audio: false
       };
 
-      // console.log("Preferred video constraints:");
-      // console.log(this.currentConstraints.video);
-
       let curScope = this;
 
       navigator.mediaDevices
@@ -238,8 +237,6 @@ export default {
           curScope.currentStream = stream;
           video.srcObject = stream;
           video.play();
-          // console.log("=> Video started:");
-          // console.log(video);
         })
         .catch(function(err) {
           console.log("==> Error occured in 'showStream':");
@@ -261,33 +258,42 @@ export default {
     // ----
 
     pauseStream: function() {
-      clearInterval(this.intervalHandler);
+      //Set websocket stream state to "off"
+      this.websocketStreamState = this.streamState.OFF;
+      //Check if websocket connection is established with server
+      if (
+        this.websocketConnection.readyState === this.websocketConnection.OPEN
+      ) {
+        this.websocketConnection.close();
+        clearInterval(this.intervalHandler);
+        console.log("connection Closed");
+        //Change pause to circle button when stream stops
+        this.recordToggle = true;
+        //Show camera flip icon to user when video stream is paused
+        this.cameraIconActive = true;
+        //Show Stream paused text and stop timer
+        this.streamStatusToggle = false;
+        this.$refs.streamtimer.stop();
+        //Change stream status text to Stream Paused
+        document.getElementById("stream-status").innerHTML = "Stream Paused";
+        //Set stream status pause state active
+        this.streamStatusToggle = true;
+        this.streamStatusTogglePause = true;
 
-      //change pause to circle button when stream stops
-      this.recordToggle = true;
+        //Create object with required data
+        let data = {
+          app_id: this.appId,
+          user_type: this.userType,
+          lng: this.positionLo,
+          lat: this.positionLa,
+          timestamp: this.timeFormat,
+          img: "None"
+        };
+        let payload = data;
 
-      this.cameraIconActive = true;
-
-      // show Stream paused text and keep showing timer
-      this.streamStatusToggle = false;
-      this.$refs.streamtimer.stop();
-      document.getElementById("stream-status").innerHTML = "Stream Paused";
-      this.streamStatusToggle = true;
-      this.streamStatusTogglePause = true;
-      this.toggleTimer = true;
-
-      let data = {
-        app_id: this.appId,
-        user_type: this.userType,
-        lng: this.positionLo,
-        lat: this.positionLa,
-        timestamp: this.timeFormat,
-        img: "None",
-        state: false
-      };
-      
-      let payload = data;
-      this.websocketConnection.send(JSON.stringify(payload));
+        //Transform data payload to JSON and send to Websocket server
+        this.websocketConnection.send(JSON.stringify(payload));
+      }
     },
 
     // ----
@@ -306,19 +312,20 @@ export default {
         // this.height = this.video.videoHeight / (this.video.videoWidth / this.width);
 
         this.height = this.SETTINGS.minImageHeight;
-        this.width = (this.video.videoWidth / this.video.videoHeight) * this.height;
+        this.width =
+          (this.video.videoWidth / this.video.videoHeight) * this.height;
 
-        console.log("VIDEO W: " + this.video.videoWidth)
-        console.log("VIDEO H: " + this.video.videoHeight)
+        console.log("VIDEO W: " + this.video.videoWidth);
+        console.log("VIDEO H: " + this.video.videoHeight);
 
-        console.log("IMAGE W: " + this.width)
-        console.log("IMAGE H: " + this.height)
+        console.log("IMAGE W: " + this.width);
+        console.log("IMAGE H: " + this.height);
 
         this.video.setAttribute("width", this.width);
         this.video.setAttribute("height", this.height);
         this.canvas.setAttribute("width", this.width);
         this.canvas.setAttribute("height", this.height);
-        
+
         this.streaming = true;
       }
     },
@@ -330,24 +337,75 @@ export default {
       context.fillStyle = "#AAA";
       context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-      let data = this.canvas.toDataURL("image/jpg");
+      let data = this.canvas.toDataURL("image/jpeg");
       this.photo.setAttribute("src", data);
     },
 
     // ----
 
     setupWebSockets: function() {
+      //Setup connection with Websocket server URL:PORT/ENDPOINT
       let websocketUrl = this.apiWebsocketUrl + "/stream";
-
       this.websocketConnection = new WebSocket(websocketUrl);
+      //Set websocket stream state to "on"
+      this.websocketStreamState = this.streamState.ON;
+      //Websocket events
       this.websocketConnection.onmessage = this.receiveWebSocketsMsg;
+      this.websocketConnection.onopen = this.receiveWebSocketsMsgOnOpen;
+      this.websocketConnection.onclose = this.receiveWebSocketsMsgOnClose;
     },
 
     // ----
 
     receiveWebSocketsMsg: function(e) {
+      //Websocket event when Message sent by the server
       console.log("Websocket connection initialized");
+      console.log(e.data);
+    },
+
+    // ----
+
+    receiveWebSocketsMsgOnOpen: function(e) {
+      //Websocket even when websocket connection between client and server is established
+      console.log("Websocket connection Connected");
+
+      // Play/pause stream button toggle
+      // After Websocket connection is disconnected and then reconnects, restart the UI State to streaming
+      if (this.websocketStreamState === this.streamState.ON) {
+        //Set Play/Pause button to streaming
+        this.recordToggle = false;
+        //Start timer function
+        this.$refs.streamtimer.start();
+        //Make sure other stream status states are false
+        this.streamStatusToggleDisconnect = false;
+        this.streamStatusTogglePause = false;
+        this.streamStatusToggle = true;
+        //Change stream status text to Streaming
+        document.getElementById("stream-status").innerHTML = "Streaming";
+      }
+
       console.log(e);
+    },
+
+    // ----
+
+    receiveWebSocketsMsgOnClose: function(e) {
+      console.log("Websocket connection disconnected");
+      console.log(e);
+      //Set stream status state Disconnected to active
+      this.streamStatusToggleDisconnect = true;
+      //Set Play/Pause button to inital state
+      this.recordToggle = true;
+      //Change stream status text to Disconnected
+      document.getElementById("stream-status").innerHTML = "Disconnected";
+      this.$refs.streamtimer.stop();
+      //Retry to make setup Websocket connection every 5 seconds
+      if (this.websocketStreamState === this.streamState.OFF) {
+        console.log("Stream is already off");
+      } else {
+        this.websocketConnection = null;
+        setTimeout(this.setupWebSockets, 5000);
+      }
     },
 
     // ----
@@ -406,6 +464,7 @@ export default {
         localStorage.appId == null
       ) {
         this.$router.push("/pwa");
+        console.log("id undefined");
       }
     },
 
@@ -430,10 +489,15 @@ export default {
   },
 
   mounted: function() {
+    //Init
     this.setup();
     this.showStream();
+
+    //Retrieve localstorage appID and userType
     this.appId = localStorage.appId;
     this.userType = localStorage.userType;
+
+    //IF USER DOENST HAVE ID REDIRECT THEM TO PWA START PAGE
     this.checkIdNull();
   }
 };
@@ -503,6 +567,7 @@ body {
   background: none;
   transition: all 0.5s;
   display: flex;
+  outline: none;
   justify-content: center;
 }
 
@@ -510,6 +575,7 @@ body {
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
+  outline: none;
   background: white;
   transition: all 0.5s;
 }
@@ -526,6 +592,7 @@ body {
 .pause-box {
   width: 4rem;
   height: 4rem;
+  outline: none;
   border-radius: 50%;
   border: 2px solid white;
   background: none;
@@ -543,7 +610,7 @@ body {
   padding: 1.875rem;
 }
 
-.streamstatus {
+.stream-status {
   align-self: start;
   margin-top: 3rem;
   transform: rotate(90deg);
@@ -554,7 +621,7 @@ body {
   /* text-shadow: 1px 1px 5px #000; */
 }
 
-.streamstatus::before {
+.stream-status::before {
   content: "";
   width: 15px;
   height: 15px;
@@ -567,7 +634,7 @@ body {
   animation: blink 1.5s infinite both;
 }
 
-.streamstatuspaused {
+.stream-status-paused {
   align-self: start;
   margin-top: 3rem;
   transform: rotate(90deg);
@@ -578,7 +645,28 @@ body {
   /* text-shadow: 1px 1px 5px #000; */
 }
 
-.streamstatuspaused::before {
+.stream-status-paused::before {
+  content: "";
+  width: 15px;
+  height: 15px;
+  background: url("../assets/pause.png");
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 0.5rem;
+  left: -1rem;
+}
+
+.stream-status-disconnected {
+  align-self: start;
+  margin-top: 3rem;
+  transform: rotate(90deg);
+  font-size: 18px;
+  color: white;
+  justify-self: center;
+  width: 8.125rem;
+}
+
+.stream-status-disconnected::before {
   content: "";
   width: 15px;
   height: 15px;
@@ -705,7 +793,6 @@ video {
 }
 
 @media (max-width: 1024px) and (orientation: portrait) {
-
   .video-stream {
     position: absolute;
     width: 100vw !important;

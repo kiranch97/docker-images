@@ -11,9 +11,9 @@ from odklib.StreamLogger import StreamLogger
 from odklib.FrameBroker import FrameBroker
 from odklib.DiskWriter import DiskWriter
 
+
 # TODO: change from string to dict with user, password, domain...
 SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_CONNECTION_STRING')
-print(SQLALCHEMY_DATABASE_URI)
 WAIT_FRAME_BROKER = 0.01  # in seconds 0.01 = 10 ms
 
 app = FastAPI()
@@ -38,6 +38,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ==== endpoints ====
 
 @app.get("/")
 def index():
@@ -58,17 +59,12 @@ async def ws_stream(ws: WebSocket):
         while True:
             # Get data from client
             frame_data = await ws.receive_json()
-            if "user_type" in frame_data:
-                print(frame_data["user_type"])
 
-            if "img" in frame_data:
-                # await disk_writer.save_file(frame_data)
-
-                try:
-                    await broker.send_message_on_queues(frame_data)
-                except ConnectionError:
-                    content = {"error": "MessageServer Not Available"}
-                    await ws.send_json(content)
+            try:
+                await broker.send_message_on_queues(frame_data)
+            except ConnectionError:
+                content = {"error": "MessageServer Not Available"}
+                await ws.send_json(content)
     except WebSocketDisconnect:
         logger.info("WebSocket /stream [disconnect]")
     except Exception as e:

@@ -770,7 +770,7 @@ body {
   position: absolute;
   width: 100vw !important;
   height: 100vh !important;
-  z-index: 0;
+  /* z-index: 0; */
   overflow: hidden !important;
 }
 

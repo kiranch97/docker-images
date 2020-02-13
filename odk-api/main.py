@@ -16,7 +16,7 @@ from odklib.DiskWriter import DiskWriter
 SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_CONNECTION_STRING')
 WAIT_FRAME_BROKER = 0.01  # in seconds 0.01 = 10 ms
 
-app = FastAPI()
+app = FastAPI(openapi_prefix= os.environ.get('API_PREFIX', '/'))
 broker = FrameBroker()
 disk_writer = DiskWriter()
 # stream_logger = StreamLogger()

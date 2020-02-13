@@ -567,8 +567,8 @@ export default {
 
     //IF USER DOENST HAVE ID REDIRECT THEM TO PWA START PAGE
     this.checkIdNull();
-    this.websocketStreamState = this.streamState.OFF;
-    setInterval(this.checkInternetState, 3000);
+    // this.websocketStreamState = this.streamState.OFF;
+    // setInterval(this.checkInternetState, 3000);
   }
 };
 </script>

@@ -32,9 +32,7 @@ export default {
         if (process.env.VUE_APP_APP_MODE) {
           console.log("development mode");
           this.$router.push({ path: "/pwa" });
-        } else {
-          this.$router.push({ path: "/" });
-        }
+        } 
       }
     }
   },

@@ -94,7 +94,7 @@ export default {
     this.userType = localStorage.userType;
 
     console.log("=> Starting 'fetchAnalysedResults' with 'countFetchRate': " + this.countFetchRate)
-    // setInterval(this.fetchAnalysedResults, this.countFetchRate);
+    setInterval(this.fetchAnalysedResults, this.countFetchRate);
   }
 };
 </script>

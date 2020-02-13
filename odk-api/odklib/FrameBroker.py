@@ -184,14 +184,15 @@ class FrameBroker:
     async def send_message_on_queues(self, frame_data: dict):
 
         # add time on queue
-        frame_data['_debug_rmq_time_on_queue'] = int(round(time.time() * 1000))
+        # frame_data['_debug_rmq_time_on_queue'] = int(round(time.time() * 1000))
 
         if not self.is_ready:
             await self.setup_all_queues(
                 # SETTINGS["RMQ_QUEUE_FRAMES_FOR_DASH"],
                 # SETTINGS["RMQ_QUEUE_ANALYSED_FRAMES_FOR_DASH"],
                 ml_queue_name=SETTINGS["RMQ_QUEUE_FRAMES_FOR_ML"],
-                analysed_queue_name=SETTINGS["RMQ_QUEUE_ANALYSED_FRAMES"])
+                analysed_queue_name=SETTINGS["RMQ_QUEUE_ANALYSED_FRAMES"]
+            )
 
         frame_json = json.dumps(frame_data).encode()
 

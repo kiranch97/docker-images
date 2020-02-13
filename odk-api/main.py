@@ -60,7 +60,7 @@ async def ws_stream(ws: WebSocket):
             # Get data from client
             frame_data = await ws.receive_json()
 
-            print(frame_data["img"])
+            # print(frame_data["img"])
 
             if frame_data["img"] is not False:
                 try:

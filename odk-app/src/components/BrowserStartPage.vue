@@ -5,7 +5,7 @@
     </div>
     <div id="text-section">
       <p class="odk-title" id="title">Object Detection Kit</p>
-      <p class="body-1">Keep streets clean by scanning garbage while driving</p>
+      <p class="body-1">Zorg voor schone straten door te scannen tijdens het rijden</p>
       <p class="body-1">
         Please
         <span id="add-to-home">‘add to homescreen’</span> to continue

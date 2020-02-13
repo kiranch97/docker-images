@@ -27,8 +27,8 @@
     <div id="text-section">
       <div id="header-section">
         <p class="body-1">Het wordt aanbevolen om</p>
-        <p class="odk-title" id="title">Hou het battery in de oplader</p>
-        <p class="body-1" id="body">Het streamen verbruikt veel batterij</p>
+        <p class="odk-title" id="title">Uw telefoon op te laden</p>
+        <p class="body-1" id="body">tijdens het rijden. Het streamen verbruikt veel batterij</p>
       </div>
       <div id="buttons-section">
         <b-button @click="switchRmd()" rounded id="cto-button" size="is-medium">Volgende</b-button>
@@ -56,17 +56,17 @@ export default {
       if (this.rmdOne) {
         this.rmdOne = !this.rmdOne;
         this.rmdTwo = !this.rmdTwo;
-        document.getElementById("title").innerHTML = "Controleer data verbruik";
+        document.getElementById("title").innerHTML = "Uw dataverbruik te controleren";
         document.getElementById("body").innerHTML =
-          "The streaming consumes a lot of data. An unlimited data subscription is recommended";
+          "Het streamen kost veel data. Een ongelimiteerd abonnement wordt geadviseerd";
       } else if (this.rmdTwo) {
         this.rmdTwo = !this.rmdTwo;
         this.rmdThree = !this.rmdThree;
         document.getElementById("gitlab-button").style.display = "none";
         document.getElementById("title").innerHTML =
-          "Kies de mode die het beste bij jou past";
+          "Uw eigen modus te kiezen";
         document.getElementById("body").innerHTML =
-          "Manual mode lets you control when the stream is on or off. Automatic mode will start and stop depending on our vehicle speed";
+          "Met handmatige modus kunt u er zelf voor kiezen wanneer u wilt streamen. De automatische modus zal de stream kunnen starten en stoppen op basis van uw rijsnelheid";
         document.getElementById("buttons-section").style.justifyContent = "flex-end"
       } else if (this.rmdThree) {
         this.$router.push({ path: "/checklist" });

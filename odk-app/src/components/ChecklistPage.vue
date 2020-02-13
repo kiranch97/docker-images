@@ -5,7 +5,7 @@
     </div>
     <div id="text-section">
       <div id="header-section">
-        <p class="odk-title" id="title">Before start streaming</p>
+        <p class="odk-title" id="title">Voordat u begint</p>
       </div>
       <div id="buttons-section">
         <b-button
@@ -32,7 +32,7 @@
               />
             </g>
           </svg>
-          Keep the screen landscape
+          Houd uw telefoon liggend
         </b-button>
 
         <b-button
@@ -60,7 +60,7 @@
               />
             </g>
           </svg>
-          Enable GPS location
+          Zet GPS locatie aan
         </b-button>
 
         <b-button
@@ -87,13 +87,11 @@
                 fill="#2F1C50"
               />
             </g>
-          </svg>Enable Camera
+          </svg>
+          Zet Camera aan
         </b-button>
       </div>
-      <p
-        class="body-1"
-        id="title"
-      >In case you deny access, this app won't work until you delete cache storage</p>
+      <p class="body-1" id="title">Als u deze stappen niet volgt, zal u ODK niet kunnen gebruiken</p>
     </div>
   </div>
 </template>

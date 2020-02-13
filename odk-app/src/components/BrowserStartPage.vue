@@ -21,19 +21,29 @@ export default {
     return {};
   },
   methods: {
-      checkAppMode(){
-            if (window.matchMedia("(display-mode: standalone)").matches) {
-            console.log("This is running as standalone.");
-            this.$router.push({ path: "/pwa" });
-            }else {
-                console.log("This is running on the browser")
-            }
+    checkAppMode() {
+      let checkMedia = window.matchMedia("(display-mode: standalone)").matches;
+      if (checkMedia) {
+        console.log("This is running as standalone.");
+        //If user downloaded pwa then he doesnt have to see this page
+        this.$router.push({ path: "/pwa" });
+      } else {
+        console.log("This is running on the browser");
+        if (process.env.VUE_APP_APP_MODE) {
+          console.log("development mode");
+          this.$router.push({ path: "/pwa" });
+        } else {
+          this.$router.push({ path: "/" });
         }
- },
+      }
+    }
+  },
   mounted() {
-      this.checkAppMode()
+    // Init
+    // IF USER DONT HAVE PWA DOWNLOADED ON MOBILE, TABLET OR PC/LAPTOP DEVICE THEY CANT ACCESS THE VIDEO STREAM
+    this.checkAppMode();
+    // this.$router.push({ path: "/pwa" });
   }
-    
 };
 </script>
 
@@ -44,7 +54,6 @@ export default {
   line-height: 2.125rem;
   color: var(--dark-blue-color);
   margin-bottom: 0.75rem;
-  
 }
 
 .body-1 {
@@ -53,7 +62,9 @@ export default {
   font-weight: 400;
   line-height: 26px;
   color: var(--dark-blue-color);
-  width: 15rem;
+  /* width: 15rem; */
+  padding-left: 47px;
+  padding-right: 46px;
 }
 
 #container {
@@ -63,11 +74,11 @@ export default {
   height: 100%;
   justify-content: center;
   align-items: center;
-  max-height: 800px;
-  max-width: 500px;
+  max-height: 896px;
+  max-width: 414px;
   margin: 0 auto;
   position: relative;
-  top: 3rem; 
+  top: 3rem;
 }
 
 #container div {
@@ -80,12 +91,12 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   height: 20rem;
 }
 
 #text-section :nth-child(2) {
-  margin-bottom: 5rem;
+  margin-bottom: 3.75rem;
 }
 
 #add-to-home {
@@ -95,14 +106,13 @@ export default {
 #image-section {
   display: flex;
   justify-content: center;
-  align-items: center;
 }
 
 #intro-img {
-  max-height: 320px;
+  max-height: 426px;
   object-fit: cover;
-  position: relative;
-  right: 2rem;
+  margin-top: 2.375rem;
+  margin-bottom: 2.375rem;
 }
 
 @media (max-width: 1024px) and (orientation: portrait) {
@@ -112,13 +122,13 @@ export default {
     height: 100%;
   }
 
-  #container{
+  #container {
     top: 0;
   }
 
   #image-section {
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
   }
 }
 
@@ -128,6 +138,14 @@ export default {
     top: 0;
     max-width: none;
     max-height: none;
+  }
+
+  #image-section {
+    align-items: center;
+  }
+
+  #text-section {
+    justify-content: center;
   }
 }
 </style>

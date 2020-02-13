@@ -6,7 +6,7 @@
     <div id="text-section">
       <div id="header-section">
         <p class="odk-title" id="title">Object Detection Kit</p>
-        <p class="body-1">Keep streets clean by scanning garbage while driving</p>
+        <p class="body-1">Houd de straten schoon door te scannen tijdens het rijden</p>
       </div>
       <div id="buttons-section">
         <router-link to="/recommendation">

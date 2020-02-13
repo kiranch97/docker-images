@@ -29,10 +29,10 @@ export default {
         this.$router.push({ path: "/pwa" });
       } else {
         console.log("This is running on the browser");
-        if (process.env.VUE_APP_APP_MODE) {
-          console.log("development mode");
-          this.$router.push({ path: "/pwa" });
-        } 
+        // if (process.env.VUE_APP_APP_MODE) {
+        //   console.log("development mode");
+        //   this.$router.push({ path: "/pwa" });
+        // } 
       }
     }
   },

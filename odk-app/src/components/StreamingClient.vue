@@ -647,6 +647,7 @@ body {
   display: flex;
   outline: none;
   justify-content: center;
+  align-items: center;
 }
 
 .inner-circle {
@@ -771,7 +772,7 @@ body {
   background: #3a225d;
   opacity: 0.8;
   display: grid;
-  grid-template-columns: repeat(auto-fill, 80% 20%);
+  grid-template-columns: repeat(auto-fill, 80%) 20%;
 }
 
 .video-stream {

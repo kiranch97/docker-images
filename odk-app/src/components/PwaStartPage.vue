@@ -55,7 +55,7 @@ export default {
 
     checkExistingId: function() {
       if (localStorage.appId && localStorage.userType) {
-        this.$router.push({ path: "/checklist" });
+        this.$router.push({ path: "/client" });
         this.appId = localStorage.appId;
         this.userType = localStorage.userType;
       } else {

@@ -680,6 +680,7 @@ body {
   z-index: 2;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .item-3 {

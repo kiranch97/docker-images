@@ -129,9 +129,9 @@ export default {
         console.log("This is running as standalone.");
       } else {
         console.log("This is running on the browser");
-        process.env.VUE_APP_APP_MODE
-          ? console.log("development mode")
-          : this.$router.push({ path: "/" });
+        // process.env.VUE_APP_APP_MODE
+        //   ? console.log("development mode")
+        //   : this.$router.push({ path: "/" });
       }
     },
 

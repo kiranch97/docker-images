@@ -1,14 +1,14 @@
 {
-    "name": "odk-pwa",
-    "short_name": "odk-pwa",
+    "name": "ODK",
+    "short_name": "ODK",
     "icons": [
       {
-        "src": "./img/icons/android-chrome-192x192.png",
+        "src": "./img/icons/odk-192.png",
         "sizes": "192x192",
         "type": "image/png"
       },
       {
-        "src": "./img/icons/android-chrome-512x512.png",
+        "src": "./img/icons/odk-512.png",
         "sizes": "512x512",
         "type": "image/png"
       }
@@ -16,7 +16,7 @@
     "start_url": "/",
     "display": "standalone",
     "orientation":  "landscape",
-    "background_color": "#000000",
+    "background_color": "#3A225D",
     "theme_color": "#3A225D"
   }
   

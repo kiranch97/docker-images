@@ -3,61 +3,64 @@ version: '3'
 services:
 
   app:
-    restart: always
     container_name: odk-proxy
-    image: nginx
+    build: ./odk-app
+    environment:
+      - VUE_APP_API_HTTP_URL=/api
+    depends_on:
+      - api
     ports:
       - "8000:80"
     volumes:
       - ./nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
       - ./logs:/var/log/nginx
-      - ./odk-app/dist:/dist
-
-  # dashboard:
-  #   restart: always
-  #   container_name: odk-dash
-  #   image: nginx
-  #   ports:
-  #     - "8001:80"
-  #   volumes:
-  #     - ./nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
-  #     - ./logs:/var/log/nginx
-  #     - ./odk-dashboard/dist:/dist
+    networks:
+      - odb-network
 
   api:
-    restart: always
     container_name: odk-api
     build: ./odk-api
-    env_file:
-      - ./env_files/odk-api.env
-    ports:
-      - "8080:80"
+    environment:
+      - API_PREFIX=/api
+      - JWT_SECRET_KEY=A_SIMPLE_SECRET_FOR_DEVELOPMENT
+      - DATABASE_CONNECTION_STRING=postgresql://postgres:mysecretpassword@odk-db/postgres
+      - RMQ_USER=user
+      - RMQ_PASSWORD=password
+      - RMQ_URL=localhostq
+    expose:
+      - "80"
     volumes:
-    - ./odk-api:/app
+      - ./odk-api:/app
+    depends_on:
+      - db
+    networks:
+      - odb-network
 
   rmq:
-    restart: always
     container_name: odk-rmq
     image: rabbitmq:3-management
-    env_file:
-      - ./env_files/odk-rmq.env
-    ports:
-      - "8081:8080"
-      - "5672:5672"
-      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=password
+    expose:
+      - "15672"
+      - "8080"
+      - "5672"
+    networks:
+      - odb-network
 
   db:
-    restart: always
     container_name: odk-db
     image: mdillon/postgis:10-alpine
-    env_file:
-      - ./env_files/odk-db.env
     environment:
-        - PGDATA=/pgdata
-    ports:
-        - "5432:5432"
-    volumes:
-        - ./pgdata:/pgdata
+      - PGDATA=/pgdata
+      - POSTGRES_PASSWORD=mysecretpassword
+    expose:
+        - "5432"
     logging:
        options:
          max-size: 50m
+    networks:
+      - odb-network
+networks:
+  odb-network:

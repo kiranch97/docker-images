@@ -1,11 +1,11 @@
 from datetime import datetime
 import os
 import base64
-
+import socket
 
 def save_file(analysed_frame_data, something_detected=False):
 
-    machine_hostname = os.uname()[1]
+    machine_hostname = socket.gethostname()
 
     folder_path = './frames/{0}'.format(machine_hostname)
 

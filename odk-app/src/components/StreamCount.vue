@@ -37,7 +37,7 @@ export default {
         Authorization: "No Auth"
       },
       apiHttpUrl: process.env.VUE_APP_API_HTTP_URL,
-      countFetchRate: 1000
+      countFetchRate: process.env.VUE_APP_RESULT_INTERVAL
     };
   },
 

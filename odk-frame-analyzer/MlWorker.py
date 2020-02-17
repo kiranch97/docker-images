@@ -6,14 +6,11 @@ import sys
 
 import simplejson as json
 import asyncio
-from odkframelib.DiskWriter import DiskWriter
+from odkframelib.Utils import save_file, save_frame_check
 from aio_pika import connect, Message, IncomingMessage, ExchangeType
 from model.garbage_detection import GarbageImageClassifier
 
-
-disk_writer = DiskWriter()
-
-GarbageImageClassifier = GarbageImageClassifier(cuda=False)
+GarbageImageClassifier = GarbageImageClassifier(cuda=True)
 
 SETTINGS = {
     'RMQ_USER': os.environ.get('RMQ_USER') or 'odk',
@@ -105,7 +102,7 @@ class MlWorker:
 
     Example of frame data dictionary as it is retrieved from the queue:
 
-    frame_data_dict = {
+    frame_data = {
         '_debug_rmq_time_on_queue': 1581347922959,
         'app_id': 'cgar53mb78',
         'img': 'data:image/jpeg:base64,/9j/rtPcyeyAs1KrYPzSksm...', # raw frame
@@ -129,10 +126,12 @@ class MlWorker:
             'timestamp': '2020-02-10 16:18:41.0089'
             'app_id: 'cgar53mb78'
         },
+
         # TODO:
         # - change mapping of lat lng to seperate value
         # - change frame id to random value?
         # - add name of frame analyzer
+
         'frame_name': 'timestamp_lat_lng.jpg',
         'user_type': 'demo',
     }
@@ -144,14 +143,24 @@ class MlWorker:
             await self.setup_queue(SETTINGS["RMQ_QUEUE_ANALYSED_FRAMES"])
 
         frame_data_dict = json.loads(message.body.decode("utf-8"))
-        frame_data = json.dumps(frame_data_dict)
         
-        analysed_frame_data= GarbageImageClassifier.detect_image(frame_data)
+        if type(frame_data_dict) is not dict:
+            print("frame_data_dict not a dict")
+            return
+
+        if frame_data_dict.get('img') is None:
+            print("No image in data found")
+            return
+
+        analysed_frame_data = GarbageImageClassifier.detect_image(json.dumps(frame_data_dict))
 
         if analysed_frame_data:
             analysed_frame_data = analysed_frame_data[0]
 
-            print("Something detected", analysed_frame_data['counts'])
+            if analysed_frame_data == None:
+                return
+
+            print("Something detected: ", analysed_frame_data['counts'])
 
             analysed_frame_data["user_type"] = frame_data_dict["user_type"]
             analysed_frame_data['take_frame']['timestamp'] = frame_data_dict["timestamp"]
@@ -165,14 +174,17 @@ class MlWorker:
             # if analysed_frame_data.get('user_type') != 'demo'
             #    file_location = disk_writer.save_file(analysed_frame_data, something_detected=true)
 
-            file_location = disk_writer.save_file(analysed_frame_data, something_detected=True)
+            # Check if count contains privacy_filter but no other DON'T save frame
+            counts = analysed_frame_data['counts']
+            if save_frame_check(counts) is True:
+                # Save file and append file name + folder path to output data
+                file_location = save_file(analysed_frame_data, something_detected=True)
+                analysed_frame_data['frame_name'] = file_location
+            else:
+                print("Not saving frame!")
 
-            analysed_frame_data['frame_name'] = file_location
-
-            # TODO: turn check 'if demo' on when going live
-
-            # if analysed_frame_data.get('user_type') == 'demo':
-            #     analysed_frame_data["frame_name"] = None
+            # Remove image data from output data
+            analysed_frame_data['take_frame']['img'] = None
 
             send_analysed_task = asyncio.create_task(
                 self.queue_analysed_frame(analysed_frame_data))
@@ -182,13 +194,13 @@ class MlWorker:
             print("Nothing detected")
             
             if frame_data_dict.get("user_type") != "demo":
-                disk_writer.save_file(frame_data_dict, something_detected=False)
+                save_file(frame_data_dict, something_detected=False)
 
 
 if __name__ == "__main__":
 
     def signal_handler(signal, frame):
-        print("Exciting...")
+        print("Exiting...")
         sys.exit(0)
 
     # Handle exit through CTRL+C gracefully

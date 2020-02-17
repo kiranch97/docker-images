@@ -70,7 +70,10 @@ class GarbageImageClassifier:
         input_size = [int(self.model.net_info['height']), int(self.model.net_info['width'])]
         batch_size = int(self.model.net_info['batch'])
 
-        classes = load_classes("model/cfg/garb.names")
+        curScriptPath = os.path.dirname(os.path.abspath(__file__)) # needed to keep track of the current location of current script ( although it is included somewhere else )
+
+
+        classes = load_classes( curScriptPath + "/cfg/garb.names")
 
         imgs = [load_data_frame(data_frame)]
         # print('Input image(s) loaded')

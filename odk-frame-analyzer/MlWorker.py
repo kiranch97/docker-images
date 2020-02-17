@@ -176,13 +176,15 @@ class MlWorker:
 
             # Check if count contains privacy_filter but no other DON'T save frame
             counts = analysed_frame_data['counts']
-            if save_frame_check(counts) is True:
-                # Save file and append file name + folder path to output data
-                file_location = save_file(analysed_frame_data, something_detected=True)
-                analysed_frame_data['frame_name'] = file_location
-            else:
-                print("Not saving frame!")
 
+            if save_frame_check(counts) is False:
+                print("Not saving frame!")
+                return
+
+            # Save file and append file name + folder path to output data
+            file_location = save_file(analysed_frame_data, something_detected=True)
+            analysed_frame_data['frame_name'] = file_location
+            
             # Remove image data from output data
             analysed_frame_data['take_frame']['img'] = None
 

@@ -30,7 +30,7 @@ export default {
 
     // console.log(setupAnimData);
 
-    this.robotAnim = bodymovin.loadAnimation(setupAnimData);
+    this.robotAnim = bodymovin.loadAnimation(setupAnimData); // eslint-disable-line
 
 
   }

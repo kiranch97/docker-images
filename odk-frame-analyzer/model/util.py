@@ -215,7 +215,7 @@ def draw_bbox(imgs, bbox, colors, classes, read_frames, output_path):
     cv2.putText(img, label, p1, cv2.FONT_HERSHEY_SIMPLEX, 1, [225, 255, 255], 1)
 
 
-def create_output_json(img, bbox):
+def create_output_json(img, bbox,classes):
     """
     Create_output_json
     """
@@ -224,13 +224,23 @@ def create_output_json(img, bbox):
 
     confidence = int(float(bbox[6])*100)
 
+    img = img[0]
+
+    p1 = tuple(bbox[1:3].int())
+    p2 = tuple(bbox[3:5].int())
+
+    blur_color = (0,0,0)
+    
+    if 'privacy' in label:
+        print('blurring', label)
+        
+        cv2.rectangle(img, p1, p2, blur_color, -1)
+        
+
+
     p1 = [int(x) for x in tuple(bbox[1:3].int())]
     p2 = [int(x) for x in tuple(bbox[3:5].int())]
 
-    if 'privacy' in label:
-
-        color = (0,0,0)
-        cv2.rectangle(img, p1, p2, color, -1)
 
     return {
         'detected_object_type': label,
@@ -238,6 +248,14 @@ def create_output_json(img, bbox):
         'bbox': {
             'coordinate1': p1,
             'coordinate2': p2
-        },
-        'anonymous_img' : img
+        }
     }
+
+def load_classes(namesfile):
+    """
+    Load class names for namesfile
+    """
+
+    fp = open(namesfile, "r")
+    names = fp.read().split("\n")
+    return names

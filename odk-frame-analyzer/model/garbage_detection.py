@@ -3,13 +3,15 @@ import argparse
 from model.darknet import Darknet
 import torch
 import logging
-from model.util import process_result, load_images, resize_image, cv_image2tensor, transform_result, create_batches,create_output_json, load_data_frame
+from model.util import process_result, load_images, resize_image, cv_image2tensor, transform_result, create_batches,create_output_json, load_data_frame, load_classes
 import math
 import pickle as pkl
 import os.path as osp
 from datetime import datetime
 import sys
 from torch.autograd import Variable
+import cv2
+import base64
 
 class GarbageImageClassifier:
     
@@ -61,75 +63,81 @@ class GarbageImageClassifier:
 
     # ----
 
-    def load_classes(namesfile):
-        fp = open(namesfile, "r")
-        names = fp.read().split("\n")
-        return names
-
-    # ----
 
     def detect_image(self,data_frame):
 
-        print('Loading input image(s)...')
+        # print('Loading input image(s)...')
         input_size = [int(self.model.net_info['height']), int(self.model.net_info['width'])]
         batch_size = int(self.model.net_info['batch'])
 
-        classes = load_classes("cfg/garb.names")
-        try:
-            imgs = [load_data_frame(data_frame)]
-            print('Input image(s) loaded')
+        curScriptPath = os.path.dirname(os.path.abspath(__file__)) # needed to keep track of the current location of current script ( although it is included somewhere else )
+
+
+        classes = load_classes( curScriptPath + "/cfg/garb.names")
+
+        imgs = [load_data_frame(data_frame)]
+        # print('Input image(s) loaded')
 
 
 
-            img_batches = create_batches(imgs, batch_size)
+        img_batches = create_batches(imgs, batch_size)
 
 
-            
-            print('Detecting...')
+        
+        print('Detecting...')
 
-            all_images_attributes = []
+        all_images_attributes = []
 
-            for batchi, img_batch in enumerate(img_batches):
-                start_time = datetime.now()
-                img_tensors = [cv_image2tensor(img, input_size) for img in img_batch]
-                img_tensors = torch.stack(img_tensors)
-                img_tensors = Variable(img_tensors)
-                if self.cuda:
-                    img_tensors = img_tensors.cuda()
-                detections = self.model(img_tensors, self.cuda).cpu()
-                detections = process_result(detections, self.obj_thresh, self.nms_thresh)
-                if len(detections) == 0:
-                    continue
+        for batchi, img_batch in enumerate(img_batches):
+            start_time = datetime.now()
+            img_tensors = [cv_image2tensor(img, input_size) for img in img_batch]
+            img_tensors = torch.stack(img_tensors)
+            img_tensors = Variable(img_tensors)
+            if self.cuda:
+                img_tensors = img_tensors.cuda()
+            detections = self.model(img_tensors, self.cuda).cpu()
+            detections = process_result(detections, self.obj_thresh, self.nms_thresh)
+            if len(detections) == 0:
+                continue
 
-                detections = transform_result(detections, img_batch, input_size)
+            detections = transform_result(detections, img_batch, input_size)
 
-                boxes = []
-                for detection in detections:
-                    boxes.append(create_output_json(img_batch,
-                                                    detection,
-                                                    colors,
-                                                    classes))
+            boxes = []
+            for detection in detections:
+                boxes.append(create_output_json(img_batch,
+                                                detection,classes))
 
-                images_attributes = {}
-                # images_attributes['img'] = "Foto"
-                images_attributes['frame_meta'] = {'width': img_batch[0].shape[1],
-                                                   'height': img_batch[0].shape[0]}
-                # print(images_attributes['frame_meta'])
-                images_attributes['detected_objects'] = boxes
+            images_attributes = {}
+            # images_attributes['img'] = "Foto"
+            images_attributes['frame_meta'] = {'width': img_batch[0].shape[1],
+                                               'height': img_batch[0].shape[0]}
+            # print(images_attributes['frame_meta'])
+            images_attributes['detected_objects'] = boxes
 
-                images_attributes['counts'] = {x: 0 for x in classes}
-                images_attributes['counts']['total'] = 0
 
-                for box in boxes:
-                    images_attributes['counts'][box['detected_object_type']] += 1
-                    images_attributes['counts']['total'] += 1
-                end_time = datetime.now()
-                print('Detection finished in %s' % (end_time - start_time))
-                images_attributes['ml_done_at'] = str(end_time)
-                images_attributes['ml_time_taken'] = str(end_time - start_time)
+            image = cv2.cvtColor(img_batch[0],cv2.COLOR_BGR2RGB)
+            retval, buffer =  cv2.imencode('.jpg',image)
 
-                all_images_attributes.append(images_attributes)
 
-            return all_images_attributes
-        except:
-            print('Error mlworker')
+
+            b64_image = base64.b64encode(buffer)
+
+
+            images_attributes['take_frame'] = {'img':'data:image/jpeg;base64,'+ b64_image.decode("utf-8") }
+
+            images_attributes['counts'] = {x: 0 for x in classes}
+            images_attributes['counts']['total'] = 0
+
+            for box in boxes:
+                images_attributes['counts'][box['detected_object_type']] += 1
+                images_attributes['counts']['total'] += 1
+            end_time = datetime.now()
+            print('Detection finished in %s' % (end_time - start_time))
+            images_attributes['ml_done_at'] = str(end_time)
+            images_attributes['ml_time_taken'] = str(end_time - start_time)
+
+            all_images_attributes.append(images_attributes)
+
+        if all_images_attributes == []:
+            return False
+        return all_images_attributes

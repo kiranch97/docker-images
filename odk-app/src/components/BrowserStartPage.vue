@@ -57,7 +57,7 @@ export default {
     // IF USER DONT HAVE PWA DOWNLOADED ON MOBILE, TABLET OR PC/LAPTOP DEVICE THEY CANT ACCESS THE VIDEO STREAM
     this.checkAppMode();
     // this.addToHs();
-
+    console.log("New app")
     let deferredPrompt;
     const addBtn = document.getElementById("add-button");
     addBtn.style.display = "none";

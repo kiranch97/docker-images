@@ -43,10 +43,11 @@ export default {
   watch: {
     websocketStreamState() {
       if (this.websocketStreamState == null || this.websocketStreamState === "off") {
+        clearInterval(this.fetchResults)
         this.fetchAnalysedResults();
         console.log("Fetch only once");
       } else if (this.websocketStreamState == "on") {
-        setInterval(this.fetchAnalysedResults, this.countFetchRate);
+        this.fetchResults = setInterval(this.fetchAnalysedResults, this.countFetchRate);
         console.log("Keep fetching");
       }
     }
@@ -74,7 +75,8 @@ export default {
         Authorization: "No Auth"
       },
       apiHttpUrl: process.env.VUE_APP_API_HTTP_URL,
-      countFetchRate: 1000
+      countFetchRate: 1000,
+      fetchResults: null
     };
   },
 

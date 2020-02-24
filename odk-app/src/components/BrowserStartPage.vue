@@ -6,7 +6,6 @@
     <div id="text-section">
       <p class="odk-title" id="title">Object Detection Kit</p>
       <p class="body-1">Zorg voor schone straten door te scannen tijdens het rijden</p>
-      <button id="add-button">Add to home screen</button>
       <p class="body-1">
         Please
         <span id="add-to-home">‘add to homescreen’</span> to continue
@@ -56,11 +55,7 @@ export default {
     // Init
     // IF USER DONT HAVE PWA DOWNLOADED ON MOBILE, TABLET OR PC/LAPTOP DEVICE THEY CANT ACCESS THE VIDEO STREAM
     this.checkAppMode();
-    // this.addToHs();
-    console.log("New app");
-    let deferredPrompt;
-    const addBtn = document.getElementById("add-button");
-    addBtn.style.display = "none";
+
 
   }
 };

@@ -79,7 +79,7 @@ export default {
           if (choiceResult.outcome === "accepted") {
             console.log("User accepted the A2HS prompt");
             window.addEventListener('appinstalled', () => {
-              window.close()
+              open(location, '_self').close()
             })
           } else {
             console.log("User dismissed the A2HS prompt");

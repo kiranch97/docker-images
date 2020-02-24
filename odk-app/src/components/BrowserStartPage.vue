@@ -6,6 +6,7 @@
     <div id="text-section">
       <p class="odk-title" id="title">Object Detection Kit</p>
       <p class="body-1">Zorg voor schone straten door te scannen tijdens het rijden</p>
+      <button id="add-button" @click="addToHs()">Add to home screen</button>
       <p class="body-1">
         Please
         <span id="add-to-home">‘add to homescreen’</span> to continue
@@ -32,15 +33,42 @@ export default {
         // if (process.env.VUE_APP_APP_MODE) {
         //   console.log("development mode");
         //   this.$router.push({ path: "/pwa" });
-        // } 
+        // }
       }
+    },
+    addToHs() {
+      // const addBtn = document.getElementById("add-button");
+
+      // addBtn.style.display = "none";
+      this.deferredPrompt.prompt();
+      // Wait for the user to respond to the prompt
+      this.deferredPrompt.userChoice.then(choiceResult => {
+        if (choiceResult.outcome === "accepted") {
+          console.log("User accepted the A2HS prompt");
+        } else {
+          console.log("User dismissed the A2HS prompt");
+        }
+        this.deferredPrompt = null;
+      });
     }
   },
   mounted() {
     // Init
     // IF USER DONT HAVE PWA DOWNLOADED ON MOBILE, TABLET OR PC/LAPTOP DEVICE THEY CANT ACCESS THE VIDEO STREAM
     this.checkAppMode();
-    // this.$router.push({ path: "/pwa" });
+    // this.addToHs();
+
+    let deferredPrompt;
+    const addBtn = document.getElementById("add-button");
+    addBtn.style.display = "none";
+
+    window.addEventListener("beforeinstallprompt", e => {
+      console.log("beforeinstall")
+      e.preventDefault();
+      deferredPrompt = e;
+      console.log(deferredPrompt)
+      addBtn.style.display = "block";
+    });
   }
 };
 </script>

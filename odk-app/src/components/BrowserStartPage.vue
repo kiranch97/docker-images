@@ -69,7 +69,7 @@ export default {
       console.log(deferredPrompt);
       addBtn.style.display = "block";
 
-      addBtn.addEventListener("click", e => {
+      addBtn.addEventListener("click", () => {
         // hide our user interface that shows our A2HS button
         addBtn.style.display = "none";
         // Show the prompt

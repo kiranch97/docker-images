@@ -6,6 +6,8 @@
     <div id="text-section">
       <p class="odk-title" id="title">Object Detection Kit</p>
       <p class="body-1">Zorg voor schone straten door te scannen tijdens het rijden</p>
+      <!-- <button id="add-button">Add to home screen</button> -->
+      <b-button id="add-button">Add to home screen</b-button>
       <p class="body-1">
         Please
         <span id="add-to-home">‘add to homescreen’</span> to continue
@@ -55,8 +57,33 @@ export default {
     // Init
     // IF USER DONT HAVE PWA DOWNLOADED ON MOBILE, TABLET OR PC/LAPTOP DEVICE THEY CANT ACCESS THE VIDEO STREAM
     this.checkAppMode();
+    // this.addToHs();
+    console.log("New app");
+    let deferredPrompt;
+    const addBtn = document.getElementById("add-button");
+    addBtn.style.display = "none";
 
+    window.addEventListener("beforeinstallprompt", e => {
+      e.preventDefault();
+      deferredPrompt = e;
+      addBtn.style.display = "block";
 
+      addBtn.addEventListener("click", () => {
+        // hide our user interface that shows our A2HS button
+        addBtn.style.display = "none";
+        // Show the prompt
+        deferredPrompt.prompt();
+        // Wait for the user to respond to the prompt
+        deferredPrompt.userChoice.then(choiceResult => {
+          if (choiceResult.outcome === "accepted") {
+            console.log("User accepted the A2HS prompt");
+          } else {
+            console.log("User dismissed the A2HS prompt");
+          }
+          deferredPrompt = null;
+        });
+      });
+    });
   }
 };
 </script>
@@ -110,7 +137,7 @@ export default {
 }
 
 #text-section :nth-child(2) {
-  margin-bottom: 3.75rem;
+  margin-bottom: 1.75rem;
 }
 
 #add-to-home {
@@ -124,9 +151,24 @@ export default {
 
 #intro-img {
   max-height: 426px;
+  width: 80%;
   object-fit: cover;
   margin-top: 2.375rem;
   margin-bottom: 2.375rem;
+}
+
+#add-button {
+  /* width: 18rem; */
+  /* height: 2.625rem; */
+  color: var(--second-purple-color) !important;
+  border: 2px solid var(--second-purple-color) !important;
+  font-family: "Open Sans", sans-serif !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.75rem;
+
 }
 
 @media (max-width: 1024px) and (orientation: portrait) {

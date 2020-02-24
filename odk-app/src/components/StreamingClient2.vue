@@ -5,7 +5,7 @@
       <canvas style="display: none;" id="canvas"></canvas>
     </div>
     <div id="container">
-      <stream-count2></stream-count2>
+      <stream-count2 :websocketStreamState="websocketStreamState"></stream-count2>
       <div id="stream-status">
         <div id="status-box">
           <div v-if="!recordToggle" class="blink-icon"></div>

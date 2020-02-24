@@ -37,6 +37,21 @@
 
 export default {
   name: "stream-count",
+
+  props: ["websocketStreamState"],
+
+  watch: {
+    websocketStreamState() {
+      if (this.websocketStreamState == null || this.websocketStreamState === "off") {
+        this.fetchAnalysedResults();
+        console.log("Fetch only once");
+      } else if (this.websocketStreamState == "on") {
+        setInterval(this.fetchAnalysedResults, this.countFetchRate);
+        console.log("Keep fetching");
+      }
+    }
+  },
+
   data() {
     return {
       swiperOption: {
@@ -65,6 +80,8 @@ export default {
 
   methods: {
     fetchAnalysedResults() {
+      console.log("Websocket Stream State:" + this.websocketStreamState);
+
       let curEndPointBase =
         this.apiHttpUrl + "/detected_objects?app_id={{APP_ID}}&day={{DATE}}";
 
@@ -124,7 +141,7 @@ export default {
       "=> Starting 'fetchAnalysedResults' with 'countFetchRate': " +
         this.countFetchRate
     );
-    setInterval(this.fetchAnalysedResults, this.countFetchRate);
+    // setInterval(this.fetchAnalysedResults, this.countFetchRate);
   }
 };
 </script>
@@ -187,14 +204,13 @@ export default {
   z-index: 5;
 }
 
-.count-fade{
+.count-fade {
   width: 100%;
   height: 100%;
   background: rgba(58, 34, 93, 0.5);
   /* background: rgba(0, 0, 0, 0.16); */
   border-radius: 50%;
   position: absolute;
-
 }
 
 #swiper {

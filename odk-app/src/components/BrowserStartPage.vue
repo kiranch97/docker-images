@@ -6,7 +6,7 @@
     <div id="text-section">
       <p class="odk-title" id="title">Object Detection Kit</p>
       <p class="body-1">Zorg voor schone straten door te scannen tijdens het rijden</p>
-      <button id="add-button" @click="addToHs()">Add to home screen</button>
+      <button id="add-button">Add to home screen</button>
       <p class="body-1">
         Please
         <span id="add-to-home">‘add to homescreen’</span> to continue
@@ -40,15 +40,15 @@ export default {
       // const addBtn = document.getElementById("add-button");
 
       // addBtn.style.display = "none";
-      deferredPrompt.prompt();
+      this.deferredPrompt.prompt();
       // Wait for the user to respond to the prompt
-      deferredPrompt.userChoice.then(choiceResult => {
+      this.deferredPrompt.userChoice.then(choiceResult => {
         if (choiceResult.outcome === "accepted") {
           console.log("User accepted the A2HS prompt");
         } else {
           console.log("User dismissed the A2HS prompt");
         }
-        deferredPrompt = null;
+        this.deferredPrompt = null;
       });
     }
   },
@@ -57,17 +57,33 @@ export default {
     // IF USER DONT HAVE PWA DOWNLOADED ON MOBILE, TABLET OR PC/LAPTOP DEVICE THEY CANT ACCESS THE VIDEO STREAM
     this.checkAppMode();
     // this.addToHs();
-    console.log("New app")
+    console.log("New app");
     let deferredPrompt;
     const addBtn = document.getElementById("add-button");
     addBtn.style.display = "none";
 
     window.addEventListener("beforeinstallprompt", e => {
-      console.log("beforeinstall")
+      console.log("beforeinstall");
       e.preventDefault();
       deferredPrompt = e;
-      console.log(deferredPrompt)
+      console.log(deferredPrompt);
       addBtn.style.display = "block";
+
+      addBtn.addEventListener("click", e => {
+        // hide our user interface that shows our A2HS button
+        addBtn.style.display = "none";
+        // Show the prompt
+        deferredPrompt.prompt();
+        // Wait for the user to respond to the prompt
+        deferredPrompt.userChoice.then(choiceResult => {
+          if (choiceResult.outcome === "accepted") {
+            console.log("User accepted the A2HS prompt");
+          } else {
+            console.log("User dismissed the A2HS prompt");
+          }
+          deferredPrompt = null;
+        });
+      });
     });
   }
 };

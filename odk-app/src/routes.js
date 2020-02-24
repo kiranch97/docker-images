@@ -1,5 +1,5 @@
 // import Onboarding from './components/Onboarding.vue';
-import StreamingClient from './components/StreamingClient';
+import StreamingClient2 from './components/StreamingClient2';
 // import DeviceLogin from './components/DeviceLogin.vue';
 import BrowserStartPage from './components/BrowserStartPage.vue';
 import PwaStartPage from './components/PwaStartPage.vue';
@@ -17,7 +17,7 @@ export const routes = [
     {
         path: '/client',
         name : 'streaming-client',
-        component: StreamingClient
+        component: StreamingClient2
     },
     // {
     //     path: '/login',

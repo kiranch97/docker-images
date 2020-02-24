@@ -1,13 +1,26 @@
 <template>
-  <div>
+  <div id="main">
     <div class="video-stream">
       <video id="video" autoplay="true"></video>
       <canvas style="display: none;" id="canvas"></canvas>
     </div>
-    <div class="container-grid">
-      <div class="item-1">
-        <div class="stream-toggle-settings">
-          <!-- <b-switch v-model="isSwitched" class="stream-switch" size="is-large"></b-switch> -->
+    <div id="container">
+      <stream-count2></stream-count2>
+      <div id="stream-status">
+        <div id="status-box">
+          <div v-if="!recordToggle" class="blink-icon"></div>
+          <DefaultLoader :loading="disconnectState" id="loader" :size="spinnersize" color="white" />
+          <stream-time id="stream-timer" ref="streamtimer"></stream-time>
+        </div>
+        <transition name="fade">
+          <div id="error-prompt" v-if="disconnectState">
+            <p>Geen internet verbinding</p>
+          </div>
+        </transition>
+      </div>
+      <div id="stream-controls">
+        <!-- CAMERA FLIP BUTTON-->
+        <div id="stream-camera-flip">
           <img
             v-if="cameraIconActive"
             class="stream-flip"
@@ -15,43 +28,31 @@
             @click="flipCamera()"
           />
         </div>
-        <div class="stream-start-settings">
-          <button
-            v-show="isSwitched"
-            v-if="recordToggle"
-            @click="startStream()"
-            class="play-pause-circle"
-          >
-            <div class="inner-circle"></div>
-          </button>
-          <button v-else @click="pauseStream()" class="pause-box">
-            <div class="inner-button"></div>
-          </button>
+        <div id="stream-start-settings">
+          <!-- MODE SWITCH BUTTON -->
+          <b-switch v-model="isAuto" class="stream-switch" size="is-large">
+            <p id="auto-mode">A</p>
+            <p id="manual-mode">M</p>
+          </b-switch>
+          <!-- PLAY/PAUSE BUTTON -->
+          <div v-if="!isAuto">
+            <button v-if="recordToggle" @click="startStream()" class="play-pause-circle">
+              <div class="inner-circle"></div>
+            </button>
+            <button v-else @click="pauseStream()" class="pause-box">
+              <div class="inner-button"></div>
+            </button>
+          </div>
         </div>
-        <!-- <stream-analyzer></stream-analyzer> -->
-      </div>
-      <div class="item-2"></div>
-      <div class="item-3">
-        <p
-          v-show="streamStatusToggle"
-          id="stream-status"
-          v-bind:class="{
-            'stream-status': streamStatusToggle,
-            'stream-status-paused': streamStatusTogglePause,
-            'stream-status-disconnected': streamStatusToggleDisconnect,
-          }"
-        >Streaming</p>
-        <stream-time v-show="toggleTimer" class="stream-timer" ref="streamtimer"></stream-time>
-      </div>
-      <div class="item-4">
-        <stream-count></stream-count>
+        <div style="height: 30%;"></div>
       </div>
     </div>
   </div>
 </template>
 <script>
 import StreamTime from "./StreamTime";
-import StreamCount from "./StreamCount";
+import StreamCount2 from "./StreamCount2";
+import { DefaultLoader } from "vue-spinners-css";
 //import { eventBus } from "../main";
 // import StreamAnalyzedFrame from "./StreamAnalyzedFrame";
 
@@ -69,12 +70,11 @@ export default {
       //PLAY/PAUSE BUTTON
       recordToggle: true,
       //STREAM STATUS STATES
-      streamStatusToggle: false,
-      streamStatusTogglePause: false,
-      streamStatusToggleDisconnect: false,
-      toggleTimer: false,
+      disconnectState: false,
+      spinnersize: 25,
       //AUTO/MANUAL MODE SWITCH
-      isSwitched: true,
+      isAuto: null,
+
       //FLIP CAMERA
       cameraIconActive: true,
 
@@ -115,6 +115,7 @@ export default {
       // ---- image files properties
       positionLa: null,
       positionLo: null,
+      deviceSpeed: null,
       timeFormat: null,
       todayDate: null,
       appId: null,
@@ -128,19 +129,65 @@ export default {
   components: {
     // "stream-details": StreamDetails,
     "stream-time": StreamTime,
-    "stream-count": StreamCount
+    "stream-count2": StreamCount2,
+    DefaultLoader
     // "stream-analyzer": StreamAnalyzedFrame
     // "device-login": DeviceLogin
   },
 
   // ----
 
-  computed: {},
+  computed: {
+    combined() {
+      //Cache geolocation with computed properties
+      let currentLocation = {
+        lo: this.positionLo,
+        la: this.positionLa
+      };
+      return currentLocation;
+    }
+  },
+
+  // ----
+
+  watch: {
+    //watching the computed combined.currentLocation property
+    // combined(newValue) {
+    //   console.log("GPS position changed");
+    //   console.log(newValue);
+
+    //   setTimeout(()=> {
+    //     if(this.deviceSpeed == null || 0 && this.isAuto){
+    //       console.log("Hold Streaming")
+    //     }
+    //   },3000)
+    // },
+
+    // ----
+
+    isAuto() {
+      if (this.isAuto) {
+        document.getElementById("stream-start-settings").style.justifyContent =
+          "flex-end";
+        console.log("Auto mode ON But still in development");
+        // this.startStream();
+      } else {
+        document.getElementById("stream-start-settings").style.justifyContent =
+          "flex-end";
+        console.log("Manual mode ON");
+      }
+    }
+  },
 
   // ==== methods ====
 
   methods: {
     setup: function() {
+      //Check User_Type . If "waste_department" -> Automode, if testuser -> Manual mode
+      localStorage.userType === "waste_department"
+        ? (this.isAuto = true)
+        : (this.isAuto = false);
+
       // set current camera orientation
       this.currentCameraOption = this.prefCameraOption;
       this.video = document.getElementById("video");
@@ -151,21 +198,17 @@ export default {
     // ----
 
     startStream: function() {
+      //ADD SCREENLOCK ACTIVATION WHILE STREAMING
+
       //Setup connection with Websocket server
       this.setupWebSockets();
       //Change circle to pause button when stream starts
       this.recordToggle = false;
       //Hide camera flip so user can switch orientation while streaming
       this.cameraIconActive = false;
-      //Show the Streaming status text and timer
-      this.streamStatusToggle = true;
-      this.toggleTimer = true;
       //$refs is used when calling functions from child components (In this case to start the timer function)
       this.$refs.streamtimer.start();
-      // Make sure other stream status states are off while streaming
-      this.streamStatusTogglePause = false;
-      this.streamStatusToggleDisconnect = false;
-      document.getElementById("stream-status").innerHTML = "Streaming";
+      //document.getElementById("stream-status").innerHTML = "Streaming";
       this.startTimeTrigger();
     },
 
@@ -274,15 +317,8 @@ export default {
         this.recordToggle = true;
         //Show camera flip icon to user when video stream is paused
         this.cameraIconActive = true;
-        //Show Stream paused text and stop timer
-        this.streamStatusToggle = false;
-        this.$refs.streamtimer.stop();
+        this.$refs.streamtimer.reset();
         //Change stream status text to Stream Paused
-        document.getElementById("stream-status").innerHTML = "Stream Paused";
-        //Set stream status pause state active
-        this.streamStatusToggle = true;
-        this.streamStatusTogglePause = true;
-
         //Create object with required data
         let data = {
           app_id: this.appId,
@@ -301,9 +337,23 @@ export default {
 
     // ----
 
+    holdStream() {
+      if (
+        this.websocketConnection.readyState === this.websocketConnection.OPEN
+      ) {
+        clearInterval(this.intervalHandler);
+        console.log("No messages sent anymore");
+        this.$refs.streamtimer.stop();
+      }
+    },
+
+    // ----
+
     updatePosition: function(position) {
       this.positionLa = position.coords.latitude;
       this.positionLo = position.coords.longitude;
+      this.deviceSpeed = position.coords.speed
+      // console.log("Speed: " + position.coords.speed)
     },
 
     // ----
@@ -379,12 +429,10 @@ export default {
         this.recordToggle = false;
         //Start timer function
         this.$refs.streamtimer.start();
-        //Make sure other stream status states are false
-        this.streamStatusToggleDisconnect = false;
-        this.streamStatusTogglePause = false;
-        this.streamStatusToggle = true;
-        //Change stream status text to Streaming
-        document.getElementById("stream-status").innerHTML = "Streaming";
+
+        this.disconnectState = false;
+        document.getElementById("status-box").style.background =
+          "rgba(76, 71, 85, 0.8)";
       }
 
       // console.log(e);
@@ -395,18 +443,17 @@ export default {
     receiveWebSocketsMsgOnClose: function(e) {
       console.log("Websocket connection disconnected");
       console.log(e);
-      //Set stream status state Disconnected to active
-      this.streamStatusToggleDisconnect = true;
       //Set Play/Pause button to inital state
       this.recordToggle = true;
-      //Change stream status text to Disconnected
-      document.getElementById("stream-status").innerHTML = "Disconnected";
       this.$refs.streamtimer.reset();
       //Retry to make setup Websocket connection every 5 seconds
       if (this.websocketStreamState === this.streamState.OFF) {
         console.log("Stream is already off");
+        this.disconnectState = false;
       } else {
         this.websocketConnection = null;
+        this.disconnectState = true;
+        document.getElementById("status-box").style.background = "#c83737";
         setTimeout(this.setupWebSockets, 5000);
       }
     },
@@ -464,7 +511,8 @@ export default {
     checkIdNull: function() {
       if (
         typeof localStorage.appId == "undefined" ||
-        localStorage.appId == null
+        localStorage.appId == null ||
+        !localStorage.userType
       ) {
         this.$router.push("/pwa");
         console.log("id undefined");
@@ -488,72 +536,7 @@ export default {
 
       this.stopMediaTracks(this.currentStream);
       this.showStream();
-    },
-    // checkInternetState: function() {
-    //   if (window.navigator.onLine) {
-    //     this.hasInternetConnection = true;
-    //     this.connectionRetrieved = true;
-    //     console.log("Connection online");
-    //     // if stream was on: continue stream
-    //     this.continueStream();
-    //   } else {
-    //     //If app online reset variables
-    //     this.hasInternetConnection = false;
-    //     this.connectionRetrieved = false;
-    //     //Try to reconnect with websocket server
-    //     this.retryStream();
-    //     console.log("Connection Offline");
-    //   }
-    // },
-    // retryStream() {
-    //   //Check if websocket was on and connection is offline and if connection hasn't been retrieved yet
-    //   setTimeout(() => {
-    //     if (
-    //       this.websocketStreamState === this.streamState.ON &&
-    //       !this.hasInternetConnection &&
-    //       !this.connectionRetrieved
-    //     ) {
-    //       //Break current stream()
-    //       this.pauseStream();
-    //       //Make new websocket Connection
-    //       let websocketUrl = this.apiWebsocketUrl + "/stream";
-    //       this.websocketConnection = new WebSocket(websocketUrl);
-    //       this.websocketConnection.onmessage = this.receiveWebSocketsMsg;
-    //       this.websocketConnection.onopen = this.receiveWebSocketsMsgOnOpen;
-    //       this.connectOnce();
-    //     } else {
-    //       console.log("Still trying");
-    //     }
-    //   }, 2000);
-    // },
-    // continueStream() {
-    //   //If stream exsits keep streaming. if not start new one.
-    //   if (
-    //     this.websocketStreamState === this.streamState.ON &&
-    //     this.connectionRetrieved
-    //   ) {
-    //     console.log("Continue Stream");
-    //     this.receiveWebSocketsMsgOnOpen()
-    //   } else if (
-    //     this.websocketStreamState === this.streamState.OFF &&
-    //     !this.connectionRetrieved
-    //   ) {
-    //     console.log("Stream already off");
-    //   } else {
-    //     console.log(this.websocketStreamState, this.connectionRetrieved);
-    //   }
-    // },
-    // connectOnce() {
-    //   if (
-    //     this.websocketConnection.readyState === this.websocketConnection.OPEN
-    //   ) {
-    //     this.connectionRetrieved = true;
-    //     this.websocketStreamState = this.streamState.ON;
-    //   } else {
-    //     // this.websocketStreamState = this.streamState.OFF;
-    //     console.log("Keep trying");
-    //   }
-    // }
+    }
   },
 
   mounted: function() {
@@ -568,15 +551,6 @@ export default {
     //IF USER DOENST HAVE ID REDIRECT THEM TO PWA START PAGE
     this.checkIdNull();
 
-
-    //Set interval when connection is offline
-    //Change stream state to OFF and close websocket connection
-    //When user has access to internet again. and iniates a new websocket stream, Clear the interval
-    //Check the user stream state. If user was streaming, restart stream. If not dont do anything.
-
-
-    // this.websocketStreamState = this.streamState.OFF;
-    // setInterval(this.checkInternetState, 3000);
   }
 };
 </script>
@@ -596,52 +570,179 @@ body {
   margin: 0;
 }
 
-.container-grid {
-  display: grid;
-  grid-template-rows: 1fr;
-  grid-template-columns: 40% 1fr 15%;
-  width: 100vw;
-  height: 100vh;
-  position: absolute;
-  overflow: hidden;
-}
-
-.item-1 {
-  display: grid;
-  grid-template-rows: 40% 20% 40%;
-  padding: 0.9375rem; /* 15px */
-}
-
-.stream-toggle-settings {
+#main {
   display: flex;
-  justify-content: space-between;
-  align-content: center;
+  justify-content: center;
+  position: relative;
+  top: 3rem;
+}
+
+#container {
+  width: 896px;
+  height: 426px;
+  position: relative;
+  z-index: 5;
+  margin: 0 auto;
+  overflow: hidden;
+  display: flex;
+}
+
+#stream-results {
+  width: 20%;
+  height: 426px;
+  /* border: 2px solid yellow; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#stream-status {
+  width: 60%;
+  height: 426px;
+  /* border: 2px solid red; */
+  display: flex;
+  justify-content: center;
+}
+
+#status-box {
+  width: 10rem;
+  height: 2rem;
+  border-radius: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(76, 71, 85, 0.8);
+  position: relative;
+  top: 1rem;
+}
+
+#error-prompt {
+  width: 14rem;
+  height: 2.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--white-color);
+  position: absolute;
+  top: 4.5rem;
+  font-weight: 600;
+  border-radius: 10px;
+}
+
+.fade-enter-active {
+  animation: slide-in-top 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.fade-enter,
+.fade-leave-to {
+  animation: slide-in-top 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) reverse;
+}
+
+@keyframes slide-in-top {
+  0% {
+    -webkit-transform: translateY(-1000px);
+    transform: translateY(-1000px);
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+#stream-controls {
+  width: 20%;
+  height: 426px;
+  /* border: 2px solid blue; */
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+}
+
+#stream-camera-flip {
+  display: flex;
+  /* border: 2px solid orange; */
+  height: 30%;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 33.891px;
+
+  /* justify-content: space-between;
+  align-content: center; */
+}
+
+#stream-start-settings {
+  display: flex;
+  height: 40%;
+  /* border: 2px solid yellow; */
+  position: relative;
+  justify-content: flex-end;
+  align-items: center;
+  right: 20px;
+
+  /* align-items: center; */
 }
 
 .stream-switch {
   justify-self: center;
-  align-self: start;
-  transform: rotate(180deg);
+  /* align-self: start; */
+  transition: 0.5 all;
+  transform: rotate(90deg);
+}
+
+#manual-mode {
+  position: absolute;
+  /* color: white; */
+  font-weight: 600;
+  transform: rotate(-90deg);
+  left: 0.7rem;
+  bottom: 0.45rem;
+  font-size: 1rem;
+  color: var(--main-purple-color);
+
+  /* right: 2.6rem; */
+}
+
+#loader {
+  position: absolute;
+  left: 0.7rem;
+  height: 18px;
+  width: 18px;
+}
+
+#auto-mode {
+  /* display: flex; */
+  position: absolute;
+  font-weight: 600;
+  color: var(--main-purple-color);
+  transform: rotate(-90deg);
+  left: 2rem;
+  bottom: 0.45rem;
+  font-size: 1rem;
+  right: 0.6rem;
+}
+
+/deep/ .switch input[type="checkbox"]:checked + .check {
+  background: rgba(255, 255, 255, 0.6) !important;
+  /* opacity: 0.5;  */
+}
+
+/deep/ .switch input[type="checkbox"]:focus:checked + .check {
+  box-shadow: none;
 }
 
 .stream-flip {
   width: 1.5rem;
   height: 0.9969375rem;
-  transform: rotate(90deg);
-  margin-top: 0.625rem;
-  margin-right: -0.375rem;
-}
-
-.stream-start-settings {
-  display: flex;
-  align-items: center;
 }
 
 .play-pause-circle {
-  width: 4rem;
-  height: 4rem;
+  width: 3.2rem;
+  height: 3.2rem;
   border-radius: 50%;
-  border: 2px solid white;
+  border: 4px solid white;
   background: none;
   transition: all 0.5s;
   display: flex;
@@ -655,25 +756,25 @@ body {
   height: 2rem;
   border-radius: 50%;
   outline: none;
+  opacity: 0.5;
   background: white;
   transition: all 0.5s;
 }
 
 .inner-button {
-  width: 2rem;
-  height: 2rem;
+  width: 1.5rem;
+  height: 1.5rem;
   border-radius: 20%;
-  background: white;
   transition: all 0.5s;
   background: #db1f48;
 }
 
 .pause-box {
-  width: 4rem;
-  height: 4rem;
+  width: 3.2rem;
+  height: 3.2rem;
   outline: none;
   border-radius: 50%;
-  border: 2px solid white;
+  border: 4px solid white;
   background: none;
   transition: all 0.5s;
   position: relative;
@@ -683,104 +784,29 @@ body {
   align-items: center;
 }
 
-.item-3 {
-  justify-content: center;
-  display: grid;
-  grid-template-rows: 1fr 1fr;
-  padding: 1.875rem;
-}
-
-.stream-status {
-  align-self: start;
-  margin-top: 3rem;
-  transform: rotate(90deg);
-  font-size: 18px;
-  color: #db1f48;
-  justify-self: center;
-  width: 8.125rem;
-  /* text-shadow: 1px 1px 5px #000; */
-}
-
-.stream-status::before {
-  content: "";
-  width: 15px;
-  height: 15px;
-  background: url("../assets/dot.png");
-  background-repeat: no-repeat;
+.blink-icon {
   position: absolute;
-  top: 0.5rem;
-  left: 0.5rem;
+  z-index: 10;
+  left: 1.3rem;
+  box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  width: 0.6rem;
+  height: 0.6rem;
+  background: var(--error-color);
   -webkit-animation: blink 1.5s infinite both;
   animation: blink 1.5s infinite both;
 }
 
-.stream-status-paused {
-  align-self: start;
-  margin-top: 3rem;
-  transform: rotate(90deg);
+#stream-timer {
   color: white;
-  font-size: 18px;
-  justify-self: center;
-  width: 8.125rem;
-  /* text-shadow: 1px 1px 5px #000; */
-}
-
-.stream-status-paused::before {
-  content: "";
-  width: 15px;
-  height: 15px;
-  background: url("../assets/pause.png");
-  background-repeat: no-repeat;
-  position: absolute;
-  top: 0.5rem;
-  left: -1rem;
-}
-
-.stream-status-disconnected {
-  align-self: start;
-  margin-top: 3rem;
-  transform: rotate(90deg);
-  font-size: 18px;
-  color: white;
-  justify-self: center;
-  width: 8.125rem;
-}
-
-.stream-status-disconnected::before {
-  content: "";
-  width: 15px;
-  height: 15px;
-  background: url("../assets/pause.png");
-  background-repeat: no-repeat;
-  position: absolute;
-  top: 0.5rem;
-  left: -1rem;
-}
-
-.stream-timer {
-  transform: rotate(90deg);
-  justify-self: center;
-  align-self: end;
-  color: white;
-  font-size: 18px;
-  text-shadow: 1px 1px 5px #000;
-}
-
-.item-4 {
-  grid-column-start: 1;
-  grid-column-end: 4;
-  height: 15vh;
-  background: #3a225d;
-  opacity: 0.8;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 80%) 20%;
+  font-size: 16px;
+  font-weight: 600;
+  text-shadow: 0px 2px 3px rgba(0, 0, 0, 0.6);
 }
 
 .video-stream {
   position: absolute;
-  width: 100vw !important;
-  height: 100vh !important;
-  /* z-index: 0; */
+  width: 900px !important;
   overflow: hidden !important;
 }
 
@@ -799,21 +825,6 @@ body {
 .stream-counts {
   transform: rotate(90deg);
   color: white;
-}
-
-.total-counts {
-  font-size: 2.5rem;
-  color: white;
-}
-
-.count-box-one {
-  display: flex;
-  justify-content: space-around;
-  margin-right: 2rem;
-}
-
-.count-box-two {
-  align-self: center;
 }
 
 video {
@@ -844,18 +855,8 @@ video {
 }
 
 @media (max-width: 1024px) and (orientation: landscape) {
-  .container-grid {
-    transform: rotate(-90deg);
-    transform-origin: top right;
-    width: 100vh;
-    height: 100vw;
-    left: -100vh;
-  }
-
-  .item-4 {
-    grid-column-start: 1;
-    grid-column-end: 4;
-    height: 15vw;
+  #main {
+    top: 0;
   }
 
   .video-stream {
@@ -866,13 +867,41 @@ video {
     overflow: hidden;
   }
 
+  #stream-status {
+    height: 100vh;
+  }
+
+  #stream-controls {
+    height: 100vh;
+  }
+
   #video {
     width: 100vw !important;
-    bottom: 0;
+    /* bottom: 0; */
   }
 }
 
 @media (max-width: 1024px) and (orientation: portrait) {
+  #main {
+    top: 0;
+  }
+
+  /* #container {
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+  } */
+
+  #stream-status {
+    height: 60%;
+    width: 100%;
+  }
+
+  #stream-controls {
+    height: 20%;
+    width: 100%;
+  }
+
   .video-stream {
     position: absolute;
     width: 100vw !important;
@@ -883,7 +912,7 @@ video {
 
   #video {
     transform: rotate(90deg);
-    right: 200px;
+    right: 350px;
     width: auto !important;
     height: 100% !important;
   }

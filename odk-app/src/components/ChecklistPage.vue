@@ -60,7 +60,7 @@
               />
             </g>
           </svg>
-          Zet GPS locatie aan
+          GPS-locatie inschakelen
         </b-button>
 
         <b-button
@@ -88,7 +88,7 @@
               />
             </g>
           </svg>
-          Zet Camera aan
+          Camera inschakelen
         </b-button>
       </div>
       <p class="body-1" id="title">Als u deze stappen niet volgt, zal u ODK niet kunnen gebruiken</p>

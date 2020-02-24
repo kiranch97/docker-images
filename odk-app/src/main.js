@@ -8,8 +8,9 @@ import './registerServiceWorker'
 import 'buefy/dist/buefy.css'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
 import 'swiper/dist/css/swiper.css'
-import DrawerLayout from 'vue-drawer-layout'
 import VieOtpInput from "@bachdgvn/vue-otp-input";
+import * as VueSpinnersCss from "vue-spinners-css";
+
 // import { makeServer } from './server'
 
 // if(process.env.NODE_ENV == "development") {
@@ -29,7 +30,7 @@ const router = new VueRouter({
 });
 
 Vue.config.productionTip = false
-Vue.use(DrawerLayout)
+Vue.use(VueSpinnersCss)
 Vue.use(Vuelidate)
 Vue.use(Buefy)
 Vue.use(VueRouter);

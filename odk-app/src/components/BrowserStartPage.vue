@@ -152,7 +152,7 @@ export default {
 #intro-img {
   max-height: 426px;
   width: 80%;
-  object-fit: cover;
+  object-fit: contain;
   margin-top: 2.375rem;
   margin-bottom: 2.375rem;
 }

@@ -49,10 +49,10 @@ export default {
         freeMode: true
       },
       /// -------
-      binCount: 13,
-      trashCount: 200,
-      cardboardCount: 4,
-      totalCount: 51,
+      binCount: 0,
+      trashCount: 0,
+      cardboardCount: 0,
+      totalCount: 0,
       appId: null,
       requestHeaders: {
         "Content-Type": "application/json",

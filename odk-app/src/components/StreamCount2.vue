@@ -4,36 +4,18 @@
       <p class="total-counts">{{ totalCount }}</p>
     </div>
     <swiper id="swiper" :options="swiperOption">
-      <swiper-slide class="swiper-item">
-        <img class="icons" src="../assets/objects/Cardboard.png" />
-        <p v-if="cardboardCount > 0" class="count">{{ cardboardCount }}</p>
-        <div :class="{ 'count-fade': cardboardCount }"></div>
+      <swiper-slide v-for="item in orderSwiperItems" v-bind:key="item.id" class="swiper-item">
+        <img class="icons" :src="require(`../assets/objects/${item.itemPicture}.png`)" />
+        <p v-if="item.count > 0" class="count">{{ item.count }}</p>
+        <div :class="{ 'count-fade': item.count }"></div>
       </swiper-slide>
-      <swiper-slide class="swiper-item">
-        <img class="icons" src="../assets/objects/garbage-bag.png" />
-        <p v-if="trashCount > 0" class="count">{{ trashCount }}</p>
-        <div :class="{ 'count-fade': trashCount }"></div>
-      </swiper-slide>
-      <swiper-slide class="swiper-item">
-        <img class="icons" src="../assets/objects/Garbage-bins.png" />
-        <p v-if="binCount > 0" class="count">{{ binCount }}</p>
-        <div :class="{ 'count-fade': binCount }"></div>
-      </swiper-slide>
-      <swiper-slide class="swiper-item">
-        <img class="icons" src="../assets/objects/Christmas-tree.png" />
-      </swiper-slide>
-      <swiper-slide class="swiper-item">
-        <img class="icons" src="../assets/objects/Construction-container.png" />
-      </swiper-slide>
-      <swiper-slide class="swiper-item">
-        <img class="icons" src="../assets/objects/Matresses.png" />
-      </swiper-slide>
-      <div class="swiper-pagination" slot="pagination"></div>
+      <!-- <div class="swiper-pagination" slot="pagination"></div> -->
     </swiper>
   </div>
 </template>
 <script>
 // import { eventBus } from "../main";
+import _ from "lodash";
 
 export default {
   name: "stream-count",
@@ -42,19 +24,24 @@ export default {
 
   watch: {
     websocketStreamState() {
-      if (this.websocketStreamState == null || this.websocketStreamState === "off") {
-        clearInterval(this.fetchResults)
+      if (
+        this.websocketStreamState == null ||
+        this.websocketStreamState === "off"
+      ) {
+        clearInterval(this.fetchResults);
         this.fetchAnalysedResults();
-        console.log("Fetch only once");
       } else if (this.websocketStreamState == "on") {
-        this.fetchResults = setInterval(this.fetchAnalysedResults, this.countFetchRate);
-        console.log("Keep fetching");
+        this.fetchResults = setInterval(
+          this.fetchAnalysedResults,
+          this.countFetchRate
+        );
       }
     }
   },
 
   data() {
     return {
+      // ----
       swiperOption: {
         direction: "vertical",
         pagination: {
@@ -64,7 +51,7 @@ export default {
         spaceBetween: 15,
         freeMode: true
       },
-      /// -------
+      // ----
       binCount: 0,
       trashCount: 0,
       cardboardCount: 0,
@@ -80,10 +67,41 @@ export default {
     };
   },
 
+  computed: {
+    orderSwiperItems: function() {
+      let swiperItems = [
+        {
+          itemPicture: "Cardboard",
+          count: this.cardboardCount
+        },
+        {
+          itemPicture: "Garbage-bag",
+          count: this.trashCount
+        },
+        {
+          itemPicture: "Garbage-bins",
+          count: this.binCount
+        },
+        {
+          itemPicture: "Christmas-tree",
+          count: 0
+        },
+        {
+          itemPicture: "Construction-container",
+          count: 0
+        },
+        {
+          itemPicture: "Matresses",
+          count: 0
+        }
+      ];
+
+      return _.orderBy(swiperItems, "count", "desc");
+    }
+  },
+
   methods: {
     fetchAnalysedResults() {
-      console.log("Websocket Stream State:" + this.websocketStreamState);
-
       let curEndPointBase =
         this.apiHttpUrl + "/detected_objects?app_id={{APP_ID}}&day={{DATE}}";
 
@@ -101,17 +119,12 @@ export default {
         .then(results => {
           if (results.length == 0) return;
 
-          let curScope = this;
+          this.binCount = results.detected_objects_by_type.container_small || 0;
+          this.trashCount = results.detected_objects_by_type.garbage_bag || 0;
+          this.cardboardCount = results.detected_objects_by_type.cardboard || 0;
 
-          curScope.binCount =
-            results.detected_objects_by_type.container_small || 0;
-          curScope.trashCount =
-            results.detected_objects_by_type.garbage_bag || 0;
-          curScope.cardboardCount =
-            results.detected_objects_by_type.cardboard || 0;
-
-          curScope.totalCount =
-            curScope.binCount + curScope.trashCount + curScope.cardboardCount;
+          this.totalCount =
+            this.binCount + this.trashCount + this.cardboardCount;
         })
         .catch(er => {
           console.log("==> Error occured in 'fetchAnalysedResults':" + er);
@@ -131,6 +144,7 @@ export default {
       if (i < 10) {
         i = "0" + i;
       }
+
       return i;
     }
   },
@@ -139,19 +153,16 @@ export default {
     this.appId = localStorage.appId;
     this.userType = localStorage.userType;
 
-    console.log(
-      "=> Starting 'fetchAnalysedResults' with 'countFetchRate': " +
-        this.countFetchRate
-    );
-    // setInterval(this.fetchAnalysedResults, this.countFetchRate);
+    // Fetch once when landing
+    this.fetchAnalysedResults();
   }
 };
 </script>
 <style>
 .count-box-one {
+  margin-right: 2rem;
   display: flex;
   justify-content: space-around;
-  margin-right: 2rem;
 }
 
 .count-box-two {
@@ -159,41 +170,38 @@ export default {
 }
 
 .stream-counts {
+  color: var(--white-color);
   transform: rotate(90deg);
-  color: white;
 }
 
 #stream-results {
-  width: 15%;
-  height: 426px;
-  /* border: 2px solid yellow; */
+  width: 50px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: flex-start !important;
-  /* align-items: center; */
 }
 
 #stream-total {
   width: 50px;
-  height: 15%;
+  height: 50px;
+  background: var(--main-purple-color);
+  border-bottom-right-radius: 50%;
+  border-bottom-left-radius: 50%;
+  z-index: 2;
   display: flex;
   justify-content: center;
   align-items: center;
-  /* border: 2px solid black; */
-  background: var(--main-purple-color);
-  border-bottom-right-radius: 45%;
-  border-bottom-left-radius: 45%;
 }
 
 .total-counts {
-  font-size: 2rem;
-  color: white;
+  font-size: 1.5rem;
+  color: var(--white-color);
 }
 
 .icons {
-  height: 2rem;
   width: 2rem;
-  /* opacity: 0.3; */
+  height: 2rem;
 }
 
 .count {
@@ -202,50 +210,32 @@ export default {
   right: 0;
   font-weight: 700;
   font-size: 1.5rem;
-  color: white;
-  z-index: 5;
+  color: var(--white-color);
+  z-index: 1;
 }
 
 .count-fade {
+  position: absolute;
   width: 100%;
   height: 100%;
   background: rgba(58, 34, 93, 0.5);
-  /* background: rgba(0, 0, 0, 0.16); */
   border-radius: 50%;
-  position: absolute;
 }
 
 #swiper {
-  /* border: 2px solid green; */
-  height: 80%;
-  padding-top: 1rem;
-}
-
-/deep/ .swiper-wrapper {
-  justify-content: space-between;
+  position: absolute;
+  height: 100vh;
+  padding-top: 4rem;
+  z-index: 1;
 }
 
 .swiper-item {
   width: 50px !important;
   height: 50px !important;
+  border-radius: 50%;
+  background: var(--white-color);
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 50%;
-  background: white;
-}
-
-@media (max-width: 1024px) and (orientation: landscape) {
-  #stream-results {
-    height: 20%;
-    width: 100%;
-  }
-}
-
-@media (max-width: 1024px) and (orientation: portrait) {
-  #stream-results {
-    height: 20%;
-    width: 100%;
-  }
 }
 </style>

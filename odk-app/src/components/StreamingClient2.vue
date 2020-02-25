@@ -82,7 +82,7 @@ export default {
       SETTINGS: {
         minImageWidth: 608,
         minImageHeight: 608,
-        TAKE_PICTURE_EVERY_MS: 1000
+        TAKE_PICTURE_EVERY_MS: 333
       },
       // ---- end settings ----
 
@@ -161,22 +161,7 @@ export default {
     //       console.log("Hold Streaming")
     //     }
     //   },3000)
-    // },
-
-    // ----
-
-    isAuto() {
-      if (this.isAuto) {
-        document.getElementById("stream-start-settings").style.justifyContent =
-          "flex-end";
-        console.log("Auto mode ON But still in development");
-        // this.startStream();
-      } else {
-        document.getElementById("stream-start-settings").style.justifyContent =
-          "flex-end";
-        console.log("Manual mode ON");
-      }
-    }
+    // }
   },
 
   // ==== methods ====
@@ -318,20 +303,6 @@ export default {
         //Show camera flip icon to user when video stream is paused
         this.cameraIconActive = true;
         this.$refs.streamtimer.reset();
-        //Change stream status text to Stream Paused
-        //Create object with required data
-        let data = {
-          app_id: this.appId,
-          user_type: this.userType,
-          lng: this.positionLo,
-          lat: this.positionLa,
-          timestamp: this.timeFormat,
-          img: false
-        };
-        let payload = data;
-
-        //Transform data payload to JSON and send to Websocket server
-        this.websocketConnection.send(JSON.stringify(payload));
       }
     },
 
@@ -352,7 +323,7 @@ export default {
     updatePosition: function(position) {
       this.positionLa = position.coords.latitude;
       this.positionLo = position.coords.longitude;
-      this.deviceSpeed = position.coords.speed
+      this.deviceSpeed = position.coords.speed;
       // console.log("Speed: " + position.coords.speed)
     },
 
@@ -441,14 +412,12 @@ export default {
     // ----
 
     receiveWebSocketsMsgOnClose: function(e) {
-      console.log("Websocket connection disconnected");
       console.log(e);
       //Set Play/Pause button to inital state
       this.recordToggle = true;
       this.$refs.streamtimer.reset();
       //Retry to make setup Websocket connection every 5 seconds
       if (this.websocketStreamState === this.streamState.OFF) {
-        console.log("Stream is already off");
         this.disconnectState = false;
       } else {
         this.websocketConnection = null;
@@ -515,13 +484,11 @@ export default {
         !localStorage.userType
       ) {
         this.$router.push("/pwa");
-        console.log("id undefined");
       }
     },
 
     stopMediaTracks: function(stream) {
       stream.getTracks().forEach(track => {
-        console.log("=> Stopping media track");
         track.stop();
       });
     },
@@ -550,7 +517,6 @@ export default {
 
     //IF USER DOENST HAVE ID REDIRECT THEM TO PWA START PAGE
     this.checkIdNull();
-
   }
 };
 </script>
@@ -579,7 +545,7 @@ body {
 
 #container {
   width: 896px;
-  height: 426px;
+  height: 100vh;
   position: relative;
   z-index: 5;
   margin: 0 auto;
@@ -589,7 +555,7 @@ body {
 
 #stream-results {
   width: 20%;
-  height: 426px;
+  height: 100vh;
   /* border: 2px solid yellow; */
   display: flex;
   flex-direction: column;
@@ -599,7 +565,7 @@ body {
 
 #stream-status {
   width: 60%;
-  height: 426px;
+  height: 100vh;
   /* border: 2px solid red; */
   display: flex;
   justify-content: center;
@@ -654,7 +620,7 @@ body {
 
 #stream-controls {
   width: 20%;
-  height: 426px;
+  height: 100vh;
   /* border: 2px solid blue; */
   display: flex;
   flex-direction: column;
@@ -697,8 +663,8 @@ body {
   /* color: white; */
   font-weight: 600;
   transform: rotate(-90deg);
-  left: 0.7rem;
-  bottom: 0.45rem;
+  left: 0.78rem;
+  bottom: 0.43rem;
   font-size: 1rem;
   color: var(--main-purple-color);
 
@@ -718,7 +684,7 @@ body {
   font-weight: 600;
   color: var(--main-purple-color);
   transform: rotate(-90deg);
-  left: 2rem;
+  left: 1.6rem;
   bottom: 0.45rem;
   font-size: 1rem;
   right: 0.6rem;
@@ -806,15 +772,15 @@ body {
 
 .video-stream {
   position: absolute;
-  width: 900px !important;
+  width: 100vw;
   overflow: hidden !important;
+  display: flex;
+  align-items: center;
 }
 
 #video {
-  width: 100vw !important;
+  width: 100%;
   height: auto;
-  position: relative;
-  bottom: 0;
 }
 
 .icons {
@@ -873,11 +839,6 @@ video {
 
   #stream-controls {
     height: 100vh;
-  }
-
-  #video {
-    width: 100vw !important;
-    /* bottom: 0; */
   }
 }
 

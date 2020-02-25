@@ -59,15 +59,12 @@ async def ws_stream(ws: WebSocket):
         while True:
             # Get data from client
             frame_data = await ws.receive_json()
-
-            # print(frame_data["img"])
-
-            if frame_data["img"] is not False:
-                try:
-                    await broker.send_message_on_queues(frame_data)
-                except ConnectionError:
-                    content = {"error": "MessageServer Not Available"}
-                    await ws.send_json(content)
+            
+            try:
+                await broker.send_message_on_queues(frame_data)
+            except ConnectionError:
+                content = {"error": "MessageServer Not Available"}
+                await ws.send_json(content)
     except WebSocketDisconnect:
         logger.info("WebSocket /stream [disconnect]")
     except Exception as e:

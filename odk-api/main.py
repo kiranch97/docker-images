@@ -60,8 +60,6 @@ async def ws_stream(ws: WebSocket):
             # Get data from client
             frame_data = await ws.receive_json()
 
-            # print(frame_data["img"])
-
             if frame_data["img"] is not False:
                 try:
                     await broker.send_message_on_queues(frame_data)
@@ -95,6 +93,7 @@ async def ws_stream(ws: WebSocket):
 def get_detected_objects(app_id: str, day: str):
     status_code = 200
     r_do = dbm.get_detected_objects(app_id, day)
+
     if "status" in r_do and r_do["status"] == "error":
         status_code = 500
     return JSONResponse(content = r_do, status_code = status_code)
@@ -112,24 +111,27 @@ def get_last_analysed_frames(app_id: str):
 def get_dash_stream_devices(app_id: str, day: str):
     status_code = 200
     r_dsd = dbm.get_dash_stream_devices(app_id, day)
+
     if "status" in r_dsd and r_dsd["status"] == "error":
         status_code = 500
     return JSONResponse(content = r_dsd,status_code = status_code)
 
 
-@app.get("/dash_total")
-def get_dash_total(day: str):
+@app.get("/dash_day_total")
+def get_dash_day_total(day: str):
     status_code = 200
-    r_dt = dbm.get_dash_total(day)
-    if "status" in r_dt and r_dt["status"] == "error":
+    r_ddt = dbm.get_dash_day_total(day)
+
+    if "status" in r_ddt and r_ddt["status"] == "error":
         status_code = 500
-    return JSONResponse(content = r_dt,status_code = status_code)
+    return JSONResponse(content = r_ddt,status_code = status_code)
 
 
 @app.get("/dash_map_data")
 def get_dash_map_data(day: str):
     status_code = 200
     r_dmd = dbm.get_dash_map_data(day)
+
     if "status" in r_dmd and r_dmd["status"] == "error":
         status_code = 500
     return JSONResponse(content = r_dmd,status_code = status_code)

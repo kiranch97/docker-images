@@ -53,8 +53,7 @@
 import StreamTime from "./StreamTime";
 import StreamCount2 from "./StreamCount2";
 import { DefaultLoader } from "vue-spinners-css";
-//import { eventBus } from "../main";
-// import StreamAnalyzedFrame from "./StreamAnalyzedFrame";
+import * as NoSleep from "nosleep.js";
 
 export default {
   //// example from: https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Taking_still_photos
@@ -66,7 +65,7 @@ export default {
     return {
       apiWebsocketUrl: process.env.VUE_APP_API_WS_URL,
       debug: false,
-      //UI properties
+      //------UI properties
       //PLAY/PAUSE BUTTON
       recordToggle: true,
       //STREAM STATUS STATES
@@ -74,7 +73,6 @@ export default {
       spinnersize: 25,
       //AUTO/MANUAL MODE SWITCH
       isAuto: null,
-
       //FLIP CAMERA
       cameraIconActive: true,
 
@@ -87,6 +85,7 @@ export default {
       // ---- end settings ----
 
       // ---- STREAM PROPERTIES ----
+      noSleep: null,
       streaming: false,
       width: null,
       height: null,
@@ -155,7 +154,6 @@ export default {
     // combined(newValue) {
     //   console.log("GPS position changed");
     //   console.log(newValue);
-
     //   setTimeout(()=> {
     //     if(this.deviceSpeed == null || 0 && this.isAuto){
     //       console.log("Hold Streaming")
@@ -173,6 +171,9 @@ export default {
         ? (this.isAuto = true)
         : (this.isAuto = false);
 
+      //Initialize noSleep object constructor
+      this.noSleep = new NoSleep();
+
       // set current camera orientation
       this.currentCameraOption = this.prefCameraOption;
       this.video = document.getElementById("video");
@@ -184,7 +185,7 @@ export default {
 
     startStream: function() {
       //ADD SCREENLOCK ACTIVATION WHILE STREAMING
-
+      this.noSleep.enable();
       //Setup connection with Websocket server
       this.setupWebSockets();
       //Change circle to pause button when stream starts
@@ -295,7 +296,11 @@ export default {
       if (
         this.websocketConnection.readyState === this.websocketConnection.OPEN
       ) {
+        //Disable screenlock when stream stops
+        this.noSleep.disable();
+        //Close websocket connection
         this.websocketConnection.close();
+        //Clear snapshot interval
         clearInterval(this.intervalHandler);
         console.log("connection Closed");
         //Change pause to circle button when stream stops

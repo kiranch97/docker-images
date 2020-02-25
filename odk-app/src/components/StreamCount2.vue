@@ -9,12 +9,10 @@
         <p v-if="item.count > 0" class="count">{{ item.count }}</p>
         <div :class="{ 'count-fade': item.count }"></div>
       </swiper-slide>
-      <!-- <div class="swiper-pagination" slot="pagination"></div> -->
     </swiper>
   </div>
 </template>
 <script>
-// import { eventBus } from "../main";
 import _ from "lodash";
 
 export default {
@@ -44,9 +42,6 @@ export default {
       // ----
       swiperOption: {
         direction: "vertical",
-        pagination: {
-          clickable: true
-        },
         slidesPerView: 5,
         spaceBetween: 15,
         freeMode: true

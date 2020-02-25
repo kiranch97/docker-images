@@ -306,7 +306,7 @@ class DatabaseManager:
 
     # ----
 
-    def get_dash_total(self, day: str):
+    def get_dash_day_total(self, day: str):
 
         if not self.has_connection:
             self.logger.error("No connection to database! Check Settings")
@@ -316,7 +316,6 @@ class DatabaseManager:
                                 Problem with server!"}
 
         try:
-            day = day.split(" ")[0]
             analysed_frames = \
                 self.db_session.query(AnalysedFrame).filter(
                     AnalysedFrame.created_at >= day).all()
@@ -332,14 +331,17 @@ class DatabaseManager:
 
                     type = detected_obj.get("detected_object_type")
 
-                    if type not in detected_objects_by_type.keys():
-                        detected_objects_by_type[type] = 0
+                    if type == "container_small" \
+                            or type == "cardboard" \
+                            or type == "garbage_bag":
+                        if type not in detected_objects_by_type.keys():
+                            detected_objects_by_type[type] = 0
 
-                    detected_objects_by_type[type] += 1
-                    detected_objects_by_type["total"] += 1
+                        detected_objects_by_type[type] += 1
+                        detected_objects_by_type["total"] += 1
 
             return {
-                    "_entity_name": "dash_total",
+                    "_entity_name": "get_dash_day_total",
                     "day": day,
                     "detected_objects_by_type": detected_objects_by_type
                    }
@@ -363,24 +365,14 @@ class DatabaseManager:
                                 Problem with server!"}
 
         try:
-            dash_map_data = {}
-            day = day.split(" ")[0]
             analysed_frames = \
                 self.db_session.query(AnalysedFrame).filter(
-                    AnalysedFrame.created_at >= day).all()
+                    AnalysedFrame.created_at >= day).order_by(
+                        AnalysedFrame.created_at.desc()).all()
+
+            dash_map_data = {}
 
             for frame in analysed_frames:
-
-                location = {}
-                
-                if "lat" not in location.keys():
-                    location["lat"] = ""
-
-                if "lng" not in location.keys():
-                    location["lng"] = ""
-                
-                location["lat"] = frame.take_frame.get("lat")
-                location["lng"] = frame.take_frame.get("lng")
 
                 detected_objects_by_type = {}
 
@@ -396,19 +388,19 @@ class DatabaseManager:
 
                     detected_objects_by_type[type] += 1
                     detected_objects_by_type["total"] += 1
-                
+
                 dash_map_data[frame.id] = {
                     "_entity_name":
                         "dash_map_data",
-                    "app_id":
+                    "frame_id":
+                        frame.id,
+                    "created_by_app":
                         frame.created_by_app,
                     "created_at":
-                        frame.created_at,
-                    # "analysed_img":
-                    #     frame.take_frame.get("img"),
+                        frame.created_at.strftime("%H:%M:%S"),
                     "location":
-                        location,
-                    "detected_objects_by_type": 
+                        frame.take_frame.get("location"),
+                    "detected_objects_by_type":
                         detected_objects_by_type
                 }
 

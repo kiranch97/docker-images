@@ -13,9 +13,9 @@ from model.garbage_detection import GarbageImageClassifier
 GarbageImageClassifier = GarbageImageClassifier(cuda=True)
 
 SETTINGS = {
-    'RMQ_USER': os.environ.get('RMQ_USER') or 'odk',
-    'RMQ_PASSWORD': os.environ.get('RMQ_PASSWORD') or 'rmqodk',
-    'RMQ_URL': os.environ.get('RMQ_URL') or '116.203.210.203',
+    'RMQ_USER': os.environ.get('RMQ_USER'),
+    'RMQ_PASSWORD': os.environ.get('RMQ_PASSWORD'),
+    'RMQ_URL': os.environ.get('RMQ_URL'),
     'RMQ_QUEUE_FRAMES_FOR_ML': 'image_frames_for_ml',
     'RMQ_EXCHANGE_FRAMES_FOR_ML': 'exhange_ml_frames',
     'RMQ_QUEUE_ANALYSED_FRAMES': 'analysed_frames',

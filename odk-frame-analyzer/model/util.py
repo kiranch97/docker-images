@@ -248,8 +248,7 @@ def create_output_json(img, bbox,classes):
         'bbox': {
             'coordinate1': p1,
             'coordinate2': p2
-        },
-        'anonymous_img' : img
+        }
     }
 
 def load_classes(namesfile):

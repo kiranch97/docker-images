@@ -80,7 +80,7 @@ export default {
       SETTINGS: {
         minImageWidth: 608,
         minImageHeight: 608,
-        TAKE_PICTURE_EVERY_MS: 333
+        TAKE_PICTURE_EVERY_MS: process.env.VUE_APP_CAPTURE_INTERVAL
       },
       // ---- end settings ----
 
@@ -522,6 +522,18 @@ export default {
 
     //IF USER DOENST HAVE ID REDIRECT THEM TO PWA START PAGE
     this.checkIdNull();
+
+    console.log("Capture rate set to: " + this.SETTINGS.TAKE_PICTURE_EVERY_MS)
+
+
+    //Set interval when connection is offline
+    //Change stream state to OFF and close websocket connection
+    //When user has access to internet again. and iniates a new websocket stream, Clear the interval
+    //Check the user stream state. If user was streaming, restart stream. If not dont do anything.
+
+
+    // this.websocketStreamState = this.streamState.OFF;
+    // setInterval(this.checkInternetState, 3000);
   }
 };
 </script>

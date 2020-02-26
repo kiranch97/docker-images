@@ -16,7 +16,7 @@ from odklib.DiskWriter import DiskWriter
 SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_CONNECTION_STRING')
 WAIT_FRAME_BROKER = 0.01  # in seconds 0.01 = 10 ms
 
-app = FastAPI()
+app = FastAPI(openapi_prefix= os.environ.get('API_PREFIX', '/'))
 broker = FrameBroker()
 disk_writer = DiskWriter()
 # stream_logger = StreamLogger()
@@ -59,12 +59,13 @@ async def ws_stream(ws: WebSocket):
         while True:
             # Get data from client
             frame_data = await ws.receive_json()
-            
-            try:
-                await broker.send_message_on_queues(frame_data)
-            except ConnectionError:
-                content = {"error": "MessageServer Not Available"}
-                await ws.send_json(content)
+
+            if frame_data["img"] is not False:
+                try:
+                    await broker.send_message_on_queues(frame_data)
+                except ConnectionError:
+                    content = {"error": "MessageServer Not Available"}
+                    await ws.send_json(content)
     except WebSocketDisconnect:
         logger.info("WebSocket /stream [disconnect]")
     except Exception as e:
@@ -114,13 +115,14 @@ def get_dash_stream_devices(app_id: str, day: str):
     return JSONResponse(content = r_dsd,status_code = status_code)
 
 
-@app.get("/dash_total")
-def get_dash_total(day: str):
+@app.get("/dash_day_total")
+def get_dash_day_total(day: str):
     status_code = 200
-    r_dt = dbm.get_dash_total(day)
-    if "status" in r_dt and r_dt["status"] == "error":
+    r_ddt = dbm.get_dash_day_total(day)
+
+    if "status" in r_ddt and r_ddt["status"] == "error":
         status_code = 500
-    return JSONResponse(content = r_dt,status_code = status_code)
+    return JSONResponse(content = r_ddt,status_code = status_code)
 
 
 @app.get("/dash_map_data")

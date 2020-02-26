@@ -10,3 +10,6 @@ env*
 
 # IDE
 .idea
+
+# Test script
+test_dash.py

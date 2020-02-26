@@ -39,6 +39,26 @@ export const routes = [
         name: 'recommendation-page',
         component: RecommendationPage
     },
+    // {
+    //     path: '/login',
+    //     name: 'login',
+    //     component: DeviceLogin
+    // },
+    {
+        path: '/',
+        name: 'browser-startpage',
+        component: BrowserStartPage
+    },
+    {
+        path: '/pwa',
+        name: 'pwa-startpage',
+        component: PwaStartPage
+    },
+    {
+        path: '/recommendation',
+        name: 'recommendation-page',
+        component: RecommendationPage
+    },
     {
         path: '/checklist',
         name: 'checklist-page',

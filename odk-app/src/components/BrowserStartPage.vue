@@ -6,7 +6,6 @@
     <div id="text-section">
       <p class="odk-title" id="title">Object Detection Kit</p>
       <p class="body-1">Zorg voor schone straten door te scannen tijdens het rijden</p>
-      <!-- <button id="add-button">Add to home screen</button> -->
       <b-button id="add-button">Add to home screen</b-button>
       <p class="body-1">
         Please

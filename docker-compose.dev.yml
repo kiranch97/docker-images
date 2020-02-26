@@ -3,7 +3,7 @@ version: '3'
 services:
 
   app:
-    container_name: odk-proxy
+    container_name: odk-app
     build: ./odk-app
     environment:
       - VUE_APP_API_HTTP_URL=/api
@@ -26,7 +26,7 @@ services:
       - DATABASE_CONNECTION_STRING=postgresql://postgres:mysecretpassword@odk-db/postgres
       - RMQ_USER=user
       - RMQ_PASSWORD=password
-      - RMQ_URL=localhostq
+      - RMQ_URL=localhost
     expose:
       - "80"
     volumes:
@@ -46,6 +46,9 @@ services:
       - "15672"
       - "8080"
       - "5672"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
     networks:
       - odb-network
 

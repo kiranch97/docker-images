@@ -60,8 +60,6 @@ async def ws_stream(ws: WebSocket):
             # Get data from client
             frame_data = await ws.receive_json()
 
-            # print(frame_data["img"])
-
             if frame_data["img"] is not False:
                 try:
                     await broker.send_message_on_queues(frame_data)
@@ -117,13 +115,14 @@ def get_dash_stream_devices(app_id: str, day: str):
     return JSONResponse(content = r_dsd,status_code = status_code)
 
 
-@app.get("/dash_total")
-def get_dash_total(day: str):
+@app.get("/dash_day_total")
+def get_dash_day_total(day: str):
     status_code = 200
-    r_dt = dbm.get_dash_total(day)
-    if "status" in r_dt and r_dt["status"] == "error":
+    r_ddt = dbm.get_dash_day_total(day)
+
+    if "status" in r_ddt and r_ddt["status"] == "error":
         status_code = 500
-    return JSONResponse(content = r_dt,status_code = status_code)
+    return JSONResponse(content = r_ddt,status_code = status_code)
 
 
 @app.get("/dash_map_data")

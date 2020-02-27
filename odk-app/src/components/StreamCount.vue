@@ -1,35 +1,59 @@
 <template>
-  <div class="item-4">
-    <div class="count-box-one">
-      <div class="stream-counts">
-        <img class="icons" src="../assets/bin-icon.png" />
-        <p>{{ binCount }}</p>
-      </div>
-      <div class="stream-counts">
-        <img class="icons" src="../assets/cb-icon.png" />
-        <p>{{ cardboardCount }}</p>
-      </div>
-      <div class="stream-counts">
-        <img class="icons" src="../assets/tb-icon.png" />
-        <p>{{ trashCount }}</p>
-      </div>
-    </div>
-
-    <div class="stream-counts count-box-two">
+  <div id="stream-results">
+    <div id="stream-total">
       <p class="total-counts">{{ totalCount }}</p>
     </div>
+    <swiper id="swiper" :options="swiperOption">
+      <swiper-slide v-for="item in orderSwiperItems" v-bind:key="item.id" class="swiper-item">
+        <img class="icons" :src="require(`../assets/objects/${item.itemPicture}.png`)" />
+        <p v-if="item.count > 0" class="count">{{ item.count }}</p>
+        <div :class="{ 'count-fade': item.count }"></div>
+      </swiper-slide>
+    </swiper>
   </div>
 </template>
 <script>
-// import { eventBus } from "../main";
+import _ from "lodash";
 
 export default {
   name: "stream-count",
+
+  props: ["websocketStreamState"],
+
+  watch: {
+    websocketStreamState() {
+      if (
+        this.websocketStreamState == null ||
+        this.websocketStreamState === "off"
+      ) {
+        clearInterval(this.fetchResults);
+        this.fetchAnalysedResults();
+      } else if (this.websocketStreamState == "on") {
+        this.fetchResults = setInterval(
+          this.fetchAnalysedResults,
+          this.countFetchRate
+        );
+      }
+    }
+  },
+
   data() {
     return {
+      // ----
+      swiperOption: {
+        direction: "vertical",
+        slidesPerView: 5,
+        spaceBetween: 15,
+        freeMode: true
+      },
+      // ----
+      //Detectable objects counts
       binCount: 0,
       trashCount: 0,
       cardboardCount: 0,
+      christmasTreeCount: 0,
+      constructionBinCount: 0,
+      matrasCount: 0,
       totalCount: 0,
       appId: null,
       requestHeaders: {
@@ -37,13 +61,48 @@ export default {
         Authorization: "No Auth"
       },
       apiHttpUrl: process.env.VUE_APP_API_HTTP_URL,
-      countFetchRate: process.env.VUE_APP_RESULT_INTERVAL
+      countFetchRate: 1000,
+      fetchResults: null
     };
+  },
+
+  computed: {
+    orderSwiperItems: function() {
+      let swiperItems = [
+        {
+          itemPicture: "Cardboard",
+          count: this.cardboardCount
+        },
+        {
+          itemPicture: "Garbage-bag",
+          count: this.trashCount
+        },
+        {
+          itemPicture: "Garbage-bins",
+          count: this.binCount
+        },
+        {
+          itemPicture: "Christmas-tree",
+          count: this.christmasTreeCount
+        },
+        {
+          itemPicture: "Construction-container",
+          count: this.constructionBinCount
+        },
+        {
+          itemPicture: "Matresses",
+          count: this.matrasCount
+        }
+      ];
+
+      return _.orderBy(swiperItems, "count", "desc");
+    }
   },
 
   methods: {
     fetchAnalysedResults() {
-      let curEndPointBase = this.apiHttpUrl + '/detected_objects?app_id={{APP_ID}}&day={{DATE}}'
+      let curEndPointBase =
+        this.apiHttpUrl + "/detected_objects?app_id={{APP_ID}}&day={{DATE}}";
 
       let curEndPoint = curEndPointBase
         .replace("{{APP_ID}}", this.appId)
@@ -57,15 +116,22 @@ export default {
           return response.json();
         })
         .then(results => {
-          if (results.length == 0) return
+          if (results.length == 0) return;
 
-          let curScope = this;
+          this.binCount = results.detected_objects_by_type.container_small || 0;
+          this.trashCount = results.detected_objects_by_type.garbage_bag || 0;
+          this.cardboardCount = results.detected_objects_by_type.cardboard || 0;
+          this.christmasTreeCount = results.detected_objects_by_type.kerstboom || 0;
+          this.constructionBinCount = results.detected_objects_by_type.construction_container || 0;
+          this.matrasCount = results.detected_objects_by_type.matras || 0;
 
-          curScope.binCount = results.detected_objects_by_type.container_small || 0;
-          curScope.trashCount = results.detected_objects_by_type.garbage_bag || 0;
-          curScope.cardboardCount = results.detected_objects_by_type.cardboard || 0;
-
-          curScope.totalCount  = curScope.binCount + curScope.trashCount + curScope.cardboardCount;
+          this.totalCount =
+            this.binCount +
+            this.trashCount +
+            this.cardboardCount +
+            this.christmasTreeCount +
+            this.constructionBinCount +
+            this.matrasCount;
         })
         .catch(er => {
           console.log("==> Error occured in 'fetchAnalysedResults':" + er);
@@ -85,24 +151,25 @@ export default {
       if (i < 10) {
         i = "0" + i;
       }
+
       return i;
-    },
+    }
   },
 
   mounted() {
     this.appId = localStorage.appId;
     this.userType = localStorage.userType;
 
-    console.log("=> Starting 'fetchAnalysedResults' with 'countFetchRate': " + this.countFetchRate)
-    setInterval(this.fetchAnalysedResults, this.countFetchRate);
+    // Fetch once when landing
+    this.fetchAnalysedResults();
   }
 };
 </script>
 <style>
 .count-box-one {
+  margin-right: 2rem;
   display: flex;
   justify-content: space-around;
-  margin-right: 2rem;
 }
 
 .count-box-two {
@@ -110,28 +177,72 @@ export default {
 }
 
 .stream-counts {
+  color: var(--white-color);
   transform: rotate(90deg);
-  color: white;
 }
 
+#stream-results {
+  width: 50px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start !important;
+}
+
+#stream-total {
+  width: 50px;
+  height: 50px;
+  background: var(--main-purple-color);
+  border-bottom-right-radius: 50%;
+  border-bottom-left-radius: 50%;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 .total-counts {
-  font-size: 2.5rem;
-  color: white;
+  font-size: 1.5rem;
+  color: var(--white-color);
 }
 
 .icons {
-  height: 3rem;
-  width: 3rem;
+  width: 2rem;
+  height: 2rem;
 }
 
-.item-4 {
-  grid-column-start: 1;
-  grid-column-end: 4;
-  height: 15vh;
-  background: #3a225d;
-  opacity: 0.8;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 80% 20%);
+.count {
+  position: absolute;
+  left: 0;
+  right: 0;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--white-color);
+  z-index: 1;
+}
+
+.count-fade {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(58, 34, 93, 0.5);
+  border-radius: 50%;
+}
+
+#swiper {
+  position: absolute;
+  height: 100vh;
+  top: 4rem;
+  z-index: 1;
+}
+
+.swiper-item {
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 50%;
+  background: var(--white-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

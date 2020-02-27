@@ -56,18 +56,19 @@ export default {
       if (this.rmdOne) {
         this.rmdOne = !this.rmdOne;
         this.rmdTwo = !this.rmdTwo;
-        document.getElementById("title").innerHTML = "Uw dataverbruik te controleren";
+        document.getElementById("title").innerHTML =
+          "Uw dataverbruik te controleren";
         document.getElementById("body").innerHTML =
           "Het streamen kost veel data. Een ongelimiteerd abonnement wordt geadviseerd";
       } else if (this.rmdTwo) {
         this.rmdTwo = !this.rmdTwo;
         this.rmdThree = !this.rmdThree;
         document.getElementById("gitlab-button").style.display = "none";
-        document.getElementById("title").innerHTML =
-          "Uw eigen modus te kiezen";
+        document.getElementById("title").innerHTML = "Uw eigen modus te kiezen";
         document.getElementById("body").innerHTML =
           "Met handmatige modus kunt u er zelf voor kiezen wanneer u wilt streamen. De automatische modus zal de stream kunnen starten en stoppen op basis van uw rijsnelheid";
-        document.getElementById("buttons-section").style.justifyContent = "flex-end"
+        document.getElementById("buttons-section").style.justifyContent =
+          "flex-end";
       } else if (this.rmdThree) {
         this.$router.push({ path: "/checklist" });
       }
@@ -240,12 +241,11 @@ export default {
     justify-content: center;
   }
 
-
-  #header-section{
+  #header-section {
     height: 30%;
   }
 
-   #buttons-section{
+  #buttons-section {
     height: 30%;
   }
 }
@@ -258,12 +258,8 @@ export default {
     max-height: none;
   }
 
-    #header-section{
-    height: 55%;
+  #buttons-section {
+    height: 30%;
   }
-
-    #buttons-section{
-        height: 30%;
-    }
 }
 </style>

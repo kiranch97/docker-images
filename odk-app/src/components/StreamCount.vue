@@ -232,7 +232,7 @@ export default {
 #swiper {
   position: absolute;
   height: 100vh;
-  top: 4rem;
+  top: 3rem;
   z-index: 1;
 }
 

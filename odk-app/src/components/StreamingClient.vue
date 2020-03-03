@@ -557,7 +557,6 @@ body {
   display: flex;
   justify-content: center;
   position: relative;
-  /* top: 3rem; */
 }
 
 #container {

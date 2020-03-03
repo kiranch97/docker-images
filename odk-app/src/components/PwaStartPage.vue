@@ -9,14 +9,15 @@
         <p class="body-1">Houd de straten schoon door te scannen tijdens het rijden</p>
       </div>
       <div id="buttons-section">
-        <router-link to="/recommendation">
+        <!-- <router-link to="/recommendation"> -->
           <b-button
             @click="saveWorkerId()"
             rounded
             id="cto-button"
             size="is-medium"
+            :disabled="buttonDisabled"
           >Ik ben een gemeente chauffer</b-button>
-        </router-link>
+        <!-- </router-link> -->
         <router-link to="/recommendation">
           <b-button
             @click="saveDemoId()"
@@ -34,7 +35,9 @@
 export default {
   name: "pwa-startpage",
   data() {
-    return {};
+    return {
+      buttonDisabled: true
+    };
   },
   methods: {
     //-------
@@ -78,6 +81,7 @@ export default {
     saveWorkerId: function() {
       localStorage.userType = "waste_department";
       console.log("Worker id generated!");
+      
     },
 
     // ----

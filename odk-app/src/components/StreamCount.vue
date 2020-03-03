@@ -121,9 +121,11 @@ export default {
           this.binCount = results.detected_objects_by_type.container_small || 0;
           this.trashCount = results.detected_objects_by_type.garbage_bag || 0;
           this.cardboardCount = results.detected_objects_by_type.cardboard || 0;
-          this.christmasTreeCount = results.detected_objects_by_type.kerstboom || 0;
+          this.christmasTreeCount = results.detected_objects_by_type.christmas_tree || 0;
           this.constructionBinCount = results.detected_objects_by_type.construction_container || 0;
           this.matrasCount = results.detected_objects_by_type.matras || 0;
+
+          console.log(results.detected_objects_by_type)
 
           this.totalCount =
             this.binCount +

@@ -1,11 +1,11 @@
-test-api:
-  image: python:3.7
-  stage: test
-  script:
-    - apt-get update -qy
-    - cd odk-api
-    - pip install -r requirements.txt
-    - pytest
+# test-api:
+#  image: python:3.7
+#  stage: test
+#  script:
+#    - apt-get update -qy
+#    - cd odk-api
+#    - pip install -r requirements.txt
+#    - pytest
 
 test-app:
   image: node:latest

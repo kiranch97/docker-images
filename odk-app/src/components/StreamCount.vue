@@ -118,22 +118,22 @@ export default {
         .then(results => {
           if (results.length == 0) return;
 
-          this.binCount = results.detected_objects_by_type.container_small || 0;
+          // this.binCount = results.detected_objects_by_type.container_small || 0;
           this.trashCount = results.detected_objects_by_type.garbage_bag || 0;
           this.cardboardCount = results.detected_objects_by_type.cardboard || 0;
-          this.christmasTreeCount = results.detected_objects_by_type.christmas_tree || 0;
-          this.constructionBinCount = results.detected_objects_by_type.construction_container || 0;
-          this.matrasCount = results.detected_objects_by_type.matras || 0;
+          // this.christmasTreeCount = results.detected_objects_by_type.christmas_tree || 0;
+          // this.constructionBinCount = results.detected_objects_by_type.construction_container || 0;
+          // this.matrasCount = results.detected_objects_by_type.matras || 0;
 
-          console.log(results.detected_objects_by_type)
+          // console.log(results.detected_objects_by_type)
 
           this.totalCount =
-            this.binCount +
+            // this.binCount +
             this.trashCount +
-            this.cardboardCount +
-            this.christmasTreeCount +
-            this.constructionBinCount +
-            this.matrasCount;
+            this.cardboardCount 
+            // this.christmasTreeCount +
+            // this.constructionBinCount +
+            // this.matrasCount;
         })
         .catch(er => {
           console.log("==> Error occured in 'fetchAnalysedResults':" + er);

@@ -234,7 +234,7 @@ export default {
 #swiper {
   position: absolute;
   height: 100vh;
-  top: 3rem;
+  top: 4rem;
   z-index: 1;
 }
 

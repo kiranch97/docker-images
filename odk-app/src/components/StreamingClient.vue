@@ -560,19 +560,20 @@ body {
 }
 
 #container {
-  width: 896px;
-  height: 100vh;
   position: relative;
-  z-index: 5;
+  width: 100vw;
+  height: 100vh;
+  max-width: 896px;
+  max-height: 414px;
   margin: 0 auto;
   overflow: hidden;
   display: flex;
+  justify-content: space-between;
 }
 
 #stream-results {
   width: 20%;
   height: 100vh;
-  /* border: 2px solid yellow; */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -582,7 +583,6 @@ body {
 #stream-status {
   width: 60%;
   height: 100vh;
-  /* border: 2px solid red; */
   display: flex;
   justify-content: center;
 }
@@ -638,10 +638,8 @@ body {
   width: 20%;
   height: 100vh;
   max-height: 426px;
-  /* border: 2px solid blue; */
   display: flex;
   flex-direction: column;
-  /* justify-content: center; */
 }
 
 #stream-camera-flip {
@@ -847,6 +845,7 @@ video {
     width: 100vw;
     height: 100vh;
     z-index: 0;
+    left: 0;
     overflow: hidden;
   }
 

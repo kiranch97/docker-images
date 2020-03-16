@@ -10,21 +10,21 @@
       </div>
       <div id="buttons-section">
         <!-- <router-link to="/recommendation"> -->
-          <b-button
-            @click="saveWorkerId()"
-            rounded
-            id="cto-button"
-            size="is-medium"
-            :disabled="buttonDisabled"
-          >Ik ben een gemeente chauffer</b-button>
+        <button
+          @click="saveWorkerId()"
+          rounded
+          id="yellow-button"
+          size="is-medium"
+          disabled="buttonDisabled"
+        >Gemeente chauffer</button>
         <!-- </router-link> -->
         <router-link to="/recommendation">
-          <b-button
+          <button
             @click="saveDemoId()"
             rounded
-            id="gitlab-button"
+            id="transparent-button"
             size="is-medium"
-          >Ik ben een demo gebruiker</b-button>
+          >Demo gebruiker</button>
         </router-link>
       </div>
     </div>
@@ -63,7 +63,7 @@ export default {
         this.userType = localStorage.userType;
       } else {
         this.generateId();
-        console.log("ID Generated")
+        console.log("ID Generated");
       }
     },
 
@@ -81,7 +81,6 @@ export default {
     saveWorkerId: function() {
       localStorage.userType = "waste_department";
       console.log("Worker id generated!");
-      
     },
 
     // ----
@@ -102,132 +101,113 @@ export default {
 </script>
 
 <style scoped>
-.odk-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 2.125rem;
-  color: var(--dark-blue-color);
-  margin-bottom: 0.75rem;
-  width: 15rem;
-}
-
-.body-1 {
-  font-family: "Open Sans", sans-serif;
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 26px;
-  color: var(--dark-blue-color);
-  width: 15rem;
-}
-
-#cto-button {
-  background: var(--yellow-color);
-  color: var(--second-purple-color);
-  font-family: "Open Sans", sans-serif;
-  font-size: 1rem;
-  font-weight: 600; /*semi- bold */
-  line-height: 22px;
-  width: 16rem;
-  height: 2.625rem;
-}
-
-#cto-button:hover {
-  background: rgba(246, 211, 101, 0.7) !important;
-}
-
-#gitlab-button {
-  width: 16rem;
-  height: 2.625rem;
-  color: var(--second-purple-color) !important;
-  border: 2px solid var(--second-purple-color) !important;
-  font-family: "Open Sans", sans-serif !important;
-  font-size: 1rem !important;
-  font-weight: 600 !important;
-}
-
-#gitlab-button:hover {
-  background: rgba(105, 89, 133, 0.6);
-}
-
 #container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  max-width: 896px;
+  max-height: 414px;
+  margin: 0 auto;
+  padding: 0 2rem 0 1rem;
+  background: var(--second-white-color);
   display: flex;
   flex-direction: row;
-  width: 100%;
-  height: 50%;
   justify-content: center;
   align-items: center;
-  background: var(--second-white-color);
-  max-height: 414px;
-  max-width: 896px;
-  margin: 0 auto;
-  position: relative;
-  top: 3rem;
-}
-
-#text-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  width: 100%;
-}
-
-#header-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 50%;
-  width: 100%;
-  text-align: left;
-}
-
-#buttons-section {
-  height: 30%;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-}
-
-#add-to-home {
-  font-weight: 700;
 }
 
 #image-section {
+  width: 50%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 100%;
 }
 
 #intro-img {
   object-fit: cover;
 }
 
-@media (max-width: 1024px) and (orientation: portrait) {
-  #container {
-    background: var(--second-white-color);
-    width: 100%;
-    height: 100%;
-    top: 0;
+#text-section {
+  width: 50%;
+  height: 100%;
+  max-width: 20rem;
+  padding: 2.5rem 0 2.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+#header-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+  width: 100%;
+  margin-top: 2rem;
+}
+
+#buttons-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+#yellow-button,
+#transparent-button {
+  width: 100%;
+  font-family: "Open Sans", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 30px;
+}
+
+#yellow-button {
+  background: var(--yellow-color);
+  color: var(--second-purple-color);
+}
+
+#yellow-button:active {
+  background: rgba(246, 211, 101, 0.7);
+}
+
+#yellow-button:disabled {
+  background: #edebf2;
+  color: #b8b1c3;
+}
+
+#transparent-button {
+  background: transparent;
+  color: var(--second-purple-color);
+  border: 2px solid var(--second-purple-color);
+  margin-top: 1rem;
+}
+
+#transparent-button:active {
+  background: rgba(105, 89, 133, 0.6);
+}
+
+@media screen and (max-width: 756px) {
+  .odk-title {
+    font-size: 1.25rem !important;
   }
 
-  #image-section {
-    display: flex;
-    justify-content: flex-start;
+  .body-1 {
+    font-size: 0.9rem !important;
+
+    line-height: 1.25rem !important;
+  }
+
+  #yellow-button,
+  #transparent-button {
+    font-size: 0.9rem;
   }
 }
 
-@media (max-width: 1024px) and (orientation: landscape) {
-  #container {
-    top: 0;
-    height: 100%;
-    max-width: none;
-    max-height: none;
-  }
+@media screen and (max-width: 660px) {
 }
 </style>

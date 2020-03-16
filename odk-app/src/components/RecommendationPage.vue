@@ -4,21 +4,21 @@
       <div id="image-section-one">
         <img
           v-bind:class="{ fade: rmdOne}"
-          id="recommendation-img-1"
+          id="recommendation-img"
           src="../assets/pwa/recommendation1.png"
           alt
         />
         <img
           v-bind:class="{ fade: rmdThree}"
-          id="recommendation-img-3"
+          id="recommendation-img"
           src="../assets/pwa/recommendation3.png"
           alt
         />
       </div>
-      <div id="image-section-one">
+      <div id="image-section-two">
         <img
           v-bind:class="{ fade: rmdTwo}"
-          id="recommendation-img-2"
+          id="recommendation-img"
           src="../assets/pwa/recommendation2.png"
           alt
         />
@@ -26,14 +26,14 @@
     </div>
     <div id="text-section">
       <div id="header-section">
-        <p class="body-1">Het wordt aanbevolen om</p>
+        <p class="caption-1">Het wordt aanbevolen om</p>
         <p class="odk-title" id="title">Uw telefoon op te laden</p>
         <p class="body-1" id="body">tijdens het rijden. Het streamen verbruikt veel batterij</p>
       </div>
       <div id="buttons-section">
-        <b-button @click="switchRmd()" rounded id="cto-button" size="is-medium">Volgende</b-button>
+        <button @click="switchRmd()" rounded id="yellow-button" size="is-medium">Volgende</button>
         <router-link to="/checklist">
-          <b-button rounded id="gitlab-button" size="is-medium">Overslaan</b-button>
+          <button rounded id="transparent-button" size="is-medium">Overslaan</button>
         </router-link>
       </div>
     </div>
@@ -63,7 +63,7 @@ export default {
       } else if (this.rmdTwo) {
         this.rmdTwo = !this.rmdTwo;
         this.rmdThree = !this.rmdThree;
-        document.getElementById("gitlab-button").style.display = "none";
+        document.getElementById("transparent-button").style.display = "none";
         document.getElementById("title").innerHTML = "Uw eigen modus te kiezen";
         document.getElementById("body").innerHTML =
           "Met handmatige modus kunt u er zelf voor kiezen wanneer u wilt streamen. De automatische modus zal de stream kunnen starten en stoppen op basis van uw rijsnelheid";
@@ -82,117 +82,37 @@ export default {
 </script>
 
 <style scoped>
-.odk-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 2.125rem;
-  color: var(--dark-blue-color);
-  margin-bottom: 0.75rem;
-  width: 15rem;
-}
-
-.body-1 {
-  font-family: "Open Sans", sans-serif;
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 26px;
-  color: var(--dark-blue-color);
-  width: 15rem;
-}
-
-#cto-button {
-  background: var(--yellow-color);
-  color: var(--second-purple-color);
-  font-family: "Open Sans", sans-serif;
-  font-size: 1rem;
-  font-weight: 600; /*semi- bold */
-  line-height: 22px;
-  width: 16rem;
-  height: 2.625rem;
-  position: relative;
-  outline: none;
-}
-
-#cto-button:hover {
-  background: rgba(246, 211, 101, 0.7) !important;
-}
-
-#gitlab-button {
-  width: 16rem;
-  height: 2.625rem;
-  color: var(--second-purple-color) !important;
-  border: 2px solid var(--second-purple-color) !important;
-  font-family: "Open Sans", sans-serif !important;
-  font-size: 1rem !important;
-  font-weight: 600 !important;
-  outline: none;
-}
-
-#gitlab-button:hover {
-  background: rgba(105, 89, 133, 0.6);
-}
-
 #container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  max-width: 896px;
+  max-height: 414px;
+  margin: 0 auto;
+  padding: 0 2rem 0 1rem;
+  background: var(--second-white-color);
   display: flex;
   flex-direction: row;
-  width: 100%;
-  height: 50%;
   justify-content: center;
   align-items: center;
-  background: var(--second-white-color);
-  max-height: 500px;
-  max-width: 900px;
-  margin: 0 auto;
-  position: relative;
-  top: 3rem;
-}
-
-#text-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  width: 100%;
-}
-
-#header-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  margin-top: 1rem;
-  align-items: center;
-  height: 15rem;
-  width: 100%;
-  text-align: left;
-}
-
-#buttons-section {
-  height: 10rem;
-  margin-bottom: 1rem;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-}
-
-#add-to-home {
-  font-weight: 700;
 }
 
 #image-section {
+  width: 50%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
 }
 
 #image-section-one {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+}
+
+#image-section-two {
+  display: flex;
 }
 
 .rmdimageone {
@@ -200,21 +120,7 @@ export default {
   object-fit: contain;
   margin: 1rem;
 }
-#recommendation-img-1 {
-  max-height: 150px;
-  object-fit: contain;
-  opacity: 0.5;
-  margin: 1rem;
-}
-
-#recommendation-img-2 {
-  max-height: 150px;
-  object-fit: contain;
-  opacity: 0.5;
-  margin: 1rem;
-}
-
-#recommendation-img-3 {
+#recommendation-img {
   max-height: 150px;
   object-fit: contain;
   opacity: 0.5;
@@ -225,41 +131,85 @@ export default {
   opacity: 1 !important;
 }
 
-@media (max-width: 1024px) and (orientation: portrait) {
-  #container {
-    background: var(--second-white-color);
-    width: 100%;
-    height: 100%;
-    top: 0;
-    flex-direction: column;
-    max-width: none;
-    max-height: none;
+#text-section {
+  width: 50%;
+  height: 100%;
+  max-width: 20rem;
+  padding: 2.5rem 0 2.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+#header-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+  width: 100%;
+}
+
+#buttons-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+#yellow-button,
+#transparent-button {
+  width: 100%;
+  font-family: "Open Sans", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 30px;
+}
+
+#yellow-button {
+  background: var(--yellow-color);
+  color: var(--second-purple-color);
+}
+
+#yellow-button:active {
+  background: rgba(246, 211, 101, 0.7);
+}
+
+#yellow-button:disabled {
+  background: #edebf2;
+  color: #b8b1c3;
+}
+
+#transparent-button {
+  background: transparent;
+  color: var(--second-purple-color);
+  border: 2px solid var(--second-purple-color);
+  margin-top: 1rem;
+}
+
+#transparent-button:active {
+  background: rgba(105, 89, 133, 0.6);
+}
+
+@media screen and (max-width: 756px) {
+  .odk-title {
+    font-size: 1.25rem !important;
   }
 
-  #image-section {
-    display: flex;
-    justify-content: center;
+  .body-1 {
+    font-size: 0.9rem !important;
+
+    line-height: 1.25rem !important;
   }
 
-  #header-section {
-    height: 30%;
-  }
-
-  #buttons-section {
-    height: 30%;
+  #yellow-button,
+  #transparent-button {
+    font-size: 0.9rem;
   }
 }
 
-@media (max-width: 1024px) and (orientation: landscape) {
-  #container {
-    height: 100%;
-    top: 0;
-    max-width: none;
-    max-height: none;
-  }
-
-  #buttons-section {
-    height: 30%;
-  }
+@media screen and (max-width: 660px) {
 }
 </style>

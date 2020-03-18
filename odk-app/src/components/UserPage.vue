@@ -9,22 +9,11 @@
         <p class="body-1">Houd de straten schoon door te scannen tijdens het rijden</p>
       </div>
       <div id="buttons-section">
-        <!-- <router-link to="/recommendation"> -->
-        <button
-          @click="saveWorkerId()"
-          rounded
-          id="yellow-button"
-          size="is-medium"
-          disabled="buttonDisabled"
-        >Gemeente chauffer</button>
-        <!-- </router-link> -->
-        <router-link to="/recommendation">
-          <button
-            @click="saveDemoId()"
-            rounded
-            id="transparent-button"
-            size="is-medium"
-          >Demo gebruiker</button>
+        <router-link to="/login">
+          <button @click="saveWorkerId()" id="yellow-button" size="is-medium">Gemeente chauffer</button>
+        </router-link>
+        <router-link to="/client">
+          <button @click="saveDemoId()" id="transparent-button" size="is-medium">Demo gebruiker</button>
         </router-link>
       </div>
     </div>
@@ -33,15 +22,16 @@
 
 <script>
 export default {
-  name: "pwa-startpage",
+  name: "user-page",
   data() {
     return {
       buttonDisabled: true
     };
   },
-  methods: {
-    //-------
 
+  // ----
+
+  methods: {
     checkAppMode() {
       let checkMedia = window.matchMedia("(display-mode: standalone)").matches;
       if (checkMedia) {
@@ -54,13 +44,11 @@ export default {
       }
     },
 
-    //-------
+    // ----
 
-    checkExistingId: function() {
+    checkIDUsertype() {
       if (localStorage.appId && localStorage.userType) {
-        this.$router.push({ path: "/client" });
-        this.appId = localStorage.appId;
-        this.userType = localStorage.userType;
+        this.$router.push("/client");
       } else {
         this.generateId();
         console.log("ID Generated");
@@ -69,7 +57,7 @@ export default {
 
     // ----
 
-    generateId: function() {
+    generateId() {
       let uniqueId = Math.random()
         .toString(32)
         .substring(3);
@@ -78,7 +66,7 @@ export default {
 
     // ----
 
-    saveWorkerId: function() {
+    saveWorkerId() {
       localStorage.userType = "waste_department";
       console.log("Worker id generated!");
     },
@@ -90,12 +78,15 @@ export default {
       console.log("Demo id generated");
     }
   },
+
+  // ----
+  
   mounted() {
     // Init
     //IF USER IN BROWSER AND development mode is off redirect them to BrowserStartPage
     this.checkAppMode();
     //IF USER DOESNT HAVE ID YET GENERATE ON FOR THEM
-    this.checkExistingId();
+    this.checkIDUsertype();
   }
 };
 </script>

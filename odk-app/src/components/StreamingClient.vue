@@ -1,51 +1,49 @@
 <template>
-  <div id="main">
+  <div id="container">
     <div class="video-stream">
       <video id="video" autoplay="true"></video>
       <canvas style="display: none;" id="canvas"></canvas>
     </div>
-    <div id="container">
-      <stream-count :websocketStreamState="websocketStreamState"></stream-count>
-      <div id="stream-status">
-        <div id="status-box">
-          <div v-if="!recordToggle" class="blink-icon"></div>
-          <DefaultLoader :loading="disconnectState" id="loader" :size="spinnersize" color="white" />
-          <stream-time id="stream-timer" ref="streamtimer"></stream-time>
-        </div>
-        <transition name="fade">
-          <div id="error-prompt" v-if="disconnectState">
-            <p>Geen internet verbinding</p>
-          </div>
-        </transition>
+    <stream-count :websocketStreamState="websocketStreamState"></stream-count>
+    <div id="stream-status">
+      <div id="status-box">
+        <div v-if="!recordToggle" class="blink-icon"></div>
+        <DefaultLoader :loading="disconnectState" id="loader" :size="spinnersize" color="white" />
+        <stream-time id="stream-timer" ref="streamtimer"></stream-time>
       </div>
-      <div id="stream-controls">
-        <!-- CAMERA FLIP BUTTON-->
-        <div id="stream-camera-flip">
-          <img
-            v-if="cameraIconActive"
-            class="stream-flip"
-            src="../assets/flip.png"
-            @click="flipCamera()"
-          />
+      <transition name="fade">
+        <div id="error-prompt" v-if="disconnectState">
+          <p>Geen internet verbinding</p>
         </div>
-        <div id="stream-start-settings">
-          <!-- MODE SWITCH BUTTON -->
-          <b-switch v-model="isAuto" class="stream-switch" size="is-large">
-            <p id="auto-mode">A</p>
-            <p id="manual-mode">M</p>
-          </b-switch>
-          <!-- PLAY/PAUSE BUTTON -->
-          <div v-if="!isAuto">
-            <button v-if="recordToggle" @click="startStream()" class="play-pause-circle">
-              <div class="inner-circle"></div>
-            </button>
-            <button v-else @click="pauseStream()" class="pause-box">
-              <div class="inner-button"></div>
-            </button>
-          </div>
-        </div>
-        <div style="height: 30%;"></div>
+      </transition>
+    </div>
+    <div id="stream-controls">
+      <!-- CAMERA FLIP BUTTON-->
+      <div id="stream-camera-flip">
+        <img
+          v-if="cameraIconActive"
+          class="stream-flip"
+          src="../assets/flip.png"
+          @click="flipCamera()"
+        />
       </div>
+      <div id="stream-start-settings">
+        <!-- MODE SWITCH BUTTON -->
+        <b-switch v-model="isAuto" class="stream-switch" size="is-large">
+          <p id="auto-mode">A</p>
+          <p id="manual-mode">M</p>
+        </b-switch>
+        <!-- PLAY/PAUSE BUTTON -->
+        <div v-if="!isAuto">
+          <button v-if="recordToggle" @click="startStream()" class="play-pause-circle">
+            <div class="inner-circle"></div>
+          </button>
+          <button v-else @click="pauseStream()" class="pause-box">
+            <div class="inner-button"></div>
+          </button>
+        </div>
+      </div>
+      <div style="height: 30%;"></div>
     </div>
   </div>
 </template>
@@ -488,7 +486,7 @@ export default {
         localStorage.appId == null ||
         !localStorage.userType
       ) {
-        this.$router.push("/pwa");
+        this.$router.push("/recommendation");
       }
     },
 
@@ -523,14 +521,12 @@ export default {
     //IF USER DOENST HAVE ID REDIRECT THEM TO PWA START PAGE
     this.checkIdNull();
 
-    console.log("Capture rate set to: " + this.SETTINGS.TAKE_PICTURE_EVERY_MS)
-
+    console.log("Capture rate set to: " + this.SETTINGS.TAKE_PICTURE_EVERY_MS);
 
     //Set interval when connection is offline
     //Change stream state to OFF and close websocket connection
     //When user has access to internet again. and iniates a new websocket stream, Clear the interval
     //Check the user stream state. If user was streaming, restart stream. If not dont do anything.
-
 
     // this.websocketStreamState = this.streamState.OFF;
     // setInterval(this.checkInternetState, 3000);
@@ -553,12 +549,6 @@ body {
   margin: 0;
 }
 
-#main {
-  display: flex;
-  justify-content: center;
-  position: relative;
-}
-
 #container {
   position: relative;
   width: 100vw;
@@ -568,7 +558,6 @@ body {
   margin: 0 auto;
   overflow: hidden;
   display: flex;
-  justify-content: space-between;
 }
 
 #stream-results {
@@ -786,11 +775,7 @@ body {
 
 .video-stream {
   position: absolute;
-  width: 100vw;
-  /* height: 100vh; */
-  overflow: hidden !important;
-  display: flex;
-  align-items: center;
+  width: 100%;
 }
 
 #video {

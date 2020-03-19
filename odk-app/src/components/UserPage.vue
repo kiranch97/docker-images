@@ -10,10 +10,10 @@
       </div>
       <div id="buttons-section">
         <router-link to="/login">
-          <button @click="saveWorkerId()" id="yellow-button" size="is-medium">Gemeente chauffer</button>
+          <button @click="saveId('worker')" id="yellow-button" size="is-medium">Gemeente chauffer</button>
         </router-link>
         <router-link to="/client">
-          <button @click="saveDemoId()" id="transparent-button" size="is-medium">Demo gebruiker</button>
+          <button @click="saveId('demo')" id="transparent-button" size="is-medium">Demo gebruiker</button>
         </router-link>
       </div>
     </div>
@@ -51,7 +51,6 @@ export default {
         this.$router.push("/client");
       } else {
         this.generateId();
-        console.log("ID Generated");
       }
     },
 
@@ -66,21 +65,18 @@ export default {
 
     // ----
 
-    saveWorkerId() {
-      localStorage.userType = "waste_department";
-      console.log("Worker id generated!");
-    },
-
-    // ----
-
-    saveDemoId() {
-      localStorage.userType = "demo";
-      console.log("Demo id generated");
+    saveId(user) {
+      if (user == "worker") {
+        localStorage.userType = "waste_department";
+      }
+      else {
+        localStorage.userType = "demo";
+      }
     }
   },
 
   // ----
-  
+
   mounted() {
     // Init
     //IF USER IN BROWSER AND development mode is off redirect them to BrowserStartPage

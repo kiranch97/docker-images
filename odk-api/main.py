@@ -58,8 +58,11 @@ async def ws_stream(ws: WebSocket):
     try:
         while True:
             login_data = await ws.receive_json()
+            message = login_data["message"].split("/")
 
-            if login_data["message"] == "waste_department_login":
+            password = os.environ.get('QR_LOGIN_PASSWORD')
+
+            if message[0] == password:
                 try:
                     content = {"success": "Login successful"}
                     await ws.send_json(content)
@@ -73,6 +76,9 @@ async def ws_stream(ws: WebSocket):
                 except ConnectionError:
                     content = {"error": "LoginServer Not Available"}
                     await ws.send_json(content)
+
+            message = []
+
     except WebSocketDisconnect:
         logger.info("WebSocket /stream [disconnect]")
     except Exception as e:

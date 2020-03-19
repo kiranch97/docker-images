@@ -29,11 +29,6 @@
           />
         </div>
         <div id="stream-start-settings">
-          <!-- MODE SWITCH BUTTON -->
-          <b-switch v-model="isAuto" class="stream-switch" size="is-large">
-            <p id="auto-mode">A</p>
-            <p id="manual-mode">M</p>
-          </b-switch>
           <!-- PLAY/PAUSE BUTTON -->
           <div v-if="!isAuto">
             <button v-if="recordToggle" @click="startStream()" class="play-pause-circle">
@@ -44,7 +39,13 @@
             </button>
           </div>
         </div>
-        <div style="height: 30%;"></div>
+        <div id="switch-container">
+          <!-- MODE SWITCH BUTTON -->
+          <b-switch v-model="isAuto" class="stream-switch" size="is-large">
+            <p id="auto-mode">A</p>
+            <p id="manual-mode">M</p>
+          </b-switch>
+        </div>
       </div>
     </div>
   </div>
@@ -416,8 +417,8 @@ export default {
 
     // ----
 
-    receiveWebSocketsMsgOnClose: function(e) {
-      console.log(e);
+    receiveWebSocketsMsgOnClose: function() {
+      // console.log(e);
       //Set Play/Pause button to inital state
       this.recordToggle = true;
       this.$refs.streamtimer.reset();
@@ -577,7 +578,9 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+  padding-left: 33.891px;
+
 }
 
 #stream-status {
@@ -649,29 +652,34 @@ body {
   justify-content: flex-end;
   align-items: center;
   padding-right: 33.891px;
-
-  /* justify-content: space-between;
-  align-content: center; */
 }
 
 #stream-start-settings {
   display: flex;
   height: 40%;
-  /* border: 2px solid yellow; */
   position: relative;
   justify-content: flex-end;
   align-items: center;
   right: 20px;
+}
 
-  /* align-items: center; */
+#switch-container{
+  height: 30%;
 }
 
 .stream-switch {
-  justify-self: center;
-  /* align-self: start; */
   transition: 0.5 all;
   transform: rotate(90deg);
+  position: absolute;
+  right: 0.5rem;
+  bottom: 2rem;
 }
+
+/* /deep/ .switch input[type=checkbox] + .check{
+  background: var(--white-color);
+  opacity: 0.5;
+} */
+
 
 #manual-mode {
   position: absolute;

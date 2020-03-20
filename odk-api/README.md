@@ -9,7 +9,7 @@ The API is the core of the ODK pipeline setting up necesarry REST and websocket 
 
 ### Requirements
 
-- Python (tested with v3.6)
+- Python (tested with v3.7)
 
 ### Setup & run
 

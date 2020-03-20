@@ -115,6 +115,10 @@ export default {
   display: flex;
 }
 
+.odk-title {
+  line-height: 1.75rem !important;
+}
+
 .rmdimageone {
   max-height: 150px;
   object-fit: contain;

@@ -53,15 +53,21 @@ def index():
 
 @app.websocket("/stream-login")
 async def ws_stream(ws: WebSocket):
+    # Accept connection
     await ws.accept()
 
     try:
         while True:
+            # Receive message (string/vehicle_type/number)
             login_data = await ws.receive_json()
             message = login_data["message"].split("/")
 
+            # Get password from environment variables
             password = os.environ.get('QR_LOGIN_PASSWORD')
 
+            # Check if string == password,
+            # if so, send back success message,
+            # else send error
             if message[0] == password:
                 try:
                     content = {"success": "Login successful"}
@@ -77,6 +83,7 @@ async def ws_stream(ws: WebSocket):
                     content = {"error": "LoginServer Not Available"}
                     await ws.send_json(content)
 
+            # Clear message array
             message = []
 
     except WebSocketDisconnect:

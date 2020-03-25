@@ -2,13 +2,14 @@
   "name": "testing",
   "version": "1.0.0",
   "description": "e2e testing",
-  "main": "playwright.js",
+  "main": "pup.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "playwright": "^0.11.1",
     "puppeteer": "^2.1.1"
   }

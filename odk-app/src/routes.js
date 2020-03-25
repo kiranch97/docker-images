@@ -1,27 +1,16 @@
-
-import StreamingClient from './components/StreamingClient';
 import BrowserStartPage from './components/BrowserStartPage.vue';
-import PwaStartPage from './components/PwaStartPage.vue';
 import RecommendationPage from './components/RecommendationPage.vue';
 import ChecklistPage from './components/ChecklistPage.vue';
+import UserPage from './components/UserPage.vue';
+import LoginPage from './components/LoginPage';
+import StreamingClient from './components/StreamingClient';
 
 
 export const routes = [
-
-    {
-        path: '/client',
-        name : 'streaming-client',
-        component: StreamingClient
-    },
     {
         path: '/',
         name: 'browser-startpage',
         component: BrowserStartPage
-    },
-    {
-        path: '/pwa',
-        name: 'pwa-startpage',
-        component: PwaStartPage
     },
     {
         path: '/recommendation',
@@ -33,6 +22,19 @@ export const routes = [
         name: 'checklist-page',
         component: ChecklistPage
     },
-
-
+    {
+        path: '/user',
+        name: 'user-page',
+        component: UserPage
+    },
+    {
+        path: '/login',
+        name: 'login-page',
+        component: LoginPage
+    },
+    {
+        path: '/client',
+        name: 'streaming-client',
+        component: StreamingClient
+    }
 ]

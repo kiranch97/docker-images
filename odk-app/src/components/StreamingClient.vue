@@ -1,10 +1,10 @@
 <template>
-  <div id="main">
-    <div class="video-stream">
+  <div id="container">
+    <div id="video-stream">
       <video id="video" autoplay="true"></video>
       <canvas style="display: none;" id="canvas"></canvas>
     </div>
-    <div id="container">
+    <div id="stream-information">
       <stream-count :websocketStreamState="websocketStreamState"></stream-count>
       <div id="stream-status">
         <div id="status-box">
@@ -418,7 +418,6 @@ export default {
     // ----
 
     receiveWebSocketsMsgOnClose: function() {
-      // console.log(e);
       //Set Play/Pause button to inital state
       this.recordToggle = true;
       this.$refs.streamtimer.reset();
@@ -489,7 +488,7 @@ export default {
         localStorage.appId == null ||
         !localStorage.userType
       ) {
-        this.$router.push("/pwa");
+        this.$router.push("/recommendation");
       }
     },
 
@@ -524,14 +523,12 @@ export default {
     //IF USER DOENST HAVE ID REDIRECT THEM TO PWA START PAGE
     this.checkIdNull();
 
-    console.log("Capture rate set to: " + this.SETTINGS.TAKE_PICTURE_EVERY_MS)
-
+    console.log("Capture rate set to: " + this.SETTINGS.TAKE_PICTURE_EVERY_MS);
 
     //Set interval when connection is offline
     //Change stream state to OFF and close websocket connection
     //When user has access to internet again. and iniates a new websocket stream, Clear the interval
     //Check the user stream state. If user was streaming, restart stream. If not dont do anything.
-
 
     // this.websocketStreamState = this.streamState.OFF;
     // setInterval(this.checkInternetState, 3000);
@@ -554,12 +551,6 @@ body {
   margin: 0;
 }
 
-#main {
-  display: flex;
-  justify-content: center;
-  position: relative;
-}
-
 #container {
   position: relative;
   width: 100vw;
@@ -569,18 +560,34 @@ body {
   margin: 0 auto;
   overflow: hidden;
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+}
+
+#video-stream {
+  position: relative;
+  width: 100%;
+}
+
+#video {
+  width: 100%;
+  height: auto;
+}
+
+#stream-information {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
 }
 
 #stream-results {
   width: 20%;
   height: 100vh;
+  padding-left: 33.891px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  padding-left: 33.891px;
-
 }
 
 #stream-status {
@@ -591,28 +598,28 @@ body {
 }
 
 #status-box {
+  position: relative;
   width: 10rem;
   height: 2rem;
+  background: rgba(76, 71, 85, 0.8);
+  top: 1rem;
   border-radius: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(76, 71, 85, 0.8);
-  position: relative;
-  top: 1rem;
 }
 
 #error-prompt {
+  position: absolute;
   width: 14rem;
   height: 2.5rem;
+  background: var(--white-color);
+  font-weight: 600;
+  top: 4.5rem;
+  border-radius: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: var(--white-color);
-  position: absolute;
-  top: 4.5rem;
-  font-weight: 600;
-  border-radius: 10px;
 }
 
 .fade-enter-active {
@@ -646,75 +653,64 @@ body {
 }
 
 #stream-camera-flip {
-  display: flex;
-  /* border: 2px solid orange; */
   height: 30%;
+  padding-right: 33.891px;
+  display: flex;
   justify-content: flex-end;
   align-items: center;
-  padding-right: 33.891px;
 }
 
 #stream-start-settings {
-  display: flex;
-  height: 40%;
   position: relative;
+  height: 40%;
+  right: 20px;
+  display: flex;
   justify-content: flex-end;
   align-items: center;
-  right: 20px;
 }
 
-#switch-container{
+#switch-container {
   height: 30%;
 }
 
 .stream-switch {
-  transition: 0.5 all;
-  transform: rotate(90deg);
   position: absolute;
   right: 0.5rem;
   bottom: 2rem;
+  transition: 0.5 all;
+  transform: rotate(90deg);
 }
-
-/* /deep/ .switch input[type=checkbox] + .check{
-  background: var(--white-color);
-  opacity: 0.5;
-} */
-
 
 #manual-mode {
   position: absolute;
-  /* color: white; */
-  font-weight: 600;
-  transform: rotate(-90deg);
-  left: 0.78rem;
-  bottom: 0.43rem;
-  font-size: 1rem;
   color: var(--main-purple-color);
-  /* right: 2.6rem; */
+  font-size: 1rem;
+  font-weight: 600;
+  left: 10.5px;
+  bottom: 7px;
+  transform: rotate(-90deg);
 }
 
 #loader {
   position: absolute;
-  left: 0.7rem;
-  height: 18px;
   width: 18px;
+  height: 18px;
+  left: 0.7rem;
 }
 
 #auto-mode {
-  /* display: flex; */
   position: absolute;
-  font-weight: 600;
   color: var(--main-purple-color);
-  transform: rotate(-90deg);
-  left: 1.6rem;
-  bottom: 0.45rem;
   font-size: 1rem;
+  font-weight: 600;
+  left: 24px;
   right: 0.6rem;
+  bottom: 7px;
+  transform: rotate(-90deg);
 }
 
 /deep/ .switch input[type="checkbox"]:checked + .check {
   background: rgba(255, 255, 255, 0.6) !important;
-  /* opacity: 0.5;  */
 }
 
 /deep/ .switch input[type="checkbox"]:focus:checked + .check {
@@ -729,12 +725,12 @@ body {
 .play-pause-circle {
   width: 3.2rem;
   height: 3.2rem;
-  border-radius: 50%;
-  border: 4px solid white;
   background: none;
+  border: 4px solid white;
+  border-radius: 50%;
+  outline: none;
   transition: all 0.5s;
   display: flex;
-  outline: none;
   justify-content: center;
   align-items: center;
 }
@@ -742,78 +738,64 @@ body {
 .inner-circle {
   width: 2rem;
   height: 2rem;
+  background: var(--white-color);
   border-radius: 50%;
   outline: none;
   opacity: 0.5;
-  background: white;
   transition: all 0.5s;
 }
 
 .inner-button {
   width: 1.5rem;
   height: 1.5rem;
+  background: #db1f48;
   border-radius: 20%;
   transition: all 0.5s;
-  background: #db1f48;
 }
 
 .pause-box {
   width: 3.2rem;
   height: 3.2rem;
-  outline: none;
-  border-radius: 50%;
-  border: 4px solid white;
   background: none;
-  transition: all 0.5s;
+  outline: none;
+  border: 4px solid white;
+  border-radius: 50%;
   position: relative;
-  z-index: 2;
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: all 0.5s;
+  z-index: 2;
 }
 
 .blink-icon {
   position: absolute;
-  z-index: 10;
-  left: 1.3rem;
-  box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.6);
-  border-radius: 50%;
   width: 0.6rem;
   height: 0.6rem;
   background: var(--error-color);
+  left: 1.3rem;
+  box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
   -webkit-animation: blink 1.5s infinite both;
   animation: blink 1.5s infinite both;
+  z-index: 10;
 }
 
 #stream-timer {
-  color: white;
+  color: var(--white-color);
   font-size: 16px;
   font-weight: 600;
   text-shadow: 0px 2px 3px rgba(0, 0, 0, 0.6);
 }
 
-.video-stream {
-  position: absolute;
-  width: 100vw;
-  /* height: 100vh; */
-  overflow: hidden !important;
-  display: flex;
-  align-items: center;
-}
-
-#video {
-  width: 100%;
-  height: auto;
-}
-
 .icons {
-  height: 3rem;
   width: 3rem;
+  height: 3rem;
 }
 
 .stream-counts {
+  color: var(--white-color);
   transform: rotate(90deg);
-  color: white;
 }
 
 video {
@@ -840,66 +822,6 @@ video {
   25%,
   75% {
     opacity: 0;
-  }
-}
-
-@media (max-width: 1024px) and (orientation: landscape) {
-  #main {
-    top: 0;
-  }
-
-  .video-stream {
-    position: absolute;
-    width: 100vw;
-    height: 100vh;
-    z-index: 0;
-    left: 0;
-    overflow: hidden;
-  }
-
-  #stream-status {
-    height: 100vh;
-  }
-
-  #stream-controls {
-    height: 100vh;
-  }
-}
-
-@media (max-width: 1024px) and (orientation: portrait) {
-  #main {
-    top: 0;
-  }
-
-  /* #container {
-    flex-direction: column;
-    height: 100vh;
-    width: 100vw;
-  } */
-
-  #stream-status {
-    height: 60%;
-    width: 100%;
-  }
-
-  #stream-controls {
-    height: 20%;
-    width: 100%;
-  }
-
-  .video-stream {
-    position: absolute;
-    width: 100vw !important;
-    height: 100vh !important;
-    z-index: 0;
-    overflow: hidden;
-  }
-
-  #video {
-    transform: rotate(90deg);
-    right: 350px;
-    width: auto !important;
-    height: 100% !important;
   }
 }
 </style>

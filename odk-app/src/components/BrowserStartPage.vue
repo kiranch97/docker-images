@@ -27,12 +27,12 @@ export default {
       if (checkMedia) {
         console.log("This is running as standalone.");
         //If user downloaded pwa then he doesnt have to see this page
-        this.$router.push({ path: "/pwa" });
+        this.$router.push("/recommendation");
       } else {
         console.log("This is running on the browser");
         // if (process.env.VUE_APP_APP_MODE) {
         //   console.log("development mode");
-        //   this.$router.push({ path: "/pwa" });
+        //   this.$router.push("/recommendation");
         // }
       }
     },

@@ -29,11 +29,6 @@
           />
         </div>
         <div id="stream-start-settings">
-          <!-- MODE SWITCH BUTTON -->
-          <b-switch v-model="isAuto" class="stream-switch" size="is-large">
-            <p id="auto-mode">A</p>
-            <p id="manual-mode">M</p>
-          </b-switch>
           <!-- PLAY/PAUSE BUTTON -->
           <div v-if="!isAuto">
             <button v-if="recordToggle" @click="startStream()" class="play-pause-circle">
@@ -44,7 +39,13 @@
             </button>
           </div>
         </div>
-        <div style="height: 30%;"></div>
+        <div id="switch-container">
+          <!-- MODE SWITCH BUTTON -->
+          <b-switch v-model="isAuto" class="stream-switch" size="is-large">
+            <p id="auto-mode">A</p>
+            <p id="manual-mode">M</p>
+          </b-switch>
+        </div>
       </div>
     </div>
   </div>
@@ -416,8 +417,7 @@ export default {
 
     // ----
 
-    receiveWebSocketsMsgOnClose: function(e) {
-      console.log(e);
+    receiveWebSocketsMsgOnClose: function() {
       //Set Play/Pause button to inital state
       this.recordToggle = true;
       this.$refs.streamtimer.reset();
@@ -583,10 +583,11 @@ body {
 #stream-results {
   width: 20%;
   height: 100vh;
+  padding-left: 33.891px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
 }
 
 #stream-status {
@@ -668,10 +669,16 @@ body {
   align-items: center;
 }
 
+#switch-container {
+  height: 30%;
+}
+
 .stream-switch {
+  position: absolute;
+  right: 0.5rem;
+  bottom: 2rem;
   transition: 0.5 all;
   transform: rotate(90deg);
-  justify-self: center;
 }
 
 #manual-mode {

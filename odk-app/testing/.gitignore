@@ -1,1 +1,14 @@
 062540/
+# dotenv environment variables file
+.env*
+env*/
+.env*/
+env*
+
+# Node & Vuejs
+node_modules/
+dist/
+npm-debug.log
+yarn-error.log
+
+Documents/

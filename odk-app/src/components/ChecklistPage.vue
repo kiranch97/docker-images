@@ -37,7 +37,7 @@
 
         <button
           rounded
-          id="transparent-button"
+          id="loc-check-button"
           size="is-medium"
           :class="{ 'check-item-complete' : locationPermission}"
           @click="askLocPermission()"
@@ -67,7 +67,7 @@
           :class="{ 'check-item-complete' : camPermission}"
           class="camera-button"
           @click="askCamPermission()"
-          id="transparent-button"
+          id="camera-check-button"
           size="is-medium"
           disabled="true"
         >
@@ -92,7 +92,7 @@
           <span id="buttonspan2">Camera inschakelen</span>
         </button>
       </div>
-      <p class="body-1" id="title">Als u deze stappen niet volgt, zal u ODK niet kunnen gebruiken</p>
+      <p class="body-1" id="tip">Als u deze stappen niet volgt, zal u ODK niet kunnen gebruiken</p>
     </div>
   </div>
 </template>
@@ -302,6 +302,37 @@ export default {
   width: 100%;
 }
 
+#camera-check-button, #loc-check-button {
+  width: 100%;
+  font-family: "Open Sans", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 30px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
+#camera-check-button, #loc-check-button {
+  background: transparent;
+  color: var(--second-purple-color);
+  border: 2px solid var(--second-purple-color);
+  margin-top: 1rem;
+}
+
+#camera-check-button:active, #loc-check-button:active {
+  background: rgba(105, 89, 133, 0.6);
+}
+
+#camera-check-button:disabled, #loc-check-button:disabled {
+  background: transparent;
+  color: #b8b1c3;
+  border: 2px solid #ebebf2;
+}
+
 #transparent-button {
   width: 100%;
   font-family: "Open Sans", sans-serif;
@@ -323,7 +354,7 @@ export default {
   margin-top: 1rem;
 }
 
-#transparent-button:active {
+#transparent-button:active{
   background: rgba(105, 89, 133, 0.6);
 }
 
@@ -339,6 +370,10 @@ export default {
 
 .check-icon {
   margin-right: 0.25rem;
+}
+
+#tip{
+  text-align: left;
 }
 
 @media screen and (max-width: 756px) {

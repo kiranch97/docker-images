@@ -24,7 +24,7 @@ export default {
     return {
       userType: null,
       apiWebsocketUrl: process.env.VUE_APP_API_WS_URL,
-      camera: "front",
+      camera: "auto",
 
       // For QR
       track: false,
@@ -36,7 +36,7 @@ export default {
 
   computed: {
     validationWaiting() {
-      return this.isValid === "waiting" && this.camera === "front";
+      return this.isValid === "waiting" && this.camera === "auto";
     },
 
     // ----
@@ -74,6 +74,7 @@ export default {
     // ----
 
     setupWebSockets() {
+ 
       //Setup connection with Websocket server URL:PORT/ENDPOINT
       let websocketUrl = this.apiWebsocketUrl + "/stream-login";
       this.websocketConnection = new WebSocket(websocketUrl);
@@ -85,7 +86,7 @@ export default {
 
     async sendWebSocketsMsg(content) {
       this.turnCameraOff();
-      await this.timeout(1000);
+      // await this.timeout(1000);
 
       // Send QR-code result to API for verification
       let data = {
@@ -103,11 +104,12 @@ export default {
 
       if (response.success) {
         this.isValid = true;
-        await this.timeout(1000);
+        // await this.timeout(1000);
         this.$router.push("/client");
+        this.websocketConnection.close()
       } else {
         this.isValid = false;
-        await this.timeout(1000);
+        // await this.timeout(1000);
         this.turnCameraOn();
       }
     },
@@ -127,7 +129,7 @@ export default {
     // ----
 
     turnCameraOn() {
-      this.camera = "front";
+      this.camera = "auto";
     },
 
     // ----
@@ -150,6 +152,8 @@ export default {
   mounted() {
     this.checkNotIDUsertype();
     this.setupWebSockets();
+
+    console.log("Facing mode" + this.facingMode)
   }
 };
 </script>

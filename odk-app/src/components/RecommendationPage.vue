@@ -51,6 +51,14 @@ export default {
     };
   },
   methods: {
+    checkIDUsertype() {
+      if (localStorage.appId && localStorage.userType) {
+        this.$router.push("/client");
+      }
+    },
+
+    // ----
+
     switchRmd() {
       //SWITCH THROUGH THE OPTIONS AND REDIRECT THE USERS TO THE CHECKLIST PAGE
       if (this.rmdOne) {
@@ -70,14 +78,19 @@ export default {
         document.getElementById("buttons-section").style.justifyContent =
           "flex-end";
       } else if (this.rmdThree) {
-        this.$router.push({ path: "/checklist" });
+        this.$router.push("/checklist");
       }
     },
+
+    // ----
+
     skipRmd() {
-      this.$router.push({ path: "/checklist" });
+      this.$router.push("/checklist");
     }
   },
-  mounted() {}
+  mounted() {
+    this.checkIDUsertype();
+  }
 };
 </script>
 

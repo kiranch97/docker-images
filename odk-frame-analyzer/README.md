@@ -15,6 +15,18 @@ This repository combines elements from:
 
 Test and prediction code for a garbage object detection
 
+## Frame analyzer components
+
+The Frame analyzer is a self-built PC, built with the following components:
+* Case: Cooler Master Elite 130 (Mini-ITX case)
+* Board: Asus Prime A320I-K/CSM (Mini-ITX motherboard, AM4 Socket)
+* CPU: AMD Ryzen 7 2700X (AM4)
+* CPU fan: Xilence XC040 (Note: space for a fan is limited due to case)
+* RAM: Corsair Vengeance LPX CMK16GX4M1D3000 (1 x 16GB & 3.000MT/s, 2 RAM slots availible (32GB is max))
+* GPU: Gigabyte GeForce RTX 2070 Super Gaming OC 3X 8G (analyzes one frame in under 0.07 seconds!)
+* Storage: Kingston A400 240GB (for running OS)
+* PSU: be quiet! Pure Power 11 500W CM (80 Plus Gold)
+
 ## Installation
 
 To install all required libaries:

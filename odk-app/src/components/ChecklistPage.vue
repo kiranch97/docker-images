@@ -122,7 +122,13 @@ export default {
     "onboarding-animation": OnboardingAnimation
   },
   methods: {
-    //-------
+    checkIDUsertype() {
+      if (localStorage.appId && localStorage.userType) {
+        this.$router.push("/client");
+      }
+    },
+
+    // ----
 
     checkAppMode() {
       let checkMedia = window.matchMedia("(display-mode: standalone)").matches;
@@ -136,7 +142,7 @@ export default {
       }
     },
 
-    //-------
+    // ----
 
     askLocPermission() {
       // console.log(navigator.geolocation)
@@ -154,7 +160,7 @@ export default {
       this.checkAllPermission();
     },
 
-    //-------
+    // ----
 
     accesDenied(error) {
       if (error.code == error.PERMISSION_DENIED)
@@ -164,14 +170,14 @@ export default {
       document.querySelector(".camera-button").disabled = true;
     },
 
-    //-------
+    // ----
 
     updatePosition: function(position) {
       this.positionLa = position.coords.latitude;
       this.positionLo = position.coords.longitude;
     },
 
-    //-------
+    // ----
 
     askCamPermission() {
       this.currentConstraints = {
@@ -186,6 +192,11 @@ export default {
       let curScope = this;
       navigator.mediaDevices
         .getUserMedia(this.currentConstraints)
+        .then(mediaStream => {
+          // Stop the stream
+          const tracks = mediaStream.getTracks();
+          tracks[0].stop();
+        })
         .then(() => {
           console.log("Permission accepted");
           curScope.camPermission = !curScope.camPermission;
@@ -199,7 +210,7 @@ export default {
         });
     },
 
-    //-------
+    // ----
 
     checkAppOrientation() {
       if (window.innerWidth > window.innerHeight) {
@@ -214,7 +225,7 @@ export default {
       this.checkAllPermission();
     },
 
-    //-------
+    // ----
 
     checkAllPermission() {
       if (
@@ -222,15 +233,17 @@ export default {
         this.camPermission &&
         this.landscapeOrientation
       ) {
-        this.$router.push({ path: "/client" });
+        this.$router.push("/user");
       }
     }
-
-    //-------
   },
+
+  // ----
+
   mounted() {
     // Init
     // check if locationPermission, camPermission en landscape orientation is active
+    this.checkIDUsertype();
     this.checkAppMode();
     this.checkAppOrientation();
 

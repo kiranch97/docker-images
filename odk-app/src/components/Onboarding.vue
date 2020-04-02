@@ -124,8 +124,7 @@ export default {
 
   created(){
     if (localStorage.appId){
-      this.$router.push({ path: "/client", name: "streaming-client" });
-      // location.replace("http://127.0.0.1:8080/client")
+      this.$router.push("/client");
       console.log("Skip onboarding!")
     }
   }

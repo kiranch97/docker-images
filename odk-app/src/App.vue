@@ -31,7 +31,15 @@ export default {
 
 .odk-title {
   font-family: "Open Sans", sans-serif !important;
-  font-size: 1.5rem !important;
+  font-size: 1.25rem !important; /*20px*/
+  font-weight: 700 !important;
+  line-height: 2rem !important;
+  color: var(--dark-blue-color) !important;
+}
+
+.title-2{
+  font-family: "Open Sans", sans-serif !important;
+  font-size: 1.125rem !important; /*20px*/
   font-weight: 700 !important;
   line-height: 2rem !important;
   color: var(--dark-blue-color) !important;
@@ -43,6 +51,15 @@ export default {
   font-size: 1rem !important;
   font-weight: 400 !important;
   line-height: 1.5rem !important;
+  color: var(--dark-blue-color) !important;
+}
+
+.body-2 {
+  /* margin-top: 1rem !important; */
+  font-family: "Open Sans", sans-serif !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  line-height: 1.875rem !important;
   color: var(--dark-blue-color) !important;
 }
 
@@ -58,12 +75,12 @@ export default {
 
 html,
 body {
-  background: var(--grey-color);
+  background: var(--grey-color) !important;
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden !important;
+  /* overflow: hidden !important; */
 }
 
 #app {

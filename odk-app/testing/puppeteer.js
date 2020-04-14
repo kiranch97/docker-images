@@ -105,7 +105,7 @@ const androidPortrait = puppeteer.devices['Pixel 2 XL'];
     //         console.log(`${i}: ${msg.args()[i]}`);
     // });
 
-    await firefoxPage.goto(process.env.LOCAL_URL);
+    await firefoxPage.goto(process.env.PRODUCTION_URL);
     await firefoxPage.waitForSelector("a")
     await firefoxPage.click("a")
     //CHECK Chrome manual

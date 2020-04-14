@@ -61,7 +61,7 @@ export default {
   // ----
 
   methods: {
-    checkNotIDUsertype() {
+    checkIdNull() {
       if (
         typeof localStorage.appId == "undefined" ||
         localStorage.appId == null ||
@@ -150,7 +150,7 @@ export default {
   // ----
 
   mounted() {
-    this.checkNotIDUsertype();
+    this.checkIdNull();
     this.setupWebSockets();
 
     console.log("Facing mode" + this.facingMode)

@@ -89,6 +89,7 @@ export default {
     }
   },
   mounted() {
+    console.log("=> Recommendation page init:");
     this.checkIDUsertype();
   }
 };

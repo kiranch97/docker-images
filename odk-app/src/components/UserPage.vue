@@ -66,6 +66,7 @@ export default {
     // ----
 
     saveId(user) {
+      console.log("Clicked")
       if (user == "worker") {
         localStorage.userType = "waste_department";
       }
@@ -79,8 +80,9 @@ export default {
 
   mounted() {
     // Init
+    console.log("=> User Page Client init:");
     //IF USER IN BROWSER AND development mode is off redirect them to BrowserStartPage
-    this.checkAppMode();
+    // this.checkAppMode();
     //IF USER DOESNT HAVE ID YET GENERATE ON FOR THEM
     this.checkIDUsertype();
   }

@@ -269,6 +269,8 @@ export default {
           curScope.currentStream = stream;
           video.srcObject = stream;
           video.play();
+          console.log(`==> Stream has started with ${curScope.rearCamResolution.width} x ${curScope.rearCamResolution.height} resolution `);
+          
         })
         .catch(function(err) {
           console.log("==> Error occured in 'showStream':");
@@ -513,6 +515,7 @@ export default {
 
   mounted: function() {
     //Init
+    console.log("=> Streaming Client init:");
     this.setup();
     this.showStream();
 
@@ -525,13 +528,6 @@ export default {
 
     console.log("Capture rate set to: " + this.SETTINGS.TAKE_PICTURE_EVERY_MS);
 
-    //Set interval when connection is offline
-    //Change stream state to OFF and close websocket connection
-    //When user has access to internet again. and iniates a new websocket stream, Clear the interval
-    //Check the user stream state. If user was streaming, restart stream. If not dont do anything.
-
-    // this.websocketStreamState = this.streamState.OFF;
-    // setInterval(this.checkInternetState, 3000);
   }
 };
 </script>

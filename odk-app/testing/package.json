@@ -2,7 +2,7 @@
   "name": "testing",
   "version": "1.0.0",
   "description": "e2e testing",
-  "main": "pup.js",
+  "main": "puppeteer.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^8.2.0",
-    "playwright": "^0.11.1",
-    "puppeteer": "^2.1.1"
+    "puppeteer": "^2.1.1",
+    "puppeteer-firefox": "^0.5.1"
   }
 }

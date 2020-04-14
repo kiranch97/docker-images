@@ -2,20 +2,23 @@
   <div id="other-manuals">
     <p class="title-2">Other devices or browsers</p>
     <ul>
-      <router-link id="firefox" v-if="chromeActive || edgeActive || iosActive || otherBrowser" to="/firefox-manual">
+      <router-link id="firefox" v-if="chromeActive || edgeActive || iosActive || otherBrowser || desktopActive" to="/firefox-manual">
         <li class="link">Firefox, Android</li>
       </router-link>
-      <router-link id="chrome" v-if="firefoxActive || edgeActive || iosActive || otherBrowser" to="/chrome-manual">
+      <router-link id="chrome" v-if="firefoxActive || edgeActive || iosActive || otherBrowser || desktopActive" to="/chrome-manual">
         <li class="link">Chrome, Android</li>
       </router-link>
-      <router-link id="edge" v-if="firefoxActive || chromeActive || iosActive || otherBrowser" to="/edge-manual">
+      <router-link id="edge" v-if="firefoxActive || chromeActive || iosActive || otherBrowser || desktopActive" to="/edge-manual">
         <li class="link">Edge, Android</li>
       </router-link>
-      <router-link id="ios" v-if="chromeActive || firefoxActive || edgeActive || otherBrowser" to="/ios-manual">
+      <router-link id="ios" v-if="chromeActive || firefoxActive || edgeActive || otherBrowser || desktopActive" to="/ios-manual">
         <li class="link">IOS</li>
       </router-link>
-      <router-link id="other-browsers" v-if="chromeActive || firefoxActive || edgeActive || iosActive" to="/other-browsers-manual">
+      <router-link id="other-browsers" v-if="chromeActive || firefoxActive || edgeActive || iosActive || desktopActive" to="/other-browsers-manual">
         <li class="link">Other browsers, Android</li>
+      </router-link>
+      <router-link id="other-browsers" v-if="chromeActive || firefoxActive || edgeActive || iosActive || otherBrowser" to="/desktop-manual">
+        <li class="link">Desktop</li>
       </router-link>
     </ul>
   </div>
@@ -23,20 +26,21 @@
 
 <script>
 export default {
-    props: ["chromeActive", "firefoxActive", "edgeActive", "iosActive", "otherBrowser"],
+    props: ["chromeActive", "firefoxActive", "edgeActive", "iosActive", "otherBrowser", "desktopActive"],
 };
 </script>
 
 <style scoped>
+
+
 #other-manuals {
-  height: 15rem;
+  height: auto;
   width: 100%;
   background: var(--grey-color);
   /* border: 2px solid black; */
   display: flex;
   flex-direction: column;
-  padding: 0 1.5rem;
-  padding-top: 2rem;
+  padding: 2rem 1.5rem;
 }
 
 p .title-2 {
@@ -45,7 +49,7 @@ p .title-2 {
 
 ul {
   /* border: 2px solid blue; */
-  margin-bottom: 2rem;
+  /* margin-bottom: 2rem; */
 }
 
 .link {

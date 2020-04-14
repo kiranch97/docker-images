@@ -1,7 +1,9 @@
 <template>
   <div id="container">
     <header>
-      <img src="../../assets/manual/logo-2.png" />
+      <router-link to="/">
+        <img id="logo" src="../../assets/manual/logo-2.png" />
+      </router-link>
     </header>
     <div v-for="manual in manuals" v-bind:key="manual.id" id="supported-browsers">
       <p class="body-2">{{manual.title}}</p>
@@ -10,24 +12,27 @@
         <p class="title-2">{{step.step}}</p>
         <p class="body-1">
           {{step.instruction}}
-          <img id="icon" v-if="step.icon" :src="require(`../../assets/manual/${step.icon}.png`)" />
+          <img
+            id="icon"
+            v-if="step.icon"
+            :src="require(`../../assets/manual/${step.icon}.png`)"
+          />
         </p>
         <img class="image" :src="require(`../../assets/manual/${step.stepImage}.png`)" />
       </div>
     </div>
-    <OtherDevicesManuals :firefoxActive="firefoxActive"/>
+    <OtherDevicesManuals :firefoxActive="firefoxActive" />
     <!-- <div id="unsupported-browsers"></div>  -->
     <footer>&copy; 2020 ODK by Gemeente Amsterdam</footer>
   </div>
 </template>
 
 <script>
-
-import OtherDevicesManuals from "./OtherDevicesManuals"
+import OtherDevicesManuals from "./OtherDevicesManuals";
 
 export default {
   name: "firefox-manual-page",
-    components: {
+  components: {
     OtherDevicesManuals
   },
   data() {
@@ -78,8 +83,11 @@ header {
   width: 100%;
   background: var(--main-purple-color);
   height: 5rem !important;
+  /* margin-bottom: 5rem; */
   position: absolute;
   display: flex;
+  align-items: center;
+  /* border: 2px solid blue; */
 }
 
 header img {
@@ -89,6 +97,7 @@ header img {
 
 footer {
   width: 100%;
+  height: 4rem !important;
   background: var(--main-purple-color);
   color: white;
   display: flex;
@@ -103,8 +112,9 @@ footer {
 #container {
   display: flex;
   flex-direction: column;
+  /* align-items: center; */
   width: 100%;
-  height: 100%;
+  height: auto;
   max-width: 414px;
   margin: 0 auto;
   position: relative;
@@ -115,16 +125,24 @@ footer {
 
 #supported-browsers {
   padding: 0 1.5rem;
-  margin-top: 7rem;
+  margin-top: 7.375rem;
 }
 
 #steps {
-  padding: 2rem 0;
+  padding-bottom: 2.625rem;
   width: 100%;
 }
 
 .body-1 {
   padding-bottom: 1rem;
+}
+
+.body-2 {
+  margin-bottom: 0.375rem;
+}
+
+.odk-title {
+  margin-bottom: 2.125rem;
 }
 
 #icon {
@@ -154,10 +172,17 @@ footer {
 
 @media (max-width: 1024px) and (orientation: landscape) {
   #container {
-    flex-direction: row;
+    /* flex-direction: row; */
     top: 0;
     max-width: none;
     max-height: none;
   }
+
+  /* #steps {
+  padding: 2rem 0;
+  width: 100%;
+  display: flex;
+  
+} */
 }
 </style>

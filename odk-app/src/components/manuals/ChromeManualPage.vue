@@ -1,7 +1,9 @@
 <template>
   <div id="container">
     <header>
-      <img src="../../assets/manual/logo-2.png" />
+      <router-link to="/">
+      <img id="logo" src="../../assets/manual/logo-2.png" />
+      </router-link>
     </header>
     <div v-for="manual in manuals" v-bind:key="manual.id" id="supported-browsers">
       <div id="step-item">
@@ -16,7 +18,7 @@
     </div>
     <OtherDevicesManuals :chromeActive="chromeActive"/>
     <!-- <div id="unsupported-browsers"></div>  -->
-    <!-- <footer>&copy; 2020 ODK by Gemeente Amsterdam</footer> -->
+    <footer>&copy; 2020 ODK by Gemeente Amsterdam</footer>
   </div>
 </template>
 
@@ -71,14 +73,14 @@ export default {
 </script>
 
 <style scoped>
+
 header {
   width: 100%;
   background: var(--main-purple-color);
   height: 5rem !important;
-  /* margin-bottom: 5rem; */
   position: absolute;
   display: flex;
-  /* border: 2px solid blue; */
+  align-items: center;
 }
 
 header img {
@@ -88,18 +90,20 @@ header img {
 
 footer {
   width: 100%;
+  height: 4rem !important;
   background: var(--main-purple-color);
-  /* height: 5rem !important;  */
   color: white;
   display: flex;
   justify-content: center;
   align-items: center;
-  /* position: absolute; */
-  /* bottom: 0; */
 }
 
 #wrapper {
   margin: 0 auto;
+}
+
+#logo{
+  height: 22px
 }
 
 #container {
@@ -107,7 +111,7 @@ footer {
   flex-direction: column;
   /* align-items: center; */
   width: 100%;
-  height: 100%;
+  height: auto;
   max-width: 414px;
   margin: 0 auto;
   position: relative;

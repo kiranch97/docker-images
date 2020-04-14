@@ -1,28 +1,29 @@
 <template>
   <div id="container">
     <header>
-      <img src="../../assets/manual/logo-2.png" />
+      <router-link to="/">
+        <img id="logo" src="../../assets/manual/logo-2.png" />
+      </router-link>
     </header>
     <div v-for="manual in manuals" v-bind:key="manual.id" id="supported-browsers">
       <p class="body-2">{{manual.title}}</p>
       <p class="odk-title">{{manual.browserName}}</p>
-      <p class="title-2 attention">{{manual.attention}}</p>
+      <p class="body-1 attention">{{manual.attention}}</p>
       <p class="body-1 recommendation">{{manual.recommendation}}</p>
       <p class="body-1 body">{{manual.body}}</p>
     </div>
-    <OtherDevicesManuals :otherBrowser="otherBrowser"/>
+    <OtherDevicesManuals :otherBrowser="otherBrowser" />
     <!-- <div id="unsupported-browsers"></div>  -->
     <footer>&copy; 2020 ODK by Gemeente Amsterdam</footer>
   </div>
 </template>
 
 <script>
-
-import OtherDevicesManuals from "./OtherDevicesManuals"
+import OtherDevicesManuals from "./OtherDevicesManuals";
 
 export default {
   name: "other-browsers-manual-page",
-    components: {
+  components: {
     OtherDevicesManuals
   },
   data() {
@@ -34,14 +35,14 @@ export default {
           browserName: "Other browsers, Android",
           attention: "Attention:",
           recommendation: "We recommend you to use Chrome, Firefox or Edge.",
-          body: "Unfortunately we cannot garantee the optimal functionality of this PWA in all browsers. Please use Chrome, Firefox or Edge for tested results.",
+          body:
+            "Unfortunately we cannot garantee the optimal functionality of this PWA in all browsers. Please use Chrome, Firefox or Edge for tested results."
         }
       ]
     };
   },
   methods: {},
-  mounted() {
-  }
+  mounted() {}
 };
 </script>
 
@@ -52,6 +53,7 @@ header {
   height: 5rem !important;
   position: absolute;
   display: flex;
+  align-items: center;
 }
 
 header img {
@@ -93,23 +95,12 @@ footer {
   margin-top: 7rem;
 }
 
-.attention{
-    padding: 1rem 0;
-    /* border: 2px solid black; */
+.attention {
+  font-weight: 700 !important;
 }
 
-.recommendation{
-    /* border: 2px solid red; */
-}
-
-.body{
-/* border: 2px solid blue; */
-padding: 1rem 0;
-/* padding-bottom: 2.5rem; */
-}
-
-.body-1 {
-  /* padding-bottom: 1rem; */
+.body {
+  padding: 1rem 0;
 }
 
 #icon {
@@ -117,6 +108,14 @@ padding: 1rem 0;
   height: 2rem;
   position: relative;
   top: 0.5rem;
+}
+
+.body-2 {
+  margin-bottom: 0.375rem;
+}
+
+.odk-title {
+  margin-bottom: 2.125rem;
 }
 
 .image {

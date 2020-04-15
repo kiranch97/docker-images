@@ -1,28 +1,29 @@
 <template>
   <div id="container">
     <header>
-      <img src="../../assets/manual/logo-2.png" />
+      <router-link to="/">
+        <img id="logo" src="../../assets/manual/logo-2.png" />
+      </router-link>
     </header>
     <div v-for="manual in manuals" v-bind:key="manual.id" id="supported-browsers">
       <p class="body-2">{{manual.title}}</p>
       <p class="odk-title">{{manual.browserName}}</p>
-      <p class="title-2 attention">{{manual.attention}}</p>
+      <p class="body-1 attention">{{manual.attention}}</p>
       <p class="body-1 recommendation">{{manual.recommendation}}</p>
       <p class="body-1 body">{{manual.body}}</p>
     </div>
-    <OtherDevicesManuals :iosActive="iosActive"/>
+    <OtherDevicesManuals :iosActive="iosActive" />
     <!-- <div id="unsupported-browsers"></div>  -->
     <footer>&copy; 2020 ODK by Gemeente Amsterdam</footer>
   </div>
 </template>
 
 <script>
-
-import OtherDevicesManuals from "./OtherDevicesManuals"
+import OtherDevicesManuals from "./OtherDevicesManuals";
 
 export default {
   name: "Ios-manual-page",
-    components: {
+  components: {
     OtherDevicesManuals
   },
   data() {
@@ -33,15 +34,16 @@ export default {
           title: "How to install PWA?",
           browserName: "IOS",
           attention: "Attention:",
-          recommendation: "At this moment you cannot use this app on IOS devices.",
-          body: "Unfortunately video stream in a PWA is still not supported by any browser, in IOS. We recommend you to use Chrome, Firefox or Edge in an Android phone.",
+          recommendation:
+            "At this moment you cannot use this app on IOS devices.",
+          body:
+            "Unfortunately video stream in a PWA is still not supported by any browser, in IOS. We recommend you to use Chrome, Firefox or Edge in an Android phone."
         }
       ]
     };
   },
   methods: {},
-  mounted() {
-  }
+  mounted() {}
 };
 </script>
 
@@ -52,6 +54,7 @@ header {
   height: 5rem !important;
   position: absolute;
   display: flex;
+  align-items: center;
 }
 
 header img {
@@ -61,12 +64,10 @@ header img {
 
 footer {
   width: 100%;
-  height: 4rem;
+  height: 4rem !important;
   background: var(--main-purple-color);
   color: white;
   display: flex;
-  position: absolute;
-  bottom: 0;
   justify-content: center;
   align-items: center;
 }
@@ -79,7 +80,7 @@ footer {
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100vh;
+  height: auto;
   max-width: 414px;
   margin: 0 auto;
   position: relative;
@@ -93,23 +94,20 @@ footer {
   margin-top: 7rem;
 }
 
-.attention{
-    padding: 1rem 0;
-    /* border: 2px solid black; */
+.attention {
+  font-weight: 700 !important;
 }
 
-.recommendation{
-    /* border: 2px solid red; */
+.body {
+  padding: 1rem 0;
 }
 
-.body{
-/* border: 2px solid blue; */
-padding: 1rem 0;
-/* padding-bottom: 2.5rem; */
+.body-2 {
+  margin-bottom: 0.375rem;
 }
 
-.body-1 {
-  /* padding-bottom: 1rem; */
+.odk-title {
+  margin-bottom: 2.125rem;
 }
 
 #icon {

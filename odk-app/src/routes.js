@@ -7,6 +7,7 @@ import ChromeManualPage from './components/manuals/ChromeManualPage';
 import EdgeManualPage from './components/manuals/EdgeManualPage';
 import FirefoxManualPage from './components/manuals/FirefoxManualPage';
 import IosManualPage from './components/manuals/IosManualPage';
+import DesktopManualPage from './components/manuals/DesktopManualPage';
 import OtherBrowsersManualPage from './components/manuals/OtherBrowsersManualPage';
 import StreamingClient from './components/StreamingClient';
 
@@ -65,6 +66,12 @@ export const routes = [
         path: '/ios-manual',
         name: 'Iosio-manual-page',
         component: IosManualPage,
+        props: true
+    },
+    {
+        path: '/desktop-manual',
+        name: 'desktop-manual-page',
+        component: DesktopManualPage,
         props: true
     },
     {

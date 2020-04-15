@@ -64,12 +64,10 @@ header img {
 
 footer {
   width: 100%;
-  height: 4rem;
+  height: 4rem !important;
   background: var(--main-purple-color);
   color: white;
   display: flex;
-  position: absolute;
-  bottom: 0;
   justify-content: center;
   align-items: center;
 }
@@ -82,7 +80,7 @@ footer {
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100vh;
+  height: auto;
   max-width: 414px;
   margin: 0 auto;
   position: relative;

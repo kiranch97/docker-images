@@ -27,6 +27,9 @@ build-app:
     - master
 
 deploy-app:
+  image: docker
+  services:
+  - docker:dind
   stage: deploy
   script:
     - echo "start deploy of odk-app"

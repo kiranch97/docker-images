@@ -96,11 +96,9 @@ export default {
     }
   },
   mounted() {
-    // Init
     // IF USER DONT HAVE PWA DOWNLOADED ON MOBILE, TABLET OR PC/LAPTOP DEVICE THEY CANT ACCESS THE VIDEO STREAM
     this.checkAppMode();
     this.checkBrowserType();
-
 
     //PWA INSTALLATION POP-UP
     let deferredPrompt;

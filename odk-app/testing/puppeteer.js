@@ -78,7 +78,6 @@ const androidPortrait = puppeteer.devices['Pixel 2 XL'];
 
 (async () => {
     const firefoxBrowser = await pptrFirefox.launch({
-        args: ['--enable-features=NetworkService'],
         headless: false,
         devtools: true,
         ignoreHTTPSErrors: false,
@@ -99,11 +98,11 @@ const androidPortrait = puppeteer.devices['Pixel 2 XL'];
     await firefoxPage.emulate(androidPortrait);
 
 
-    //Read Logs in console
-    // firefoxPage.on('console', msg => {
-    //     for (let i = 0; i < msg.args().length; ++i)
-    //         console.log(`${i}: ${msg.args()[i]}`);
-    // });
+    // Read Logs in console
+    firefoxPage.on('console', msg => {
+        for (let i = 0; i < msg.args().length; ++i)
+            console.log(`${i}: ${msg.args()[i]}`);
+    });
 
     await firefoxPage.goto(process.env.PRODUCTION_URL);
     await firefoxPage.waitForSelector("a")
@@ -120,6 +119,9 @@ const androidPortrait = puppeteer.devices['Pixel 2 XL'];
     //Check other browsers manual
     await firefoxPage.waitForSelector("a#other-browsers")
     await firefoxPage.click("a#other-browsers")
+    //Go back to main screen
+    await firefoxPage.waitForSelector("img#logo")
+    await firefoxPage.click("img#logo")
 
 
     /* Initialize Chrome browser instance */

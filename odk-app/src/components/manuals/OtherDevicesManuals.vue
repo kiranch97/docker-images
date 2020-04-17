@@ -17,7 +17,7 @@
       <router-link id="other-browsers" v-if="chromeActive || firefoxActive || edgeActive || iosActive || desktopActive" to="/other-browsers-manual">
         <li class="link">Other browsers, Android</li>
       </router-link>
-      <router-link id="other-browsers" v-if="chromeActive || firefoxActive || edgeActive || iosActive || otherBrowser" to="/desktop-manual">
+      <router-link id="desktop" v-if="chromeActive || firefoxActive || edgeActive || iosActive || otherBrowser" to="/desktop-manual">
         <li class="link">Desktop</li>
       </router-link>
     </ul>
@@ -36,7 +36,7 @@ export default {
 #other-manuals {
   height: auto;
   width: 100%;
-  background: var(--grey-color);
+  background: var(--second-white-color);
   /* border: 2px solid black; */
   display: flex;
   flex-direction: column;

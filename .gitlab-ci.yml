@@ -7,10 +7,26 @@
 #    - pip install -r requirements.txt
 #    - pytest
 
-test-app:
-  image: node:latest
-  stage: test
+# test-app:
+#   image: node:latest
+#   stage: test
+#   script:
+#     - cd odk-app
+#     - npm install --progress=false
+#     - npm run lint
+
+build-app:
+  stage: build
   script:
+    - echo "start build of odk-app"
     - cd odk-app
     - npm install --progress=false
-    - npm run lint
+    - npm run build
+  only:
+    - master
+
+deploy-app:
+  stage: deploy
+  script:
+    - echo "start deploy of odk-app"
+    - docker restart odk-proxy

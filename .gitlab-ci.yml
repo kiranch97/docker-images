@@ -16,6 +16,7 @@
 #     - npm run lint
 
 build-app:
+  image: node:latest
   stage: build
   script:
     - echo "start build of odk-app"

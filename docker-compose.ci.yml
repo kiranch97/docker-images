@@ -7,7 +7,7 @@ services:
     container_name: odk-proxy
     image: nginx
     depends_on:
-      - api
+      - fastapi-server
     ports:
       - "80:80"
       - "443:443"

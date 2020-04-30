@@ -2,4 +2,4 @@ FROM tiangolo/uvicorn-gunicorn-fastapi:python3.7
 
 ENV API_PREFIX /
 
-COPY ./app /app
+COPY ./odk-api /app

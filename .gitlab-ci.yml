@@ -18,7 +18,7 @@ build-server:
 pre-deploy-server:
     stage: pre-deploy
     script:
-        - docker-compose -f docker-compose.ci.yml start postgres-db
+        - docker-compose -f docker-compose.ci.yml up -d postgres-db
     only:
         changes:
             - docker-compose.ci.yml

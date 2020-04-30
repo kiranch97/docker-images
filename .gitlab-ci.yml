@@ -1,5 +1,6 @@
 stages:
     - build
+    - pre-deploy
     - deploy
 
 # FASTAPI SERVER
@@ -9,6 +10,15 @@ build-server:
     script:
         - docker-compose -f docker-compose.ci.yml stop fastapi-server
         - docker-compose -f docker-compose.ci.yml build fastapi-server
+    only:
+        changes:
+            - docker-compose.ci.yml
+            - odk-api/**/*
+
+pre-deploy-server:
+    stage: pre-deploy
+    script:
+        - docker-compose -f docker-compose.ci.yml start postgres-db
     only:
         changes:
             - docker-compose.ci.yml

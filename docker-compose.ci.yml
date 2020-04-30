@@ -23,9 +23,9 @@ services:
   fastapi-server:
     container_name: odk-api
     build: ./odk-api
-    # depends_on:
-    #   - db
-    #   - rmq
+    depends_on:
+      - postgres-db
+      # - rmq
     environment:
       - DATABASE_CONNECTION_STRING
       - RMQ_USER
@@ -44,21 +44,22 @@ services:
   #     - "8081:8080"
   #     - "5672:5672"
 
-  # db:
-  #   restart: always
-  #   container_name: odk-pg
-  #   image: mdillon/postgis:10-alpine
-  #   env_file:
-  #     - ./env_files/odk-db.env
-  #   environment:
-  #       - PGDATA=/pgdata
-  #   ports:
-  #       - "5432:5432"
-  #   volumes:
-  #       - ./pgdata:/pgdata
-  #   logging:
-  #      options:
-  #        max-size: 50m
+  postgres-db:
+    container_name: odk-db
+    image: mdillon/postgis:10-alpine
+    environment:
+      - POSTGRES_NAME
+      - POSTGRES_HOST
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - PGDATA=/pgdata
+    ports:
+        - "5432:5432"
+    volumes:
+        - ./pgdata:/pgdata
+    logging:
+       options:
+         max-size: 50m
 
   # email:
   #   restart: always

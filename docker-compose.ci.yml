@@ -27,10 +27,10 @@ services:
       - postgres-db
       # - rmq
     environment:
-      - DATABASE_CONNECTION_STRING: ${DATABASE_CONNECTION_STRING}
-      - RMQ_USER: ${RMQ_USER}
-      - RMQ_PASSWORD: ${RMQ_PASSWORD}
-      - RMQ_URL: ${RMQ_URL}
+      DATABASE_CONNECTION_STRING: ${DATABASE_CONNECTION_STRING}
+      RMQ_USER: ${RMQ_USER}
+      RMQ_PASSWORD: ${RMQ_PASSWORD}
+      RMQ_URL: ${RMQ_URL}
     ports:
       - "8000:80"
   

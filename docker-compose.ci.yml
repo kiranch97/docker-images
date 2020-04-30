@@ -25,7 +25,7 @@ services:
     build: ./odk-api
     depends_on:
       - postgres-db
-      # - rmq
+      - rabbitmq
     environment:
       - DATABASE_CONNECTION_STRING
       - RMQ_USER
@@ -34,15 +34,15 @@ services:
     ports:
       - "8000:80"
   
-  # rmq:
-  #   restart: always
-  #   container_name: odk-rmq
-  #   image: rabbitmq:3-management
-  #   env_file:
-  #     - ./env_files/odk-rmq.env
-  #   ports:
-  #     - "8081:8080"
-  #     - "5672:5672"
+  rabbitmq:
+    container_name: odk-rmq
+    image: rabbitmq:3-management
+    enviroment:
+      - RABBITMQ_DEFAULT_USER
+      - RABBITMQ_DEFAULT_PASS
+    ports:
+      # - "8081:8080"
+      - "5672:5672"
 
   postgres-db:
     container_name: odk-db

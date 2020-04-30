@@ -37,7 +37,7 @@ services:
   rabbitmq:
     container_name: odk-rmq
     image: rabbitmq:3-management
-    enviroment:
+    environment:
       - RABBITMQ_DEFAULT_USER
       - RABBITMQ_DEFAULT_PASS
     ports:

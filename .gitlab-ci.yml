@@ -1,16 +1,45 @@
-test-api:
-  image: python:3.7
-  stage: test
-  script:
-    - apt-get update -qy
-    - cd odk-api
-    - pip install -r requirements.txt
-    - pytest
+stages:
+    - build
+    - deploy
 
-test-app:
-  image: node:latest
-  stage: test
-  script:
-    - cd odk-app
-    - npm install --progress=false
-    - npm run lint
+# FASTAPI SERVER
+
+build-server:
+    stage: build
+    script:
+        - docker-compose -f docker-compose.ci.yml stop fastapi-server
+        - docker-compose -f docker-compose.ci.yml build fastapi-server
+    only:
+        changes:
+            - docker-compose.ci.yml
+            - odk-api/**/*
+
+deploy-server:
+    stage: deploy
+    script:
+        - docker-compose -f docker-compose.ci.yml up -d fastapi-server
+    only:
+        changes:
+            - docker-compose.ci.yml
+            - odk-api/**/*
+
+# VUE PWA
+
+# build-app:
+#     stage: build
+#     script:
+#         - docker-compose stop vue-pwa
+#         - docker-compose build vue-pwa
+#     only:
+#         changes:
+#             - docker-compose.yml
+#             - pwa/**/*
+
+# deploy-app:
+#     stage: deploy
+#     script:
+#         - docker-compose up -d vue-pwa
+#     only:
+#         changes:
+#             - docker-compose.yml
+#             - pwa/**/*

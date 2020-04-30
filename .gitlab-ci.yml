@@ -8,6 +8,7 @@ build-server:
     stage: build
     script:
         - docker-compose -f docker-compose.ci.yml stop fastapi-server
+        - ls -al
         - docker-compose -f docker-compose.ci.yml build fastapi-server
     only:
         changes:

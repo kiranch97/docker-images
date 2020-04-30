@@ -28,9 +28,9 @@ services:
       # - rmq
     environment:
       - DATABASE_CONNECTION_STRING
-      # RMQ_USER: ${RMQ_USER}
-      # RMQ_PASSWORD: ${RMQ_PASSWORD}
-      # RMQ_URL: ${RMQ_URL}
+      - RMQ_USER
+      - RMQ_PASSWORD
+      - RMQ_URL
     ports:
       - "8000:80"
   

@@ -5,21 +5,21 @@ stages:
 
 # POSTGRES DATABASE
 
-start-database:
+start database:
     stage: pre-deploy
     script:
         - docker-compose -f docker-compose.ci.yml up -d postgres-db
 
 # RABBITMQ MESSAGE BROKER
 
-start-rabbitmq:
+start rabbitmq:
     stage: pre-deploy
     script:
         - docker-compose -f docker-compose.ci.yml up -d rabbitmq
 
 # FASTAPI SERVER
 
-build-server:
+build server:
     stage: build
     script:
         - docker-compose -f docker-compose.ci.yml stop fastapi-server
@@ -29,7 +29,7 @@ build-server:
             - docker-compose.ci.yml
             - odk-api/**/*
 
-deploy-server:
+deploy server:
     stage: deploy
     script:
         - docker-compose -f docker-compose.ci.yml up -d fastapi-server

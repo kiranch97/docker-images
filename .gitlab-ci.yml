@@ -8,6 +8,7 @@ stages:
 build-server:
     stage: build
     script:
+        - echo $DATABASE_CONNECTION_STRING
         - docker-compose -f docker-compose.ci.yml stop fastapi-server
         - docker-compose -f docker-compose.ci.yml build fastapi-server
     only:
@@ -15,23 +16,23 @@ build-server:
             - docker-compose.ci.yml
             - odk-api/**/*
 
-start-database:
-    stage: pre-deploy
-    script:
-        - docker-compose -f docker-compose.ci.yml up -d postgres-db
-    only:
-        changes:
-            - docker-compose.ci.yml
-            - odk-api/**/*
+# start-database:
+#     stage: pre-deploy
+#     script:
+#         - docker-compose -f docker-compose.ci.yml up -d postgres-db
+#     only:
+#         changes:
+#             - docker-compose.ci.yml
+#             - odk-api/**/*
 
-deploy-server:
-    stage: deploy
-    script:
-        - docker-compose -f docker-compose.ci.yml up -d fastapi-server
-    only:
-        changes:
-            - docker-compose.ci.yml
-            - odk-api/**/*
+# deploy-server:
+#     stage: deploy
+#     script:
+#         - docker-compose -f docker-compose.ci.yml up -d fastapi-server
+#     only:
+#         changes:
+#             - docker-compose.ci.yml
+#             - odk-api/**/*
 
 # VUE PWA
 

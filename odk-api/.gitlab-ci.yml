@@ -1,6 +1,6 @@
 stages:
     - build
-    - test
+    # - test
     - deploy
 
 build_server:
@@ -11,6 +11,6 @@ build_server:
 
 deploy_server:
     stage: deploy
-    needs: build_server
+    # needs: build_server
     script:
         - docker-compose -f docker-compose.ci.yml up -d fastapi-server

@@ -1,0 +1,16 @@
+stages:
+    - build
+    - test
+    - deploy
+
+build_server:
+    stage: build
+    script:
+        - docker-compose -f docker-compose.ci.yml stop fastapi-server
+        - docker-compose -f docker-compose.ci.yml build fastapi-server
+
+deploy_server:
+    stage: deploy
+    needs: build_server
+    script:
+        - docker-compose -f docker-compose.ci.yml up -d fastapi-server

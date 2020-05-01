@@ -20,6 +20,14 @@ services:
   #    # - ./odk-dashboard/dist:/dash-dist
   #    # - ./odk-website/dist:/website-dist
   
+  vue-pwa:
+    container_name: odk-app
+    build: ./odk-app
+    depends_on:
+      - fastapi-server
+    ports:
+      - "8080:8080"
+
   fastapi-server:
     container_name: odk-api
     build: ./odk-api

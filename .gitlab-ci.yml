@@ -1,60 +1,46 @@
 stages:
-    - build
-    - pre-deploy
-    - deploy
+    - services
+    - trigger
 
 # POSTGRES DATABASE
 
-start database:
-    stage: pre-deploy
+start_database:
+    stage: services
     script:
         - docker-compose -f docker-compose.ci.yml up -d postgres-db
 
 # RABBITMQ MESSAGE BROKER
 
-start rabbitmq:
-    stage: pre-deploy
+start_rabbitmq:
+    stage: services
     script:
         - docker-compose -f docker-compose.ci.yml up -d rabbitmq
 
 # FASTAPI SERVER
 
-build server:
-    stage: build
-    script:
-        - docker-compose -f docker-compose.ci.yml stop fastapi-server
-        - docker-compose -f docker-compose.ci.yml build fastapi-server
-    only:
-        changes:
+trigger_server:
+    stage: triggers
+    trigger:
+        include: odk-api/.gitlab-ci.yml
+    rules:
+        - changes:
             - docker-compose.ci.yml
-            - odk-api/**/*
-
-deploy server:
-    stage: deploy
-    script:
-        - docker-compose -f docker-compose.ci.yml up -d fastapi-server
-    only:
-        changes:
-            - docker-compose.ci.yml
-            - odk-api/**/*
+            - odk-api/**/*    
 
 # VUE PWA
 
-# build-app:
+# build_app:
 #     stage: build
 #     script:
-#         - docker-compose stop vue-pwa
-#         - docker-compose build vue-pwa
-#     only:
-#         changes:
+#         - docker-compose -f docker-compose.ci.yml stop vue-pwa
+#         - docker-compose -f docker-compose.ci.yml build vue-pwa
+#     rules:
+#         - changes:
 #             - docker-compose.yml
 #             - pwa/**/*
 
-# deploy-app:
+# deploy_app:
 #     stage: deploy
+#     needs: build_app
 #     script:
-#         - docker-compose up -d vue-pwa
-#     only:
-#         changes:
-#             - docker-compose.yml
-#             - pwa/**/*
+#         - docker-compose -f docker-compose.ci.yml up -d vue-pwa

@@ -1,17 +1,12 @@
-# build environment
-FROM node:12.2.0-alpine as build
+FROM node:lts-alpine
+
+RUN npm install -g http-server
+
 WORKDIR /app
-ENV PATH /app/node_modules/.bin:$PATH
-ENV VUE_APP_API_HTTP_URL /api
-ENV VUE_APP_API_WS_URL /api
-COPY package.json /app/package.json
-RUN npm install --silent
-RUN npm install @vue/cli@3.7.0 -g
-COPY . /app
+COPY package*.json ./
+RUN npm install
+COPY . .
 RUN npm run build
 
-# production environment
-FROM nginx:1.16.0-alpine
-COPY --from=build /app/dist /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 8080
+CMD [ "http-server", "dist" ]

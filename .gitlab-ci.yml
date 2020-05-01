@@ -29,18 +29,11 @@ trigger_server:
 
 # VUE PWA
 
-# build_app:
-#     stage: build
-#     script:
-#         - docker-compose -f docker-compose.ci.yml stop vue-pwa
-#         - docker-compose -f docker-compose.ci.yml build vue-pwa
-#     rules:
-#         - changes:
-#             - docker-compose.yml
-#             - pwa/**/*
-
-# deploy_app:
-#     stage: deploy
-#     needs: build_app
-#     script:
-#         - docker-compose -f docker-compose.ci.yml up -d vue-pwa
+trigger_server:
+    stage: triggers
+    trigger:
+        include: odk-app/.gitlab-ci.yml
+    rules:
+        - changes:
+            - docker-compose.ci.yml
+            - odk-app/**/*

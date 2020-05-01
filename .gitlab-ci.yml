@@ -29,7 +29,7 @@ trigger_server:
 
 # VUE PWA
 
-trigger_server:
+trigger_app:
     stage: triggers
     trigger:
         include: odk-app/.gitlab-ci.yml

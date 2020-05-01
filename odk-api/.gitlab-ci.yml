@@ -11,6 +11,7 @@ build_server:
 
 deploy_server:
     stage: deploy
-    needs: build_server
+    # Using `needs` here breaks this child-pipeline for some reason, altough its included in the official documentation of GitLab
+    # needs: build_server
     script:
         - docker-compose -f docker-compose.ci.yml up -d fastapi-server

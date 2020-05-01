@@ -25,7 +25,7 @@ trigger_server:
     rules:
         - changes:
             - docker-compose.ci.yml
-            - odk-api/**/*    
+            - odk-api/**/*
 
 # VUE PWA
 

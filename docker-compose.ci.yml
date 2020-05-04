@@ -63,7 +63,7 @@ services:
       - POSTGRES_PASSWORD
       - PGDATA=/pgdata
     ports:
-        - "5433:5432"
+        - "5432:5432"
     volumes:
         - /pgdata-docker:/pgdata
     logging:

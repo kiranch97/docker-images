@@ -20,6 +20,17 @@ services:
   #    # - ./odk-dashboard/dist:/dash-dist
   #    # - ./odk-website/dist:/website-dist
   
+  nginx-proxy:
+    container_name: odk-proxy
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/error.log:/etc/nginx/error_log.log
+      - ./nginx/cache/:/etc/nginx/cache
+      - /etc/letsencrypt/:/etc/letsencrypt/:ro
+    ports:
+      - "80:80"
+      - "443:443"
   
   vue-pwa:
     container_name: odk-app
@@ -50,7 +61,6 @@ services:
       - RABBITMQ_DEFAULT_USER
       - RABBITMQ_DEFAULT_PASS
     ports:
-      # - "8081:8080"
       - "5672:5672"
 
   postgres-db:

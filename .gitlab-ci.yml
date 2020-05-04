@@ -4,6 +4,13 @@ stages:
     - test
     - deploy
 
+# NGINX PROXY
+
+start_nginx:
+    stage: services
+    script:
+        - docker-compose -f docker-compose.ci.yml up -d nginx-proxy
+
 # POSTGRES DATABASE
 
 start_database:

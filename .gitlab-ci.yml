@@ -30,7 +30,6 @@ build_server:
             - docker-compose.ci.yml
             - odk-api/**/*
 
-
 integration_test_server:
     stage: test
     needs: ['build_server']
@@ -55,14 +54,14 @@ build_app:
             - docker-compose.ci.yml
             - odk-app/**/*
 
-test_app:
-    stage: test
-    needs: ['build_app']
-    script:
-        - echo "NOT YET IMPLEMENTED"
+# test_app:
+#     stage: test
+#     needs: ['build_app']
+#     script:
+#         - echo "NOT YET IMPLEMENTED"
 
 deploy_app:
     stage: deploy
-    needs: ['test_app']
+    needs: ['build_app']
     script:
         - docker-compose -f docker-compose.ci.yml up -d --no-deps vue-pwa

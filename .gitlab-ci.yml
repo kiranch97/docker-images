@@ -32,15 +32,22 @@ build_server:
 
 integration_test_server:
     stage: test
-    needs: ['build_server']
     script:
         - docker-compose -f docker-compose.ci.yml run --rm fastapi-server bash run_db_connection_test.sh
+    rules:
+        - changes:
+            - docker-compose.ci.yml
+            - odk-api/**/*
+
 
 deploy_server:
     stage: deploy
-    needs: ['integration_test_server']
     script:
         - docker-compose -f docker-compose.ci.yml up -d --no-deps fastapi-server
+    rules:
+        - changes:
+            - docker-compose.ci.yml
+            - odk-api/**/*
 
 # VUE PWA
 
@@ -54,14 +61,21 @@ build_app:
             - docker-compose.ci.yml
             - odk-app/**/*
 
-# test_app:
-#     stage: test
-#     needs: ['build_app']
-#     script:
-#         - echo "NOT YET IMPLEMENTED"
+test_app:
+    stage: test
+    script:
+        - echo "NOT YET IMPLEMENTED"
+    rules:
+        - changes:
+            - docker-compose.ci.yml
+            - odk-app/**/*
+
 
 deploy_app:
     stage: deploy
-    needs: ['build_app']
     script:
         - docker-compose -f docker-compose.ci.yml up -d --no-deps vue-pwa
+    rules:
+        - changes:
+            - docker-compose.ci.yml
+            - odk-app/**/*

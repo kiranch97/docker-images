@@ -39,7 +39,7 @@ integration_test_server:
 
 deploy_server:
     stage: deploy
-    # needs: integration_test_server
+    needs: {"integration_test_server"]
     script:
         - docker-compose -f docker-compose.ci.yml up -d --no-deps fastapi-server
 
@@ -57,12 +57,12 @@ build_app:
 
 test_app:
     stage: test
-    # needs: build_app
+    needs: ["build_app"]
     script:
         - echo "NOT YET IMPLEMENTED"
 
 deploy_app:
     stage: deploy
-    # needs: test_app
+    needs: {"test_app"}
     script:
         - docker-compose -f docker-compose.ci.yml up -d --no-deps vue-pwa

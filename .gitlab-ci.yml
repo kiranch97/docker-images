@@ -1,6 +1,8 @@
 stages:
     - services
-    - triggers
+    - build
+    - test
+    - deploy
 
 # POSTGRES DATABASE
 
@@ -18,22 +20,49 @@ start_rabbitmq:
 
 # FASTAPI SERVER
 
-trigger_server:
-    stage: triggers
-    trigger:
-        include: odk-api/.gitlab-ci.yml
+build_server:
+    stage: build
+    script:
+        - docker-compose -f docker-compose.ci.yml stop fastapi-server
+        - docker-compose -f docker-compose.ci.yml build fastapi-server
     rules:
         - changes:
             - docker-compose.ci.yml
             - odk-api/**/*
 
+
+integration_test_server:
+    stage: test
+    needs: build_server
+    script:
+        - docker-compose -f docker-compose.ci.yml run --rm fastapi-server bash run_db_connection_test.sh
+
+deploy_server:
+    stage: deploy
+    needs: integration_test_server
+    script:
+        - docker-compose -f docker-compose.ci.yml up -d --no-deps fastapi-server
+
 # VUE PWA
 
-trigger_app:
-    stage: triggers
-    trigger:
-        include: odk-app/.gitlab-ci.yml
+build_app:
+    stage: build
+    script:
+        - docker-compose -f docker-compose.ci.yml stop vue-pwa
+        - docker-compose -f docker-compose.ci.yml build vue-pwa
     rules:
         - changes:
             - docker-compose.ci.yml
             - odk-app/**/*
+
+test_app:
+    stage: test
+    needs: build_app
+    script:
+        - echo "NOT YET IMPLEMENTED"
+
+deploy_app:
+    stage: deploy
+    needs: test_app
+    script:
+        - docker-compose -f docker-compose.ci.yml up -d --no-deps vue-pwa

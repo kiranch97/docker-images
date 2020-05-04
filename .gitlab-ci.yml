@@ -64,7 +64,7 @@ deploy_server:
             - docker-compose.ci.yml
             - odk-api/**/*
 
-# VUE PWA
+# VUEJS PWA
 
 build_app:
     stage: build

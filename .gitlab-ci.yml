@@ -45,24 +45,24 @@ deploy_server:
 
 # VUE PWA
 
-build_app:
-    stage: build
-    script:
-        - docker-compose -f docker-compose.ci.yml stop vue-pwa
-        - docker-compose -f docker-compose.ci.yml build vue-pwa
-    rules:
-        - changes:
-            - docker-compose.ci.yml
-            - odk-app/**/*
+# build_app:
+#     stage: build
+#     script:
+#         - docker-compose -f docker-compose.ci.yml stop vue-pwa
+#         - docker-compose -f docker-compose.ci.yml build vue-pwa
+#     rules:
+#         - changes:
+#             - docker-compose.ci.yml
+#             - odk-app/**/*
 
-test_app:
-    stage: test
-    needs: ['build_app']
-    script:
-        - echo "NOT YET IMPLEMENTED"
+# test_app:
+#     stage: test
+#     needs: ['build_app']
+#     script:
+#         - echo "NOT YET IMPLEMENTED"
 
-deploy_app:
-    stage: deploy
-    needs: ['test_app']
-    script:
-        - docker-compose -f docker-compose.ci.yml up -d --no-deps vue-pwa
+# deploy_app:
+#     stage: deploy
+#     needs: ['test_app']
+#     script:
+#         - docker-compose -f docker-compose.ci.yml up -d --no-deps vue-pwa

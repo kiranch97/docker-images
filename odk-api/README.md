@@ -4,6 +4,7 @@ The API is the core of the ODK pipeline setting up necesarry REST and websocket 
 
 ![architecture](../images/odk-stack-architecture.png)
 
+
 ## Getting started
 
 ### Requirements

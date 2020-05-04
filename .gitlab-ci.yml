@@ -4,6 +4,21 @@ stages:
     - test
     - deploy
 
+# NGINX PROXY
+
+start_nginx:
+    stage: services
+    script:
+        - docker-compose -f docker-compose.ci.yml up -d nginx-proxy
+
+reload_nginx:
+    stage: services
+    script:
+        - docker restart odk-proxy
+    rules:
+        - changes:
+            - nginx.conf
+
 # POSTGRES DATABASE
 
 start_database:
@@ -17,26 +32,6 @@ start_rabbitmq:
     stage: services
     script:
         - docker-compose -f docker-compose.ci.yml up -d rabbitmq
-
-# NGINX PROXY
-
-build_proxy:
-    stage: build
-    script:
-        - docker-compose -f docker-compose.ci.yml build nginx-proxy
-    rules:
-        - changes:
-            - docker-compose.ci.yml
-            - nginx.conf
-
-deploy_proxy:
-    stage: deploy
-    script:
-        - docker-compose -f docker-compose.ci.yml up -d nginx-proxy
-    rules:
-        - changes:
-            - docker-compose.ci.yml
-            - nginx.conf
 
 # FASTAPI SERVER
 

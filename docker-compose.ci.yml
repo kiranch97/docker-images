@@ -19,8 +19,8 @@ services:
     build: ./odk-app
     depends_on:
       - fastapi-server
-    ports:
-      - "8080"
+    expose:
+      - "80"
 
   fastapi-server:
     container_name: odk-api
@@ -33,7 +33,7 @@ services:
       - RMQ_USER
       - RMQ_PASSWORD
       - RMQ_URL
-    ports:
+    expose:
       - "80"
   
   rabbitmq:

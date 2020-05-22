@@ -11,7 +11,6 @@ from odklib.StreamLogger import StreamLogger
 from odklib.FrameBroker import FrameBroker
 from odklib.DiskWriter import DiskWriter
 
-
 # TODO: change from string to dict with user, password, domain...
 SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_CONNECTION_STRING')
 WAIT_FRAME_BROKER = 0.01  # in seconds 0.01 = 10 ms

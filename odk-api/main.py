@@ -25,6 +25,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(name)s %(levelname)-4s %(message)s')
 
+
 # TODO: move to init function, include: setup queues + setup logging
 dbm = DatabaseManager(SQLALCHEMY_DATABASE_URI)
 

@@ -8,3 +8,5 @@ frames/
 # idea
 .vscode/
 .ipynb_checkpoints/
+
+.env

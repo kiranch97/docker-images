@@ -10,12 +10,16 @@ start_nginx:
     stage: services
     script:
         - docker-compose -f docker-compose.ci.yml up -d nginx-proxy
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "production"'
+    
 
 reload_nginx:
     stage: services
     script:
         - docker restart odk-proxy
     rules:
+        - if: '$CI_COMMIT_BRANCH == "production"'
         - changes:
             - nginx.conf
 
@@ -25,14 +29,18 @@ start_database:
     stage: services
     script:
         - docker-compose -f docker-compose.ci.yml up -d postgres-db
-
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "production"'
+    
 # RABBITMQ MESSAGE BROKER
 
 start_rabbitmq:
     stage: services
     script:
         - docker-compose -f docker-compose.ci.yml up -d rabbitmq
-
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "production"'
+    
 # FASTAPI SERVER
 
 build_server:
@@ -41,6 +49,7 @@ build_server:
         - docker-compose -f docker-compose.ci.yml stop fastapi-server
         - docker-compose -f docker-compose.ci.yml build fastapi-server
     rules:
+        - if: '$CI_COMMIT_BRANCH == "production"'
         - changes:
             - docker-compose.ci.yml
             - odk-api/**/*
@@ -50,6 +59,7 @@ integration_test_server:
     script:
         - docker-compose -f docker-compose.ci.yml run --rm fastapi-server bash run_db_connection_test.sh
     rules:
+        - if: '$CI_COMMIT_BRANCH == "production"'
         - changes:
             - docker-compose.ci.yml
             - odk-api/**/*
@@ -60,6 +70,7 @@ deploy_server:
     script:
         - docker-compose -f docker-compose.ci.yml up -d --no-deps fastapi-server
     rules:
+        - if: '$CI_COMMIT_BRANCH == "production"'
         - changes:
             - docker-compose.ci.yml
             - odk-api/**/*
@@ -72,6 +83,7 @@ build_app:
         - docker-compose -f docker-compose.ci.yml stop vue-pwa
         - docker-compose -f docker-compose.ci.yml build vue-pwa
     rules:
+        - if: '$CI_COMMIT_BRANCH == "production"'
         - changes:
             - docker-compose.ci.yml
             - odk-app/**/*
@@ -81,6 +93,7 @@ test_app:
     script:
         - echo "NOT YET IMPLEMENTED"
     rules:
+        - if: '$CI_COMMIT_BRANCH == "production"'
         - changes:
             - docker-compose.ci.yml
             - odk-app/**/*
@@ -91,6 +104,7 @@ deploy_app:
     script:
         - docker-compose -f docker-compose.ci.yml up -d --no-deps vue-pwa
     rules:
+        - if: '$CI_COMMIT_BRANCH == "production"'
         - changes:
             - docker-compose.ci.yml
             - odk-app/**/*

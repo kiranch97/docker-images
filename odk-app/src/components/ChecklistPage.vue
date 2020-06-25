@@ -8,10 +8,10 @@
         <p class="odk-title" id="title">Voordat u begint</p>
       </div>
       <div id="buttons-section">
-        <b-button
+        <button
           :class="{ 'check-item-complete' : landscapeOrientation}"
           rounded
-          id="gitlab-button"
+          id="transparent-button"
           size="is-medium"
         >
           <svg
@@ -32,12 +32,12 @@
               />
             </g>
           </svg>
-          Houd uw telefoon liggend
-        </b-button>
+          <span>Houd uw telefoon liggend</span>
+        </button>
 
-        <b-button
+        <button
           rounded
-          id="gitlab-button"
+          id="loc-check-button"
           size="is-medium"
           :class="{ 'check-item-complete' : locationPermission}"
           @click="askLocPermission()"
@@ -60,15 +60,16 @@
               />
             </g>
           </svg>
-          GPS-locatie inschakelen
-        </b-button>
+          <span id="buttonspan">GPS-locatie inschakelen</span>
+        </button>
 
-        <b-button
+        <button
           :class="{ 'check-item-complete' : camPermission}"
+          class="camera-button"
           @click="askCamPermission()"
-          rounded
-          id="gitlab-button"
+          id="camera-check-button"
           size="is-medium"
+          disabled="true"
         >
           <svg
             v-if="camPermission"
@@ -88,10 +89,10 @@
               />
             </g>
           </svg>
-          Camera inschakelen
-        </b-button>
+          <span id="buttonspan2">Camera inschakelen</span>
+        </button>
       </div>
-      <p class="body-1" id="title">Als u deze stappen niet volgt, zal u ODK niet kunnen gebruiken</p>
+      <p class="body-1" id="tip">Als u deze stappen niet volgt, zal u ODK niet kunnen gebruiken</p>
     </div>
   </div>
 </template>
@@ -121,7 +122,13 @@ export default {
     "onboarding-animation": OnboardingAnimation
   },
   methods: {
-    //-------
+    checkIDUsertype() {
+      if (localStorage.appId && localStorage.userType) {
+        this.$router.push("/client");
+      }
+    },
+
+    // ----
 
     checkAppMode() {
       let checkMedia = window.matchMedia("(display-mode: standalone)").matches;
@@ -135,7 +142,7 @@ export default {
       }
     },
 
-    //-------
+    // ----
 
     askLocPermission() {
       // console.log(navigator.geolocation)
@@ -145,28 +152,32 @@ export default {
           this.accesDenied
         );
         this.locationPermission = !this.locationPermission;
+        document.getElementById("buttonspan").style.marginLeft = "0";
+        document.querySelector(".camera-button").removeAttribute("disabled");
       } else {
         console.log("Geolocation wordt niet ondersteund door deze browser");
       }
       this.checkAllPermission();
     },
 
-    //-------
+    // ----
 
     accesDenied(error) {
       if (error.code == error.PERMISSION_DENIED)
         this.locationPermission = false;
       console.log("you denied the geolocation permission :-(");
+      document.getElementById("buttonspan").style.marginLeft = "1.75rem";
+      document.querySelector(".camera-button").disabled = true;
     },
 
-    //-------
+    // ----
 
     updatePosition: function(position) {
       this.positionLa = position.coords.latitude;
       this.positionLo = position.coords.longitude;
     },
 
-    //-------
+    // ----
 
     askCamPermission() {
       this.currentConstraints = {
@@ -181,6 +192,11 @@ export default {
       let curScope = this;
       navigator.mediaDevices
         .getUserMedia(this.currentConstraints)
+        .then(mediaStream => {
+          // Stop the stream
+          const tracks = mediaStream.getTracks();
+          tracks[0].stop();
+        })
         .then(() => {
           console.log("Permission accepted");
           curScope.camPermission = !curScope.camPermission;
@@ -194,7 +210,7 @@ export default {
         });
     },
 
-    //-------
+    // ----
 
     checkAppOrientation() {
       if (window.innerWidth > window.innerHeight) {
@@ -209,7 +225,7 @@ export default {
       this.checkAllPermission();
     },
 
-    //-------
+    // ----
 
     checkAllPermission() {
       if (
@@ -217,17 +233,22 @@ export default {
         this.camPermission &&
         this.landscapeOrientation
       ) {
-        this.$router.push({ path: "/client" });
+        this.$router.push("/user");
       }
     }
-
-    //-------
   },
+
+  // ----
+
   mounted() {
     // Init
     // check if locationPermission, camPermission en landscape orientation is active
+    this.checkIDUsertype();
     this.checkAppMode();
     this.checkAppOrientation();
+
+    document.getElementById("buttonspan").style.marginLeft = "1.75rem";
+    document.getElementById("buttonspan2").style.marginLeft = "1.75rem";
 
     //TODO: IF THIS.checkAppOrientation = TRUE  then go to /client immedietly
   }
@@ -235,163 +256,143 @@ export default {
 </script>
 
 <style scoped>
-.odk-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 2.125rem;
-  color: var(--dark-blue-color);
-  margin-bottom: 0.75rem;
-}
-
-.body-1 {
-  font-family: "Open Sans", sans-serif;
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 26px;
-  color: var(--dark-blue-color);
-  width: 20rem;
-}
-
-#cto-button {
-  background: var(--yellow-color);
-  color: var(--second-purple-color);
-  font-family: "Open Sans", sans-serif;
-  font-size: 1rem;
-  font-weight: 600; /*semi- bold */
-  line-height: 22px;
-  width: 16rem;
-  height: 2.625rem;
-}
-
-#cto-button:hover {
-  background: rgba(246, 211, 101, 0.7) !important;
-}
-
-#gitlab-button {
-  width: 18rem;
-  height: 2.625rem;
-  color: var(--second-purple-color) !important;
-  border: 2px solid var(--second-purple-color) !important;
-  font-family: "Open Sans", sans-serif !important;
-  font-size: 1rem !important;
-  font-weight: 600 !important;
-  display: flex;
-  align-items: center;
-}
-
-.check-item-complete {
-  background: rgba(105, 89, 133, 0.6);
-}
-
-.check-icon {
-  position: absolute;
-  left: 0.75rem;
-}
-
 #container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  max-width: 896px;
+  max-height: 414px;
+  margin: 0 auto;
+  padding: 0 2rem 0 1rem;
+  background: var(--second-white-color);
   display: flex;
   flex-direction: row;
-  width: 100%;
-  height: 50%;
   justify-content: center;
   align-items: center;
-  background: var(--second-white-color);
-  max-height: 500px;
-  max-width: 900px;
-  margin: 0 auto;
-  position: relative;
-  top: 3rem;
+}
+
+#image-section {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#intro-img {
+  object-fit: cover;
 }
 
 #text-section {
+  width: 50%;
+  height: 100%;
+  max-width: 20rem;
+  padding: 2.5rem 0 2.5rem 3rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  width: 100%;
+  justify-content: space-between;
 }
 
 #header-section {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 15%;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
   width: 100%;
+}
+
+#camera-check-button, #loc-check-button {
+  width: 100%;
+  font-family: "Open Sans", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 30px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
+#camera-check-button, #loc-check-button {
+  background: transparent;
+  color: var(--second-purple-color);
+  border: 2px solid var(--second-purple-color);
+  margin-top: 1rem;
+}
+
+#camera-check-button:active, #loc-check-button:active {
+  background: rgba(105, 89, 133, 0.6);
+}
+
+#camera-check-button:disabled, #loc-check-button:disabled {
+  background: transparent;
+  color: #b8b1c3;
+  border: 2px solid #ebebf2;
+}
+
+#transparent-button {
+  width: 100%;
+  font-family: "Open Sans", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 30px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
+#transparent-button {
+  background: transparent;
+  color: var(--second-purple-color);
+  border: 2px solid var(--second-purple-color);
+  margin-top: 1rem;
+}
+
+#transparent-button:active{
+  background: rgba(105, 89, 133, 0.6);
+}
+
+#transparent-button:disabled {
+  background: transparent;
+  color: #b8b1c3;
+  border: 2px solid #ebebf2;
+}
+
+.check-item-complete {
+  background: rgba(105, 89, 133, 0.6) !important;
+}
+
+.check-icon {
+  margin-right: 0.25rem;
+}
+
+#tip{
   text-align: left;
 }
 
-#buttons-section {
-  height: 35%;
-  width: 100%;
-  display: flex;
-  margin-bottom: 2rem;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-}
-
-#add-to-home {
-  font-weight: 700;
-}
-
-#image-section {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-}
-
-#intro-img {
-  max-height: 320px;
-  object-fit: cover;
-  /* position: relative;
-  right: 2rem; */
-}
-
-@media (max-width: 1024px) and (orientation: portrait) {
-  #container {
-    background: var(--second-white-color);
-    width: 100%;
-    height: 100%;
-    top: 0;
+@media screen and (max-width: 756px) {
+  .odk-title {
+    font-size: 1.25rem !important;
   }
 
-  #image-section {
-    display: flex;
-    justify-content: flex-start;
+  .body-1 {
+    font-size: 0.9rem !important;
+
+    line-height: 1.25rem !important;
+  }
+
+  #yellow-button,
+  #transparent-button {
+    font-size: 0.9rem;
   }
 }
 
-@media (max-width: 1024px) and (orientation: landscape) {
-  #container {
-    flex-direction: row;
-    top: 0;
-    height: 100%;
-    max-width: none;
-    max-height: none;
-  }
-
-  #header-section {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 10%;
-    width: 100%;
-    text-align: left;
-  }
-
-  #buttons-section {
-    height: 50%;
-    width: 100%;
-    margin-bottom: 0.5rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-  }
+@media screen and (max-width: 660px) {
 }
 </style>

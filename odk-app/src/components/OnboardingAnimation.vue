@@ -51,10 +51,4 @@ export default {
   width: 100%;
   height: auto;
 }
-
-@media only screen and (max-width: 1023px) {
-  #setup-images {
-    width: 90%;
-  }
-}
 </style>

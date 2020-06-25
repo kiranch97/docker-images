@@ -6,8 +6,8 @@
 
 <script>
 export default {
-  name: 'app',
-}
+  name: "app"
+};
 </script>
 
 <style>
@@ -27,22 +27,73 @@ export default {
   --grey-blue-color: #9891a4;
 }
 
-html, body {
-  background: var(--grey-color);
+/* Text styles */
+
+.odk-title {
+  font-family: "Open Sans", sans-serif !important;
+  font-size: 1.25rem !important; /*20px*/
+  font-weight: 700 !important;
+  line-height: 2rem !important;
+  color: var(--dark-blue-color) !important;
+}
+
+.title-2{
+  font-family: "Open Sans", sans-serif !important;
+  font-size: 1.125rem !important; /*20px*/
+  font-weight: 700 !important;
+  line-height: 2rem !important;
+  color: var(--dark-blue-color) !important;
+}
+
+.body-1 {
+  margin-top: 1rem !important;
+  font-family: "Open Sans", sans-serif !important;
+  font-size: 1rem !important;
+  font-weight: 400 !important;
+  line-height: 1.5rem !important;
+  color: var(--dark-blue-color) !important;
+}
+
+.body-2 {
+  /* margin-top: 1rem !important; */
+  font-family: "Open Sans", sans-serif !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  line-height: 1.875rem !important;
+  color: var(--dark-blue-color) !important;
+}
+
+.caption-1 {
+  font-family: "Open Sans", sans-serif !important;
+  font-size: 0.75rem !important;
+  font-weight: 400 !important;
+  line-height: 1.125rem !important;
+  color: var(--dark-blue-color) !important;
+}
+
+/*  */
+
+html,
+body {
+  background: var(--grey-color) !important;
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden!important;
+  /* overflow: hidden !important; */
 }
 
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
+  display: flex;
+  align-items: center;
 }
 
+button:focus {
+  outline: none !important;
+}
 </style>

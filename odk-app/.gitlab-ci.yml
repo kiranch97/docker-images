@@ -1,0 +1,15 @@
+stages:
+    - build
+    - test
+    - deploy
+
+build_app:
+    stage: build
+    script:
+        - docker-compose -f docker-compose.ci.yml stop vue-pwa
+        - docker-compose -f docker-compose.ci.yml build vue-pwa
+
+deploy_app:
+    stage: deploy
+    script:
+        - docker-compose -f docker-compose.ci.yml up -d --no-deps vue-pwa

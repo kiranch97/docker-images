@@ -1,36 +1,110 @@
-# test-api:
-#  image: python:3.7
-#  stage: test
-#  script:
-#    - apt-get update -qy
-#    - cd odk-api
-#    - pip install -r requirements.txt
-#    - pytest
+stages:
+    - services
+    - build
+    - test
+    - deploy
 
-# test-app:
-#   image: node:latest
-#   stage: test
-#   script:
-#     - cd odk-app
-#     - npm install --progress=false
-#     - npm run lint
+# NGINX PROXY
 
-build-app:
-  image: node:latest
-  stage: build
-  script:
-    - echo "start build of odk-app"
-    - cd odk-app
-    - npm install --progress=false
-    - npm run build
-  only:
-    - master
+start_nginx:
+    stage: services
+    script:
+        - docker-compose -f docker-compose.ci.yml up -d nginx-proxy
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "production"'
+    
 
-deploy-app:
-  image: docker
-  services:
-  - docker:dind
-  stage: deploy
-  script:
-    - echo "start deploy of odk-app"
-    - docker restart odk-proxy
+reload_nginx:
+    stage: services
+    script:
+        - docker restart odk-proxy
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "production"'
+        - changes:
+            - nginx.conf
+
+# POSTGRES DATABASE
+
+start_database:
+    stage: services
+    script:
+        - docker-compose -f docker-compose.ci.yml up -d postgres-db
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "production"'
+    
+# RABBITMQ MESSAGE BROKER
+
+start_rabbitmq:
+    stage: services
+    script:
+        - docker-compose -f docker-compose.ci.yml up -d rabbitmq
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "production"'
+    
+# FASTAPI SERVER
+
+build_server:
+    stage: build
+    script:
+        - docker-compose -f docker-compose.ci.yml stop fastapi-server
+        - docker-compose -f docker-compose.ci.yml build fastapi-server
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "production"'
+        - changes:
+            - docker-compose.ci.yml
+            - odk-api/**/*
+
+integration_test_server:
+    stage: test
+    script:
+        - docker-compose -f docker-compose.ci.yml run --rm fastapi-server bash run_db_connection_test.sh
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "production"'
+        - changes:
+            - docker-compose.ci.yml
+            - odk-api/**/*
+
+
+deploy_server:
+    stage: deploy
+    script:
+        - docker-compose -f docker-compose.ci.yml up -d --no-deps fastapi-server
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "production"'
+        - changes:
+            - docker-compose.ci.yml
+            - odk-api/**/*
+
+# VUEJS PWA
+
+build_app:
+    stage: build
+    script:
+        - docker-compose -f docker-compose.ci.yml stop vue-pwa
+        - docker-compose -f docker-compose.ci.yml build vue-pwa
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "production"'
+        - changes:
+            - docker-compose.ci.yml
+            - odk-app/**/*
+
+test_app:
+    stage: test
+    script:
+        - echo "NOT YET IMPLEMENTED"
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "production"'
+        - changes:
+            - docker-compose.ci.yml
+            - odk-app/**/*
+
+
+deploy_app:
+    stage: deploy
+    script:
+        - docker-compose -f docker-compose.ci.yml up -d --no-deps vue-pwa
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "production"'
+        - changes:
+            - docker-compose.ci.yml
+            - odk-app/**/*

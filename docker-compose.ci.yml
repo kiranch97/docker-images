@@ -1,0 +1,63 @@
+version: '3'
+
+services:
+  
+  nginx-proxy:
+    container_name: odk-proxy
+    image: nginx:stable-alpine
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - /nginx/error.log:/etc/nginx/error_log.log
+      - /nginx/cache/:/etc/nginx/cache
+      - /etc/letsencrypt/:/etc/letsencrypt/:ro
+    ports:
+      - "80:80"
+      - "443:443"
+  
+  vue-pwa:
+    container_name: odk-app
+    build: ./odk-app
+    depends_on:
+      - fastapi-server
+    expose:
+      - "80"
+
+  fastapi-server:
+    container_name: odk-api
+    build: ./odk-api
+    depends_on:
+      - postgres-db
+      - rabbitmq
+    environment:
+      - DATABASE_CONNECTION_STRING
+      - RMQ_USER
+      - RMQ_PASSWORD
+      - RMQ_URL
+    expose:
+      - "80"
+  
+  rabbitmq:
+    container_name: odk-rmq
+    image: rabbitmq:3-management
+    environment:
+      - RABBITMQ_DEFAULT_USER
+      - RABBITMQ_DEFAULT_PASS
+    ports:
+      - "5672:5672"
+
+  postgres-db:
+    container_name: odk-db
+    image: mdillon/postgis:10-alpine
+    environment:
+      - POSTGRES_NAME
+      - POSTGRES_HOST
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - PGDATA=/pgdata
+    ports:
+        - "5432:5432"
+    volumes:
+        - /pgdata-docker:/pgdata
+    logging:
+       options:
+         max-size: 50m

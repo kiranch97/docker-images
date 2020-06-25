@@ -3,15 +3,19 @@
     <div id="stream-total">
       <p class="total-counts">{{ totalCount }}</p>
     </div>
+
     <swiper id="swiper" :options="swiperOption">
       <swiper-slide v-for="item in orderSwiperItems" v-bind:key="item.id" class="swiper-item">
         <img class="icons" :src="require(`../assets/objects/${item.itemPicture}.png`)" />
+
         <p v-if="item.count > 0" class="count">{{ item.count }}</p>
+
         <div :class="{ 'count-fade': item.count }"></div>
       </swiper-slide>
     </swiper>
   </div>
 </template>
+
 <script>
 import _ from "lodash";
 
@@ -81,10 +85,10 @@ export default {
           itemPicture: "Garbage-bins",
           count: this.binCount
         },
-        {
-          itemPicture: "Christmas-tree",
-          count: this.christmasTreeCount
-        },
+        // {
+        //   itemPicture: "Christmas-tree",
+        //   count: this.christmasTreeCount
+        // },
         {
           itemPicture: "Construction-container",
           count: this.constructionBinCount
@@ -167,6 +171,7 @@ export default {
   }
 };
 </script>
+
 <style>
 .count-box-one {
   margin-right: 2rem;

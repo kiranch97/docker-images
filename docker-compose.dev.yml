@@ -27,6 +27,8 @@ services:
       - RMQ_USER=user
       - RMQ_PASSWORD=password
       - RMQ_URL=localhost
+    ports:
+      - "8080:80"
     expose:
       - "80"
     volumes:
@@ -42,6 +44,10 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=user
       - RABBITMQ_DEFAULT_PASS=password
+    ports:
+       - "8081:8080"
+       - "5672:5672"
+       - "15672:15672"
     expose:
       - "15672"
       - "8080"
@@ -58,12 +64,16 @@ services:
     environment:
       - PGDATA=/pgdata
       - POSTGRES_PASSWORD=mysecretpassword
+    ports:
+      - "5432:5432"
     expose:
-        - "5432"
+      - "5432"
     logging:
        options:
          max-size: 50m
     networks:
       - odb-network
+    volumes:
+      - ./pgdata:/pgdata
 networks:
   odb-network:

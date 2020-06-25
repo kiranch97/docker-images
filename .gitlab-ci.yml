@@ -1,16 +1,36 @@
-test-api:
-  image: python:3.7
-  stage: test
-  script:
-    - apt-get update -qy
-    - cd odk-api
-    - pip install -r requirements.txt
-    - pytest
+# test-api:
+#  image: python:3.7
+#  stage: test
+#  script:
+#    - apt-get update -qy
+#    - cd odk-api
+#    - pip install -r requirements.txt
+#    - pytest
 
-test-app:
+# test-app:
+#   image: node:latest
+#   stage: test
+#   script:
+#     - cd odk-app
+#     - npm install --progress=false
+#     - npm run lint
+
+build-app:
   image: node:latest
-  stage: test
+  stage: build
   script:
+    - echo "start build of odk-app"
     - cd odk-app
     - npm install --progress=false
-    - npm run lint
+    - npm run build
+  only:
+    - master
+
+deploy-app:
+  image: docker
+  services:
+  - docker:dind
+  stage: deploy
+  script:
+    - echo "start deploy of odk-app"
+    - docker restart odk-proxy

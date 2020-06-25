@@ -4,20 +4,24 @@
       <video id="video" autoplay="true"></video>
       <canvas style="display: none;" id="canvas"></canvas>
     </div>
+
     <div id="stream-information">
       <stream-count :websocketStreamState="websocketStreamState"></stream-count>
+
       <div id="stream-status">
         <div id="status-box">
           <div v-if="!recordToggle" class="blink-icon"></div>
           <DefaultLoader :loading="disconnectState" id="loader" :size="spinnersize" color="white" />
           <stream-time id="stream-timer" ref="streamtimer"></stream-time>
         </div>
+
         <transition name="fade">
           <div id="error-prompt" v-if="disconnectState">
             <p>Geen internet verbinding</p>
           </div>
         </transition>
       </div>
+
       <div id="stream-controls">
         <!-- CAMERA FLIP BUTTON-->
         <div id="stream-camera-flip">
@@ -28,6 +32,7 @@
             @click="flipCamera()"
           />
         </div>
+
         <div id="stream-start-settings">
           <!-- PLAY/PAUSE BUTTON -->
           <div v-if="!isAuto">
@@ -39,17 +44,19 @@
             </button>
           </div>
         </div>
-        <div id="switch-container">
+
+        <!-- <div id="switch-container"> -->
           <!-- MODE SWITCH BUTTON -->
-          <b-switch v-model="isAuto" class="stream-switch" size="is-large">
+          <!-- <b-switch v-model="isAuto" class="stream-switch" size="is-large">
             <p id="auto-mode">A</p>
             <p id="manual-mode">M</p>
-          </b-switch>
-        </div>
+          </b-switch> -->
+        <!-- </div> -->
       </div>
     </div>
   </div>
 </template>
+
 <script>
 import StreamTime from "./StreamTime";
 import StreamCount from "./StreamCount";
@@ -642,10 +649,10 @@ body {
 
 #stream-controls {
   width: 20%;
-  height: 100vh;
+  height: 100%;
   max-height: 426px;
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
 }
 
 #stream-camera-flip {

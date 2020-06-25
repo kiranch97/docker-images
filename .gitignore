@@ -2,8 +2,6 @@
 certs/
 domains/
 logs/
-.idea/
-.vscode/
 .env*
 
 # database
@@ -15,3 +13,7 @@ odk-website/
 # odk api
 frames-analysed/
 frames/
+
+# ide
+.vscode/
+.idea/

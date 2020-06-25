@@ -68,6 +68,9 @@ services:
       - "5432:5432"
     expose:
       - "5432"
+    # enable `ports` to map to localhost for testing
+    # ports:
+    #   - "5432:5432"
     logging:
        options:
          max-size: 50m
@@ -77,3 +80,4 @@ services:
       - ./pgdata:/pgdata
 networks:
   odb-network:
+

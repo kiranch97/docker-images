@@ -77,3 +77,4 @@ services:
       - ./pgdata:/pgdata
 networks:
   odb-network:
+

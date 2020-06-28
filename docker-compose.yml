@@ -17,8 +17,6 @@ services:
      - ./domains:/domains
      - ./logs:/var/log/nginx
      - ./odk-app/dist:/app-dist
-     # - ./odk-dashboard/dist:/dash-dist
-     # - ./odk-website/dist:/website-dist
 
   api:
     restart: always

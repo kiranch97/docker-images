@@ -333,6 +333,11 @@ export default {
   border: 2px solid #ebebf2;
 }
 
+#loc-check-button span {
+  width: calc(100% - 24px);
+  text-align: left;
+}
+
 #transparent-button {
   width: 100%;
   font-family: "Open Sans", sans-serif;

@@ -93,6 +93,7 @@ async def ws_stream(ws: WebSocket):
         logger.info(e)
 
 
+
 @app.websocket("/stream")
 async def ws_stream(ws: WebSocket):
     await ws.accept()
@@ -113,21 +114,6 @@ async def ws_stream(ws: WebSocket):
         logger.info("WebSocket /stream [disconnect]")
     except Exception as e:
         logger.info(e)
-
-
-# DISABLED
-# @app.websocket("/dash_stream")
-# async def ws_dashboard(websocket: WebSocket):
-#     await broker.connect_to_websocket(websocket)
-#     try:
-#         while True:
-#             # receive text from dashboard ( NEEDED? )
-#             data = await websocket.receive_text()
-#             # await websocket.send_text(f" Got data from dash: {data}")
-#             pass
-#     except WebSocketDisconnect:
-#         broker.remove_websocket(websocket)
-
 
 # ==== REST endpoints ====
 

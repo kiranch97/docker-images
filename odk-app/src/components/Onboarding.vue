@@ -175,6 +175,7 @@ body {
 
 #logo {
   height: 0.876rem;
+  max-height: 24px;
   width: 3.48rem;
   transform: rotate(-0deg);
 }

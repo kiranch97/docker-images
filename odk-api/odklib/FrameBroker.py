@@ -8,7 +8,7 @@ import asyncio
 from starlette.websockets import WebSocket
 from aio_pika import connect, Message, IncomingMessage, ExchangeType
 
-from odklib.DatabaseManager import DatabaseManager
+from DatabaseManager import DatabaseManager
 
 
 # TODO: Get DB connection string from main

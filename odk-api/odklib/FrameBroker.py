@@ -119,8 +119,6 @@ class FrameBroker:
     
     """
     async def setup_all_queues(self,
-                               # dash_queue_name: str,
-                               # dash_analysed_queue_name: str,
                                ml_queue_name: str,
                                analysed_queue_name: str):
 
@@ -134,28 +132,6 @@ class FrameBroker:
 
         # setup channels
         self.channel = await self.rmq_conn.channel()
-
-        # DISABLED: dash channel
-        # self.dash_queue_name = dash_queue_name
-        # self.exchange_dash = await self.channel.declare_exchange(
-        #     SETTINGS['RMQ_EXCHANGE_FRAMES_FOR_DASH'], ExchangeType.FANOUT)
-        # queue_dash = await self.channel.declare_queue(self.dash_queue_name)
-        # await queue_dash.bind(self.exchange_dash)
-        # await queue_dash.consume(
-        #     self.handle_new_frame_on_dash_queue,
-        #     no_ack=True)
-
-        # DISABLED: dash analysed channel
-        # self.dash_analysed_queue_name = dash_analysed_queue_name
-        # self.exchange_dash_analysed = await self.channel.declare_exchange(
-        #     SETTINGS['RMQ_EXCHANGE_ANALYSED_FRAMES_FOR_DASH'],
-        #     ExchangeType.FANOUT)
-        # queue_analysed_dash = await self.channel.declare_queue(
-        #     self.dash_analysed_queue_name)
-        # await queue_analysed_dash.bind(self.exchange_dash_analysed)
-        # await queue_analysed_dash.consume(
-        #     self.handle_new_analysed_frame_on_dash_queue,
-        #     no_ack=True)
 
         # to ml channel (to be analysed)
         self.ml_queue_name = ml_queue_name
@@ -195,12 +171,6 @@ class FrameBroker:
             )
 
         frame_json = json.dumps(frame_data).encode()
-
-        # DISABLED: send messages to Dashboard
-        # await self.exchange_dash.publish(
-        #     Message(frameJson),
-        #     routing_key=self.dash_queue_name,
-        # )
 
         await self.exchange_ml.publish(
             Message(frame_json),
@@ -242,12 +212,6 @@ class FrameBroker:
 
         # Persist analysed frame on database
         dbm.add_analysed_frame(analysed_frame_data)
-
-        # DISABLED: send analysed frame to Dashboard
-        # await self.exchange_dash_analysed.publish(
-        #     Message(analysed_frame_json),
-        #     routing_key=self.dash_analysed_queue_name,
-        # )
 
     async def handle_new_analysed_frame_on_dash_queue(
       self,

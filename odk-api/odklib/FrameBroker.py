@@ -164,8 +164,6 @@ class FrameBroker:
 
         if not self.is_ready:
             await self.setup_all_queues(
-                # SETTINGS["RMQ_QUEUE_FRAMES_FOR_DASH"],
-                # SETTINGS["RMQ_QUEUE_ANALYSED_FRAMES_FOR_DASH"],
                 ml_queue_name=SETTINGS["RMQ_QUEUE_FRAMES_FOR_ML"],
                 analysed_queue_name=SETTINGS["RMQ_QUEUE_ANALYSED_FRAMES"]
             )
@@ -220,5 +218,3 @@ class FrameBroker:
         analysed_frame_data_dict["_debug_rmq_off_time"] = int(
             round(time.time() * 1000))
         analysed_frame_data = json.dumps(analysed_frame_data_dict)
-
-        return

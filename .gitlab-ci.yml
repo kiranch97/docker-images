@@ -50,7 +50,7 @@ build_server:
         - docker-compose -f docker-compose.ci.yml build fastapi-server
     rules:
         - if: '$CI_COMMIT_BRANCH == "production"'
-        - changes:
+          changes:
             - docker-compose.ci.yml
             - odk-api/**/*
 
@@ -60,7 +60,7 @@ integration_test_server:
         - docker-compose -f docker-compose.ci.yml run --rm fastapi-server bash run_db_connection_test.sh
     rules:
         - if: '$CI_COMMIT_BRANCH == "production"'
-        - changes:
+          changes:
             - docker-compose.ci.yml
             - odk-api/**/*
 
@@ -71,7 +71,7 @@ deploy_server:
         - docker-compose -f docker-compose.ci.yml up -d --no-deps fastapi-server
     rules:
         - if: '$CI_COMMIT_BRANCH == "production"'
-        - changes:
+          changes:
             - docker-compose.ci.yml
             - odk-api/**/*
 
@@ -84,7 +84,7 @@ build_app:
         - docker-compose -f docker-compose.ci.yml build vue-pwa
     rules:
         - if: '$CI_COMMIT_BRANCH == "production"'
-        - changes:
+          changes:
             - docker-compose.ci.yml
             - odk-app/**/*
 
@@ -94,7 +94,7 @@ test_app:
         - echo "NOT YET IMPLEMENTED"
     rules:
         - if: '$CI_COMMIT_BRANCH == "production"'
-        - changes:
+          changes:
             - docker-compose.ci.yml
             - odk-app/**/*
 
@@ -105,6 +105,6 @@ deploy_app:
         - docker-compose -f docker-compose.ci.yml up -d --no-deps vue-pwa
     rules:
         - if: '$CI_COMMIT_BRANCH == "production"'
-        - changes:
+          changes:
             - docker-compose.ci.yml
             - odk-app/**/*

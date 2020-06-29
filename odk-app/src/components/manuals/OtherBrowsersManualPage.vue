@@ -2,7 +2,7 @@
   <div id="container">
     <header>
       <router-link to="/">
-        <img id="logo" src="../../assets/manual/logo-2.png" />
+        <img id="logo" src="../../assets/manual/logo.svg" />
       </router-link>
     </header>
     <div v-for="manual in manuals" v-bind:key="manual.id" id="supported-browsers">
@@ -73,6 +73,10 @@ footer {
 
 #wrapper {
   margin: 0 auto;
+}
+
+#logo {
+  height: 24px;
 }
 
 #container {

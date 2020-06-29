@@ -36,13 +36,13 @@ Build ODK App:
 $ cd odk-app
 $ npm install
 $ npm run build
-``` 
+```
 
 Setup virtual environment for Frame Analyzer:
 ```
 $ cd odk-frame-analyzer
 $ python3 -m venv venv
-$ source venv/bin/active (Linux)
+$ source venv/bin/activate (Linux)
 $ venv\Scripts\activate (Windows)
 (venv) $ pip install -r requirements.txt
 ```
@@ -58,7 +58,7 @@ $ cat download_link | xargs -L 1 wget
 Start Frame Analyzer:
 ```
 $ cd odk-frame-analyzer
-$ source venv/bin/active (Linux & Mac)
+$ source venv/bin/activate (Linux & Mac)
 $ venv\Scripts\activate (Windows)
 (venv) $ python MlWorker.py
 ```

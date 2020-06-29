@@ -3,7 +3,7 @@ import logging
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 
-from AnalysedFrame import AnalysedFrame
+from odklib.AnalysedFrame import AnalysedFrame
 
 
 class DatabaseManager:

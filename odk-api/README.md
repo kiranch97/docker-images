@@ -15,7 +15,7 @@ The API is the core of the ODK pipeline setting up necesarry REST and websocket 
 Setup virtual environment:
 ```
 $ python3 -m venv venv
-$ source venv/bin/active (Linux)
+$ source venv/bin/activate (Linux)
 $ venv\Scripts\activate (Windows)
 (venv) $ pip install -r requirements.txt
 (venv) $ python main.py

@@ -1,0 +1,74 @@
+{
+  "title": "How to install a PWA?",
+  "subtext": "Choose the browser and device you are using.",
+  "copyright": "© 2020 ODK by Gemeente Amsterdam",
+  "manuals": [
+    {
+      "sysName": "chrome",
+      "browserName": "Chrome, Android",
+      "steps": [
+        {
+          "step": "Step 1",
+          "instruction": "Open browser's settings",
+          "stepImage": "chrome-1"
+        },
+        {
+          "step": "Step 2",
+          "instruction": "Scroll down and tap Add to Home screen.",
+          "stepImage": "chrome-2"
+        },
+        {
+          "step": "Step 3",
+          "instruction": "Confirm by tapping Add.",
+          "stepImage": "chrome-3"
+        },
+        {
+          "step": "Step 4",
+          "instruction": "Open app from home screen, as any other native app.",
+          "stepImage": "chrome-4"
+        }
+      ]
+    },
+    {
+      "sysName": "firefox",
+      "browserName": "Firefox, Android",
+      "steps": [
+        {
+          "step": "Step 1",
+          "instruction": "Tap",
+          "icon": "add2hs",
+          "stepImage": "firefox-1"
+        },
+        {
+          "step": "Step 2",
+          "instruction": "Confirm by tapping Add to Home screen.",
+          "stepImage": "firefox-2"
+        },
+        {
+          "step": "Step 3",
+          "instruction": "Choose by tapping Add automatically or by dragging the image to your home screen.",
+          "stepImage": "firefox-3"
+        },
+        {
+          "step": "Step 4",
+          "instruction": "Open app from home screen, as any other native app.",
+          "stepImage": "firefox-4"
+        }
+      ]
+    },
+    {
+      "sysName": "webkit",
+      "browserName": "IOS",
+      "attention": "Attention:",
+      "recommendation": "At this moment you cannot use this app on IOS devices.",
+      "body": "Unfortunately video stream in a PWA is still not supported by any browser, in IOS. We recommend you to use Chrome, Firefox or Edge on an Android phone."
+    },
+    {
+      "sysName": "others",
+      "browserName": "Other browsers, Android",
+      "attention": "Attention:",
+      "recommendation": "We recommend you to use Chrome, Firefox or Edge.",
+      "body": "Unfortunately we cannot garantee the optimal functionality of this PWA in all browsers. Please use Chrome, Firefox or Edge for tested results."
+    }
+  ]
+}

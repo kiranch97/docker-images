@@ -1,42 +1,41 @@
-import Vue from 'vue'
-import App from './App.vue'
-import Buefy from 'buefy'
-import Vuelidate from 'vuelidate'
-import VueRouter from 'vue-router'
-import { routes } from './routes'
-import './registerServiceWorker'
-import 'buefy/dist/buefy.css'
-import VueAwesomeSwiper from 'vue-awesome-swiper'
-import 'swiper/dist/css/swiper.css'
+import Vue from "vue";
+import App from "./App.vue";
+import Buefy from "buefy";
+import Vuelidate from "vuelidate";
+import VueRouter from "vue-router";
+import { routes } from "./routes";
+import "./registerServiceWorker";
+import "buefy/dist/buefy.css";
+import VueAwesomeSwiper from "vue-awesome-swiper";
+import "swiper/dist/css/swiper.css";
 import VieOtpInput from "@bachdgvn/vue-otp-input";
 import * as VueSpinnersCss from "vue-spinners-css";
 
 // import { makeServer } from './server'
 
-// if(process.env.NODE_ENV == "development") {
+// if (process.env.NODE_ENV == "development") {
 //   console.log("I am in development mode")
 //   makeServer()
 // }
 
 Vue.component("vie-otp-input", VieOtpInput);
-export const eventBus = new Vue(); 
-
+export const eventBus = new Vue();
 
 // document.cookie = 'cross-site-cookie=bar; SameSite=None';
 
 const router = new VueRouter({
   routes,
-  mode: 'history'
+  mode: "history",
 });
 
-Vue.config.productionTip = false
-Vue.use(VueSpinnersCss)
-Vue.use(Vuelidate)
-Vue.use(Buefy)
+Vue.config.productionTip = false;
+Vue.use(VueSpinnersCss);
+Vue.use(Vuelidate);
+Vue.use(Buefy);
 Vue.use(VueRouter);
-Vue.use(VueAwesomeSwiper, /* { default global options } */)
+Vue.use(VueAwesomeSwiper, /* { default global options } */);
 
 new Vue({
   router,
   render: h => h(App),
-}).$mount('#app')
+}).$mount("#app");

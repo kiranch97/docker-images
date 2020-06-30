@@ -1,22 +1,27 @@
 <template>
   <div id="container">
     <div id="video-stream">
-      <video id="video" autoplay="true"></video>
-      <canvas style="display: none;" id="canvas"></canvas>
+      <video id="video" autoplay="true" />
+      <canvas id="canvas" style="display: none;" />
     </div>
 
     <div id="stream-information">
-      <stream-count :websocketStreamState="websocketStreamState"></stream-count>
+      <stream-count :websocket-stream-state="websocketStreamState" />
 
       <div id="stream-status">
         <div id="status-box">
-          <div v-if="!recordToggle" class="blink-icon"></div>
-          <DefaultLoader :loading="disconnectState" id="loader" :size="spinnersize" color="white" />
-          <stream-time id="stream-timer" ref="streamtimer"></stream-time>
+          <div v-if="!recordToggle" class="blink-icon" />
+          <DefaultLoader
+            id="loader"
+            :loading="disconnectState"
+            :size="spinnersize"
+            color="white"
+          />
+          <stream-time id="stream-timer" ref="streamtimer" />
         </div>
 
         <transition name="fade">
-          <div id="error-prompt" v-if="disconnectState">
+          <div v-if="disconnectState" id="error-prompt">
             <p>Geen internet verbinding</p>
           </div>
         </transition>
@@ -30,24 +35,24 @@
             class="stream-flip"
             src="../assets/flip.png"
             @click="flipCamera()"
-          />
+          >
         </div>
 
         <div id="stream-start-settings">
           <!-- PLAY/PAUSE BUTTON -->
           <div v-if="!isAuto">
-            <button v-if="recordToggle" @click="startStream()" class="play-pause-circle">
-              <div class="inner-circle"></div>
+            <button v-if="recordToggle" class="play-pause-circle" @click="startStream()">
+              <div class="inner-circle" />
             </button>
-            <button v-else @click="pauseStream()" class="pause-box">
-              <div class="inner-button"></div>
+            <button v-else class="pause-box" @click="pauseStream()">
+              <div class="inner-button" />
             </button>
           </div>
         </div>
 
         <!-- <div id="switch-container"> -->
-          <!-- MODE SWITCH BUTTON -->
-          <!-- <b-switch v-model="isAuto" class="stream-switch" size="is-large">
+        <!-- MODE SWITCH BUTTON -->
+        <!-- <b-switch v-model="isAuto" class="stream-switch" size="is-large">
             <p id="auto-mode">A</p>
             <p id="manual-mode">M</p>
           </b-switch> -->
@@ -67,9 +72,20 @@ export default {
   //// example from: https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Taking_still_photos
   //// https://medium.com/tsftech/using-web-sockets-to-update-images-8c66327f39a3
 
-  name: "streaming-client",
+  name: "StreamingClient",
+
+  // ==== Components ====
+
+  components: {
+    // "stream-details": StreamDetails,
+    "stream-time": StreamTime,
+    "stream-count": StreamCount,
+    DefaultLoader,
+    // "stream-analyzer": StreamAnalyzedFrame
+    // "device-login": DeviceLogin
+  },
   // ----
-  data: function() {
+  data: function () {
     return {
       apiWebsocketUrl: process.env.VUE_APP_API_WS_URL,
       debug: false,
@@ -88,7 +104,7 @@ export default {
       SETTINGS: {
         minImageWidth: 608,
         minImageHeight: 608,
-        TAKE_PICTURE_EVERY_MS: process.env.VUE_APP_CAPTURE_INTERVAL
+        TAKE_PICTURE_EVERY_MS: process.env.VUE_APP_CAPTURE_INTERVAL,
       },
       // ---- end settings ----
 
@@ -103,7 +119,7 @@ export default {
       websocketStreamState: null,
       streamState: {
         ON: "on",
-        OFF: "off"
+        OFF: "off",
       },
       hasInternetConnection: null,
       connectionRetrieved: false,
@@ -114,7 +130,7 @@ export default {
       currentCameraOption: null,
       rearCamResolution: {
         width: 1280,
-        height: 720
+        height: 720,
       },
       currentConstraints: null,
       currentStream: null,
@@ -127,32 +143,21 @@ export default {
       todayDate: null,
       appId: null,
       userType: null,
-      streamTime: "00:00:00"
+      streamTime: "00:00:00",
     };
-  },
-
-  // ==== Components ====
-
-  components: {
-    // "stream-details": StreamDetails,
-    "stream-time": StreamTime,
-    "stream-count": StreamCount,
-    DefaultLoader
-    // "stream-analyzer": StreamAnalyzedFrame
-    // "device-login": DeviceLogin
   },
 
   // ----
 
   computed: {
-    combined() {
+    combined () {
       //Cache geolocation with computed properties
-      let currentLocation = {
+      const currentLocation = {
         lo: this.positionLo,
-        la: this.positionLa
+        la: this.positionLa,
       };
       return currentLocation;
-    }
+    },
   },
 
   // ----
@@ -170,10 +175,27 @@ export default {
     // }
   },
 
+  mounted: function () {
+    //Init
+    console.log("=> Streaming Client init:");
+    this.setup();
+    this.showStream();
+
+    //Retrieve localstorage appID and userType
+    this.appId = localStorage.appId;
+    this.userType = localStorage.userType;
+
+    //IF USER DOENST HAVE ID REDIRECT THEM TO PWA START PAGE
+    this.checkIdNull();
+
+    console.log("Capture rate set to: " + this.SETTINGS.TAKE_PICTURE_EVERY_MS);
+
+  },
+
   // ==== methods ====
 
   methods: {
-    setup: function() {
+    setup: function () {
       //Check User_Type . If "waste_department" -> Automode, if testuser -> Manual mode
       localStorage.userType === "waste_department"
         ? (this.isAuto = true)
@@ -191,7 +213,7 @@ export default {
 
     // ----
 
-    startStream: function() {
+    startStream: function () {
       //ADD SCREENLOCK ACTIVATION WHILE STREAMING
       this.noSleep.enable();
       //Setup connection with Websocket server
@@ -208,7 +230,7 @@ export default {
 
     // ----
 
-    startTimeTrigger: function() {
+    startTimeTrigger: function () {
       //Interval function to take screenshots of Video stream canvas
       this.intervalHandler = setInterval(
         this.takePicture,
@@ -218,14 +240,14 @@ export default {
 
     // ----
 
-    takePicture: function() {
-      let context = this.canvas.getContext("2d");
+    takePicture: function () {
+      const context = this.canvas.getContext("2d");
       if (this.width && this.height) {
         this.canvas.width = this.width;
         this.canvas.height = this.height;
         context.drawImage(this.video, 0, 0, this.width, this.height);
 
-        let img = this.canvas.toDataURL("image/jpeg");
+        const img = this.canvas.toDataURL("image/jpeg");
 
         this.sendImage(img);
       } else {
@@ -235,19 +257,19 @@ export default {
 
     // ----
 
-    sendImage: function(base64Img) {
+    sendImage: function (base64Img) {
       this.formatDate(new Date());
       this.appId = localStorage.appId;
       this.userType = localStorage.userType;
 
       //Send data to websocket API
-      let data = {
+      const data = {
         img: base64Img,
         app_id: this.appId,
         user_type: this.userType,
         lng: this.positionLo,
         lat: this.positionLa,
-        timestamp: this.timeFormat
+        timestamp: this.timeFormat,
       };
 
       this.websocketConnection.send(JSON.stringify(data));
@@ -256,30 +278,30 @@ export default {
 
     // ----
 
-    showStream() {
-      let video = this.video;
+    showStream () {
+      const video = this.video;
 
       this.currentConstraints = {
         video: {
           facingMode: this.currentCameraOption,
           width: this.rearCamResolution.width,
-          height: this.rearCamResolution.height
+          height: this.rearCamResolution.height,
         },
-        audio: false
+        audio: false,
       };
 
-      let curScope = this;
+      const curScope = this;
 
       navigator.mediaDevices
         .getUserMedia(this.currentConstraints)
-        .then(function(stream) {
+        .then(function (stream) {
           curScope.currentStream = stream;
           video.srcObject = stream;
           video.play();
           console.log(`==> Stream has started with ${curScope.rearCamResolution.width} x ${curScope.rearCamResolution.height} resolution `);
-          
+
         })
-        .catch(function(err) {
+        .catch(function (err) {
           console.log("==> Error occured in 'showStream':");
           console.error(err);
         });
@@ -298,7 +320,7 @@ export default {
 
     // ----
 
-    pauseStream: function() {
+    pauseStream: function () {
       this.websocketStreamState = this.streamState.OFF;
 
       //Set websocket stream state to "off"
@@ -323,7 +345,7 @@ export default {
 
     // ----
 
-    holdStream() {
+    holdStream () {
       if (
         this.websocketConnection.readyState === this.websocketConnection.OPEN
       ) {
@@ -335,7 +357,7 @@ export default {
 
     // ----
 
-    updatePosition: function(position) {
+    updatePosition: function (position) {
       this.positionLa = position.coords.latitude;
       this.positionLo = position.coords.longitude;
       this.deviceSpeed = position.coords.speed;
@@ -344,7 +366,7 @@ export default {
 
     // ----
 
-    onStartedStream: function() {
+    onStartedStream: function () {
       // resize video
       if (!this.streaming) {
         // this.width = this.SETTINGS.minImageWidth;
@@ -371,20 +393,20 @@ export default {
 
     // ----
 
-    clearPhoto: function() {
-      let context = this.canvas.getContext("2d");
+    clearPhoto: function () {
+      const context = this.canvas.getContext("2d");
       context.fillStyle = "#AAA";
       context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-      let data = this.canvas.toDataURL("image/jpeg");
+      const data = this.canvas.toDataURL("image/jpeg");
       this.photo.setAttribute("src", data);
     },
 
     // ----
 
-    setupWebSockets: function() {
+    setupWebSockets: function () {
       //Setup connection with Websocket server URL:PORT/ENDPOINT
-      let websocketUrl = this.apiWebsocketUrl + "/stream";
+      const websocketUrl = this.apiWebsocketUrl + "/stream";
       this.websocketConnection = new WebSocket(websocketUrl);
       // //Set websocket stream state to "on"
       this.websocketStreamState = this.streamState.ON;
@@ -396,7 +418,7 @@ export default {
 
     // ----
 
-    receiveWebSocketsMsg: function(e) {
+    receiveWebSocketsMsg: function (e) {
       //Websocket event when Message sent by the server
       console.log("Websocket connection initialized");
       console.log(e.data);
@@ -404,7 +426,7 @@ export default {
 
     // ----
 
-    receiveWebSocketsMsgOnOpen: function() {
+    receiveWebSocketsMsgOnOpen: function () {
       //Websocket even when websocket connection between client and server is established
       console.log("Websocket connection Connected");
 
@@ -426,7 +448,7 @@ export default {
 
     // ----
 
-    receiveWebSocketsMsgOnClose: function() {
+    receiveWebSocketsMsgOnClose: function () {
       //Set Play/Pause button to inital state
       this.recordToggle = true;
       this.$refs.streamtimer.reset();
@@ -443,14 +465,14 @@ export default {
 
     // ----
 
-    formatDate: function(date) {
-      let year = date.getFullYear();
-      let month = this.addZero(date.getMonth() + 1);
-      let day = this.addZero(date.getDate());
-      let hour = this.addZero(date.getHours());
-      let min = this.addZero(date.getMinutes());
-      let sec = this.addZero(date.getSeconds());
-      let millisec = this.addZeroMillisec(date.getMilliseconds());
+    formatDate: function (date) {
+      const year = date.getFullYear();
+      const month = this.addZero(date.getMonth() + 1);
+      const day = this.addZero(date.getDate());
+      const hour = this.addZero(date.getHours());
+      const min = this.addZero(date.getMinutes());
+      const sec = this.addZero(date.getSeconds());
+      const millisec = this.addZeroMillisec(date.getMilliseconds());
 
       this.timeFormat = `${year}-${month}-${day} ${hour}:${min}:${sec}.${millisec}`;
 
@@ -459,10 +481,10 @@ export default {
 
     // ----
 
-    todayDateFunc: function(date) {
-      let year = date.getFullYear();
-      let month = this.addZero(date.getMonth() + 1);
-      let day = this.addZero(date.getDate());
+    todayDateFunc: function (date) {
+      const year = date.getFullYear();
+      const month = this.addZero(date.getMonth() + 1);
+      const day = this.addZero(date.getDate());
 
       this.todayDate = year + "-" + month + "-" + day;
 
@@ -471,7 +493,7 @@ export default {
 
     // ----
 
-    addZero: function(i) {
+    addZero: function (i) {
       if (i < 10) {
         i = "0" + i;
       }
@@ -480,7 +502,7 @@ export default {
 
     // ----
 
-    addZeroMillisec: function(i) {
+    addZeroMillisec: function (i) {
       if (i < 100) {
         i = "00" + i;
       } else if (i >= 100 < 1000) {
@@ -491,7 +513,7 @@ export default {
 
     // ----
 
-    checkIdNull: function() {
+    checkIdNull: function () {
       if (
         typeof localStorage.appId == "undefined" ||
         localStorage.appId == null ||
@@ -501,13 +523,13 @@ export default {
       }
     },
 
-    stopMediaTracks: function(stream) {
+    stopMediaTracks: function (stream) {
       stream.getTracks().forEach(track => {
         track.stop();
       });
     },
 
-    flipCamera: function() {
+    flipCamera: function () {
       if (this.currentCameraOption == "user") {
         this.currentCameraOption = "environment";
       } else {
@@ -517,25 +539,8 @@ export default {
 
       this.stopMediaTracks(this.currentStream);
       this.showStream();
-    }
+    },
   },
-
-  mounted: function() {
-    //Init
-    console.log("=> Streaming Client init:");
-    this.setup();
-    this.showStream();
-
-    //Retrieve localstorage appID and userType
-    this.appId = localStorage.appId;
-    this.userType = localStorage.userType;
-
-    //IF USER DOENST HAVE ID REDIRECT THEM TO PWA START PAGE
-    this.checkIdNull();
-
-    console.log("Capture rate set to: " + this.SETTINGS.TAKE_PICTURE_EVERY_MS);
-
-  }
 };
 </script>
 
@@ -640,6 +645,7 @@ body {
     transform: translateY(-1000px);
     opacity: 0;
   }
+
   100% {
     -webkit-transform: translateY(0);
     transform: translateY(0);
@@ -777,7 +783,7 @@ body {
   height: 0.6rem;
   background: var(--error-color);
   left: 1.3rem;
-  box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.6);
   border-radius: 50%;
   -webkit-animation: blink 1.5s infinite both;
   animation: blink 1.5s infinite both;
@@ -788,7 +794,7 @@ body {
   color: var(--white-color);
   font-size: 16px;
   font-weight: 600;
-  text-shadow: 0px 2px 3px rgba(0, 0, 0, 0.6);
+  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.6);
 }
 
 .icons {
@@ -811,17 +817,20 @@ video {
   100% {
     opacity: 1;
   }
+
   25%,
   75% {
     opacity: 0;
   }
 }
+
 @keyframes blink {
   0%,
   50%,
   100% {
     opacity: 1;
   }
+
   25%,
   75% {
     opacity: 0;

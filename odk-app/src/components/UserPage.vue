@@ -1,19 +1,23 @@
 <template>
   <div id="container">
     <div id="image-section">
-      <img id="intro-img" src="../assets/pwa/intro.png" alt />
+      <img id="intro-img" src="../assets/pwa/intro.png" alt>
     </div>
+
     <div id="text-section">
       <div id="header-section">
-        <p class="odk-title" id="title">Object Detection Kit</p>
+        <p id="title" class="odk-title">Object Detection Kit</p>
+
         <p class="body-1">Houd de straten schoon door te scannen tijdens het rijden</p>
       </div>
+
       <div id="buttons-section">
         <router-link to="/login">
-          <button @click="saveId('worker')" id="yellow-button" size="is-medium">Gemeente chauffer</button>
+          <button id="yellow-button" size="is-medium" @click="saveId('worker')">Gemeente chauffer</button>
         </router-link>
+
         <router-link to="/client">
-          <button @click="saveId('demo')" id="transparent-button" size="is-medium">Demo gebruiker</button>
+          <button id="transparent-button" size="is-medium" @click="saveId('demo')">Demo gebruiker</button>
         </router-link>
       </div>
     </div>
@@ -22,18 +26,26 @@
 
 <script>
 export default {
-  name: "user-page",
-  data() {
+  name: "UserPage",
+  data () {
     return {
-      buttonDisabled: true
+      buttonDisabled: true,
     };
   },
 
-  // ----
+  mounted () {
+    // Init
+    console.log("=> User Page Client init:");
+    //IF USER IN BROWSER AND development mode is off redirect them to BrowserStartPage
+    // this.checkAppMode();
+    //IF USER DOESNT HAVE ID YET GENERATE ON FOR THEM
+    this.checkIDUsertype();
+  },
 
   methods: {
-    checkAppMode() {
-      let checkMedia = window.matchMedia("(display-mode: standalone)").matches;
+    checkAppMode () {
+      const checkMedia = window.matchMedia("(display-mode: standalone)").matches;
+
       if (checkMedia) {
         console.log("This is running as standalone.");
       } else {
@@ -44,9 +56,7 @@ export default {
       }
     },
 
-    // ----
-
-    checkIDUsertype() {
+    checkIDUsertype () {
       if (localStorage.appId && localStorage.userType) {
         this.$router.push("/client");
       } else {
@@ -54,38 +64,23 @@ export default {
       }
     },
 
-    // ----
-
-    generateId() {
-      let uniqueId = Math.random()
+    generateId () {
+      const uniqueId = Math.random()
         .toString(32)
         .substring(3);
       localStorage.appId = uniqueId;
     },
 
-    // ----
-
-    saveId(user) {
-      console.log("Clicked")
+    saveId (user) {
+      console.log("Clicked");
       if (user == "worker") {
         localStorage.userType = "waste_department";
       }
       else {
         localStorage.userType = "demo";
       }
-    }
+    },
   },
-
-  // ----
-
-  mounted() {
-    // Init
-    console.log("=> User Page Client init:");
-    //IF USER IN BROWSER AND development mode is off redirect them to BrowserStartPage
-    // this.checkAppMode();
-    //IF USER DOESNT HAVE ID YET GENERATE ON FOR THEM
-    this.checkIDUsertype();
-  }
 };
 </script>
 
@@ -187,7 +182,6 @@ export default {
 
   .body-1 {
     font-size: 0.9rem !important;
-
     line-height: 1.25rem !important;
   }
 
@@ -195,8 +189,5 @@ export default {
   #transparent-button {
     font-size: 0.9rem;
   }
-}
-
-@media screen and (max-width: 660px) {
 }
 </style>

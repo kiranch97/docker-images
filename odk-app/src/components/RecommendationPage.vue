@@ -3,37 +3,44 @@
     <div id="image-section">
       <div id="image-section-one">
         <img
-          v-bind:class="{ fade: rmdOne}"
           id="recommendation-img"
+          :class="{ fade: rmdOne}"
           src="../assets/pwa/recommendation1.png"
           alt
-        />
+        >
         <img
-          v-bind:class="{ fade: rmdThree}"
           id="recommendation-img"
+          :class="{ fade: rmdThree}"
           src="../assets/pwa/recommendation3.png"
           alt
-        />
+        >
       </div>
       <div id="image-section-two">
         <img
-          v-bind:class="{ fade: rmdTwo}"
           id="recommendation-img"
+          :class="{ fade: rmdTwo}"
           src="../assets/pwa/recommendation2.png"
           alt
-        />
+        >
       </div>
     </div>
     <div id="text-section">
       <div id="header-section">
         <p class="caption-1">Het wordt aanbevolen om</p>
-        <p class="odk-title" id="title">Uw telefoon op te laden</p>
-        <p class="body-1" id="body">tijdens het rijden. Het streamen verbruikt veel batterij</p>
+        <p id="title" class="odk-title">Uw telefoon op te laden</p>
+        <p id="body" class="body-1">tijdens het rijden. Het streamen verbruikt veel batterij</p>
       </div>
       <div id="buttons-section">
-        <button @click="switchRmd()" rounded id="yellow-button" size="is-medium">Volgende</button>
+        <button
+          id="yellow-button"
+          rounded
+          size="is-medium"
+          @click="switchRmd()"
+        >
+          Volgende
+        </button>
         <router-link to="/checklist">
-          <button rounded id="transparent-button" size="is-medium">Overslaan</button>
+          <button id="transparent-button" rounded size="is-medium">Overslaan</button>
         </router-link>
       </div>
     </div>
@@ -42,24 +49,28 @@
 
 <script>
 export default {
-  name: "recommendation-page",
-  data() {
+  name: "RecommendationPage",
+  
+  data () {
     return {
       rmdOne: true,
       rmdTwo: false,
-      rmdThree: false
+      rmdThree: false,
     };
   },
+  
+  mounted () {
+    this.checkIDUsertype();
+  },
+  
   methods: {
-    checkIDUsertype() {
+    checkIDUsertype () {
       if (localStorage.appId && localStorage.userType) {
         this.$router.push("/client");
       }
     },
 
-    // ----
-
-    switchRmd() {
+    switchRmd () {
       //SWITCH THROUGH THE OPTIONS AND REDIRECT THE USERS TO THE CHECKLIST PAGE
       if (this.rmdOne) {
         this.rmdOne = !this.rmdOne;
@@ -82,16 +93,10 @@ export default {
       }
     },
 
-    // ----
-
-    skipRmd() {
+    skipRmd () {
       this.$router.push("/checklist");
-    }
+    },
   },
-  mounted() {
-    console.log("=> Recommendation page init:");
-    this.checkIDUsertype();
-  }
 };
 </script>
 
@@ -138,6 +143,7 @@ export default {
   object-fit: contain;
   margin: 1rem;
 }
+
 #recommendation-img {
   max-height: 150px;
   object-fit: contain;
@@ -218,7 +224,6 @@ export default {
 
   .body-1 {
     font-size: 0.9rem !important;
-
     line-height: 1.25rem !important;
   }
 
@@ -226,8 +231,5 @@ export default {
   #transparent-button {
     font-size: 0.9rem;
   }
-}
-
-@media screen and (max-width: 660px) {
 }
 </style>

@@ -197,9 +197,11 @@ export default {
   methods: {
     setup: function () {
       //Check User_Type . If "waste_department" -> Automode, if testuser -> Manual mode
-      localStorage.userType === "waste_department"
-        ? (this.isAuto = true)
-        : (this.isAuto = false);
+      // @todo Fix confusing issue with automatically switching mode depending on user type. (-RJS)
+      // localStorage.userType === "waste_department"
+      //   ? (this.isAuto = true)
+      //   : (this.isAuto = false);
+      this.isAuto = false;
 
       //Initialize noSleep object constructor
       this.noSleep = new NoSleep();

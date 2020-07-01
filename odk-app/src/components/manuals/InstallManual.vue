@@ -1,15 +1,17 @@
 <template>
-  <div class="manual container">
-    <header>
+  <div :class="[$style['manual'], 'container']">
+    <header :class="$style['manual-header']">
       <router-link to="/">
-        <img class="logo" src="../../assets/manual/logo.svg">
+        <img :class="$style['manual-header-logo']" src="../../assets/manual/logo.svg">
       </router-link>
     </header>
 
-    <main>
-      <h1 class="title is-4">{{ content.title }}</h1>
+    <main :class="$style['manual-body']">
+      <div class="content">
+        <h1 class="title is-4">{{ content.title }}</h1>
 
-      <p>{{ content.subtext }}</p>
+        <p>{{ content.subtext }}</p>
+      </div>
 
       <b-collapse
         v-for="(manual, index) of content.manuals"
@@ -29,8 +31,14 @@
             {{ manual.browserName }}
           </p>
           <a class="card-header-icon is-size-4">
-            <div v-if="props.open">−</div>
-            <div v-else>+</div>
+            <div
+              v-if="props.open"
+              :class="$style['icon-collapse']"
+            >−</div>
+            <div
+              v-else
+              :class="$style['icon-collapse']"
+            >+</div>
           </a>
         </div>
         <div class="card-content">
@@ -38,14 +46,14 @@
             <section
               v-for="(step, sI) in manual.steps"
               :key="sI"
-              class="step"
+              :class="$style['manual-step']"
             >
               <h2 class="title is-6">{{ step.step }}</h2>
               <p>{{ step.instruction }}</p>
               <img
                 :src="require(`../../assets/manual/${step.stepImage}.png`)"
                 alt="step.instruction"
-                class="image"
+                :class="$style['manual-image']"
               >
             </section>
           </div>
@@ -59,7 +67,7 @@
       </b-collapse>
     </main>
 
-    <footer>
+    <footer :class="$style['manual-footer']">
       {{ content.copyright }}
     </footer>
   </div>
@@ -97,7 +105,6 @@ export default {
 .container {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   background: var(--second-white-color);
   width: 100%;
   max-width: 414px;
@@ -116,59 +123,60 @@ export default {
     max-height: none;
   }
 }
+</style>
 
-header {
-  display: flex;
-  align-items: center;
-  background: var(--main-purple-color);
-  width: 100%;
-  height: 5rem;
+<style lang="scss" module>
+.manual {
+  &-header {
+    display: flex;
+    flex: 0 1 auto;
+    align-items: center;
+    background: var(--main-purple-color);
+    width: 100%;
+    height: 5rem;
 
-  .logo {
-    margin-left: 1.5rem;
-    height: 24px;
+    &-logo {
+      margin-left: 1.5rem;
+      height: 24px;
+    }
+  }
+
+  &-body {
+    flex: 1 1 100%;
+    padding: 2.375rem 1.5rem;
+  }
+
+  &-step {
+    margin-top: 2em;
+
+    &:first-of-type {
+      margin-top: 0;
+    }
+  }
+
+  &-image {
+    border-radius: 12px;
+    width: 100%;
+    object-fit: contain;
+  }
+
+  &-footer {
+    display: flex;
+    flex: 0 1 auto;
+    align-items: center;
+    justify-content: center;
+    background: var(--main-purple-color);
+    width: 100%;
+    height: 4rem;
+    color: white;
   }
 }
 
-main {
-  padding: 2.375rem 1.5rem;
-}
-
-footer {
+.icon-collapse {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--main-purple-color);
-  width: 100%;
-  height: 4rem;
-  color: white;
-}
-
-.card {
-  &-header {
-    &-icon {
-      div {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 24px;
-        height: 24px;
-      }
-    }
-  }
-}
-
-.step {
-  margin-top: 2em;
-
-  &:first-of-type {
-    margin-top: 0;
-  }
-}
-
-.image {
-  border-radius: 12px;
-  width: 100%;
-  object-fit: contain;
+  width: 24px;
+  height: 24px;
 }
 </style>

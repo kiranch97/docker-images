@@ -58,10 +58,10 @@
     },
     {
       "sysName": "webkit",
-      "browserName": "IOS",
+      "browserName": "iOS",
       "attention": "Attention:",
-      "recommendation": "At this moment you cannot use this app on IOS devices.",
-      "body": "Unfortunately video stream in a PWA is still not supported by any browser, in IOS. We recommend you to use Chrome, Firefox or Edge on an Android phone."
+      "recommendation": "At this moment you cannot use this app on iOS devices.",
+      "body": "Unfortunately video stream in a PWA is still not supported by any browser, in iOS. We recommend you to use Chrome, Firefox or Edge on an Android phone."
     },
     {
       "sysName": "others",

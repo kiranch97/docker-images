@@ -30,15 +30,19 @@
           <p class="card-header-title is-size-6 has-text-weight-medium">
             {{ manual.browserName }}
           </p>
-          <a class="card-header-icon is-size-4">
+          <a class="card-header-icon is-size-3">
             <div
               v-if="props.open"
               :class="$style['icon-collapse']"
-            >−</div>
+            >
+              −
+            </div>
             <div
               v-else
               :class="$style['icon-collapse']"
-            >+</div>
+            >
+              +
+            </div>
           </a>
         </div>
         <div class="card-content">
@@ -48,7 +52,7 @@
               :key="sI"
               :class="$style['manual-step']"
             >
-              <h2 class="title is-6">{{ step.step }}</h2>
+              <h2 class="title is-5">{{ step.step }}</h2>
               <p>{{ step.instruction }}</p>
               <img
                 :src="require(`../../assets/manual/${step.stepImage}.png`)"
@@ -59,8 +63,8 @@
           </div>
 
           <div v-else class="content">
-            <h2>{{ manual.attention }}</h2>
-            <p>{{ manual.recommendation }}</p>
+            <h2 class="title is-6">{{ manual.attention }}</h2>
+            <p><strong class="has-text-weight-medium">{{ manual.recommendation }}</strong></p>
             <p>{{ manual.body }}</p>
           </div>
         </div>
@@ -105,7 +109,7 @@ export default {
 .container {
   display: flex;
   flex-direction: column;
-  background: var(--second-white-color);
+  background: white;
   width: 100%;
   max-width: 414px;
   height: 100%;
@@ -121,6 +125,16 @@ export default {
     top: 0;
     max-width: none;
     max-height: none;
+  }
+}
+
+.card {
+  margin: 0.5rem auto;
+  box-shadow: none;
+  background-color: var(--second-white-color);
+
+  &-header {
+    box-shadow: none;
   }
 }
 </style>
@@ -176,7 +190,8 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
+  color: black;
 }
 </style>

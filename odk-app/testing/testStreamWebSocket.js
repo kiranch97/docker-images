@@ -20,7 +20,7 @@ function base64_encode(file) {
 const base64Img = base64_encode('./062540/16-56-10.0374-52.3736191-4.9146496.jpeg');
 
 let data = { 
-    app_id: '123456',
+    stream_id: '123456',
     img: base64Img, 
     createdAt: new Date().toString(),
     lng: 5.3,

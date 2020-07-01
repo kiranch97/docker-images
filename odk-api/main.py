@@ -25,7 +25,6 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(name)s %(levelname)-4s %(message)s')
 
-
 # TODO: move to init function, include: setup queues + setup logging
 dbm = DatabaseManager(SQLALCHEMY_DATABASE_URI)
 
@@ -52,68 +51,62 @@ def index():
 # ==== WebSocket endpoints ====
 
 
-@app.websocket("/stream-login")
-async def ws_stream(ws: WebSocket):
-    # Accept connection
-    await ws.accept()
-
-    try:
-        while True:
-            # Receive message (string/vehicle_type/number)
-            login_data = await ws.receive_json()
-            message = login_data["message"].split("/")
-
-            # Get password from environment variables
-            password = os.environ.get('QR_LOGIN_PASSWORD')
-
-            # Check if string == password,
-            # if so, send back success message,
-            # else send error
-            if message[0] == password:
-                try:
-                    content = {"success": "Login successful"}
-                    await ws.send_json(content)
-                except ConnectionError:
-                    content = {"error": "LoginServer Not Available"}
-                    await ws.send_json(content)
-            else:
-                try:
-                    content = {"error": "Login can not be verified"}
-                    await ws.send_json(content)
-                except ConnectionError:
-                    content = {"error": "LoginServer Not Available"}
-                    await ws.send_json(content)
-
-            # Clear message array
-            message = []
-
-    except WebSocketDisconnect:
-        logger.info("WebSocket /stream [disconnect]")
-    except Exception as e:
-        logger.info(e)
-
-
-
 @app.websocket("/stream")
 async def ws_stream(ws: WebSocket):
     await ws.accept()
-    await ws.send_text("Connection accepted")
+    content = {"connected": "Connection accepted on /stream", "status": "Ready to collect frames"}
+    await ws.send_json(content)
 
     try:
         while True:
             # Get data from client
-            frame_data = await ws.receive_json()
+            stream_data = await ws.receive_json()
 
-            if frame_data["img"] is not False:
+            # When data from client is an image
+            if "img" in stream_data:
                 try:
-                    await broker.send_message_on_queues(frame_data)
+                    await broker.send_message_on_queue(stream_data)
                 except ConnectionError:
                     content = {"error": "MessageServer Not Available"}
                     await ws.send_json(content)
+                except Exception as e:
+                    logger.info(e)
+
+            # When data from client is a request (detected_objects)
+            if "request_type" in stream_data:
+                try:
+                    r_do = dbm.get_detected_objects(stream_data["app_id"], stream_data["day"])
+                    if "status" in r_do and r_do["status"] == "error":
+                        status_code = 500
+                        content = {"status_code": status_code}
+                        await ws.send_json(content)
+                    else:
+                        await ws.send_json(r_do)
+                except ConnectionError:
+                    content = {"error": "RequestHandler Not Available"}
+                    await ws.send_json(content)
+                except Exception as e:
+                    logger.info(e)
+
     except WebSocketDisconnect:
         logger.info("WebSocket /stream [disconnect]")
     except Exception as e:
         logger.info(e)
+
+
+# DISABLED
+# @app.websocket("/dash_stream")
+# async def ws_dashboard(websocket: WebSocket):
+#     await broker.connect_to_websocket(websocket)
+#     try:
+#         while True:
+#             # receive text from dashboard ( NEEDED? )
+#             data = await websocket.receive_text()
+#             # await websocket.send_text(f" Got data from dash: {data}")
+#             pass
+#     except WebSocketDisconnect:
+#         broker.remove_websocket(websocket)
+
 
 # ==== REST endpoints ====
 
@@ -125,6 +118,29 @@ def get_detected_objects(app_id: str, day: str):
     if "status" in r_do and r_do["status"] == "error":
         status_code = 500
     return JSONResponse(content=r_do, status_code=status_code)
+
+
+@app.get("/authorized_login")
+def check_credentials(credential_string: str):
+    status_code = 200
+    credentials = credential_string.split("/")
+
+    # Get password from environment variables
+    password = os.environ.get('QR_LOGIN_PASSWORD')
+
+    # Check if string == password,
+    # if so, send back success message,
+    # else send error
+    if credentials[0] == password:
+        content = {
+            "success": "Login successful",
+            "vehicle_type": credentials[1],
+            "driver_phone_number": credentials[2]
+        }
+    else:
+        content = {"error": "Login can not be verified"}
+
+    return JSONResponse(content=content, status_code=status_code)
 
 
 @app.get("/last_analysed_frames")

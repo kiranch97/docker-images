@@ -12,47 +12,62 @@ DBObj = declarative_base()
 
 class AnalysedFrame(DBObj):
 
-    __tablename__ = "analysed_frames"
+    # __tablename__ = "analysed_frames"
+    __tablename__ = "analysed_frames_new"
 
     id = Column(String(), primary_key=True)
     created_at = Column(DateTime())
-    created_by_app = Column(String())
+    # created_by_app = Column(String())
+    stream_id = Column(String())
     frame_meta = Column(JSONB())
     detected_objects = Column(JSONB())
     counts = Column(JSONB())
     ml_done_at = Column(DateTime())
     ml_time_taken = Column(String())
     frame_name = Column(String())
-    user_type = Column(String())
-    take_frame = Column(JSONB())
+    location = Column(JSONB())
+    vehicle_type = Column(String())
+    driver_phone_number = Column(String())
+    # user_type = Column(String())
+    # take_frame = Column(JSONB())
 
     # ----
 
     def __init__(self,
                  created_at=None,
-                 created_by_app=None,
-                 frame_meta={},
-                 detected_objects={},
-                 counts={},
+                 # created_by_app=None,
+                 stream_id=None,
+                 frame_meta=None,
+                 detected_objects=None,
+                 counts=None,
                  ml_done_at=None,
                  ml_time_taken=None,
                  frame_name=None,
-                 user_type=None,
-                 take_frame=None
+                 location=None,
+                 vehicle_type=None,
+                 driver_phone_number=None,
+                 # user_type=None,
+                 # take_frame=None
                  ):
 
         self.id = str(uuid.uuid4())
-        if type(take_frame) is dict:
-            self.created_at = take_frame.get("timestamp")
-            self.created_by_app = take_frame.get("app_id")
+        self.created_at = created_at
+        # self.created_by_app = created_by_app
+        self.stream_id = stream_id
+        # if type(take_frame) is dict:
+        #     self.created_at = take_frame.get("timestamp")
+        #     self.created_by_app = take_frame.get("app_id")
         self.frame_meta = frame_meta
         self.detected_objects = detected_objects
         self.counts = counts
         self.ml_done_at = ml_done_at
         self.ml_time_taken = ml_time_taken
         self.frame_name = frame_name
-        self.user_type = user_type
-        self.take_frame = take_frame
+        self.location = location
+        self.vehicle_type = vehicle_type
+        self.driver_phone_number = driver_phone_number
+        # self.user_type = user_type
+        # self.take_frame = take_frame
 
     # ----
 
@@ -66,15 +81,19 @@ class AnalysedFrame(DBObj):
 
         return {"id": self.id,
                 "created_at": str(self.created_at),
-                "created_by_app": self.created_by_app,
+                # "created_by_app": self.created_by_app,
+                "stream_id": self.stream_id,
                 "frame_meta": self.frame_meta,
                 "detected_objects": self.detected_objects,
                 "counts": self.counts,
                 "ml_done_at": self.ml_done_at,
                 "ml_time_taken": self.ml_done_at,
                 "frame_name": self.frame_name,
-                "user_type": self.user_type,
-                "take_frame": self.take_frame
+                "location": self.location,
+                "vehicle_type": self.vehicle_type,
+                "driver_phone_number": self.driver_phone_number,
+                # "user_type": self.user_type,
+                # "take_frame": self.take_frame
                 }
 
     # ----
@@ -83,15 +102,19 @@ class AnalysedFrame(DBObj):
 
         return {"id": self.id,
                 "created_at": str(self.created_at),
-                "created_by_app": self.created_by_app,
+                # "created_by_app": self.created_by_app,
+                "stream_id": self.stream_id,
                 "frame_meta": self.frame_meta,
                 "detected_objects": self.detected_objects,
                 "counts": self.counts,
                 "ml_done_at": self.ml_done_at,
                 "ml_time_taken": self.ml_done_at,
                 "frame_name": self.frame_name,
-                "user_type": self.user_type,
-                "take_frame": self.take_frame
+                "location": self.location,
+                "vehicle_type": self.vehicle_type,
+                "driver_phone_number": self.driver_phone_number,
+                # "user_type": self.user_type,
+                # "take_frame": self.take_frame
                 }
 
     # ----

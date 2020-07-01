@@ -7,50 +7,19 @@
       <p class="odk-title" id="title">Object Detection Kit</p>
       <p class="body-1">Zorg voor schone straten door te scannen tijdens het rijden</p>
       <b-button id="add-button">Add to home screen</b-button>
-      <!-- SUPPORTED BROWSERS MANUAL -->
-      <div v-if="chromeActive">
-        <p class="body-1">
-          <span id="add-to-home">Add to homescreen</span> to continue
-        </p>
-        <router-link :to="{ name:'chrome-manual-page', params: {chromeActive: chromeActive } }">
-          <p class="link">How to install a PWA?</p>
-        </router-link>
-      </div>
-      <div v-if="firefoxActive">
-        <p class="body-1">
-          <span id="add-to-home">Add to homescreen</span> to continue
-        </p>
-        <router-link :to="{ name:'firefox-manual-page', params: {firefoxActive: firefoxActive } }">
-          <p class="link">How to install a PWA?</p>
-        </router-link>
-      </div>
-      <!-- UNSUPPORTED BROWSERS MANUAL -->
-      <div v-if="iosActive">
-        <p class="body-1">Not supported by IOS</p>
-        <router-link to="ios-manual">
-          <p class="link">Why?</p>
-        </router-link>
-      </div>
-      <div v-if="otherBrowser">
-        <p class="body-1">Please use another browser</p>
-        <router-link :to="{name:'manual-page', params: {otherBrowser: otherBrowser}}">
-          <p class="link">Which one?</p>
-        </router-link>
-      </div>
+      <p class="body-1">
+        Please
+        <span id="add-to-home">‘add to homescreen’</span> to continue
+      </p>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "browser-start-page",
+  name: "browser-startpage",
   data() {
-    return {
-      chromeActive: false,
-      iosActive: false,
-      firefoxActive: false,
-      otherBrowser: false
-    };
+    return {};
   },
   methods: {
     checkAppMode() {
@@ -58,49 +27,37 @@ export default {
       if (checkMedia) {
         console.log("This is running as standalone.");
         //If user downloaded pwa then he doesnt have to see this page
-        this.$router.push("/recommendation");
+        this.$router.push("/welcome");
       } else {
         console.log("This is running on the browser");
         // if (process.env.VUE_APP_APP_MODE) {
         //   console.log("development mode");
-        //   this.$router.push("/recommendation");
+        //   this.$router.push("/welcome");
         // }
       }
     },
-    checkBrowserType() {
-      // CHROME
-      if (navigator.userAgent.indexOf("Chrome") != -1) {
-        console.log("Google Chrome");
-        this.chromeActive = true;
-      }
-      // FIREFOX
-      else if (navigator.userAgent.indexOf("Firefox") != -1) {
-        console.log("Mozilla Firefox");
-        this.firefoxActive = true;
-      }
-      // EDGE
-      else if (navigator.userAgent.indexOf("Edge") != -1) {
-        console.log("Microsoft Edge");
-        this.chromeActive = true;
-      }
-      // SAFARI
-      else if (navigator.userAgent.indexOf("Safari") != -1) {
-        console.log("Safari");
-        this.iosActive = true;
-      }
-      // OTHERS
-      else {
-        console.log("Others");
-        this.otherBrowser = true;
-      }
+    addToHs() {
+      // const addBtn = document.getElementById("add-button");
+
+      // addBtn.style.display = "none";
+      this.deferredPrompt.prompt();
+      // Wait for the user to respond to the prompt
+      this.deferredPrompt.userChoice.then(choiceResult => {
+        if (choiceResult.outcome === "accepted") {
+          console.log("User accepted the A2HS prompt");
+        } else {
+          console.log("User dismissed the A2HS prompt");
+        }
+        this.deferredPrompt = null;
+      });
     }
   },
   mounted() {
+    // Init
     // IF USER DONT HAVE PWA DOWNLOADED ON MOBILE, TABLET OR PC/LAPTOP DEVICE THEY CANT ACCESS THE VIDEO STREAM
     this.checkAppMode();
-    this.checkBrowserType();
-
-    //PWA INSTALLATION POP-UP
+    // this.addToHs();
+    console.log("New app");
     let deferredPrompt;
     const addBtn = document.getElementById("add-button");
     addBtn.style.display = "none";
@@ -154,15 +111,19 @@ export default {
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   justify-content: center;
   align-items: center;
   max-height: 896px;
   max-width: 414px;
   margin: 0 auto;
   position: relative;
-  top: 3rem;
+}
+
+#container div {
   background: var(--second-white-color);
+  width: 100%;
+  height: 100%;
 }
 
 #text-section {
@@ -179,12 +140,6 @@ export default {
 
 #add-to-home {
   font-weight: 700;
-}
-
-.link {
-  color: var(--pink-color) !important;
-  text-decoration: underline !important;
-  padding-top: 1rem;
 }
 
 #image-section {
@@ -211,6 +166,7 @@ export default {
   display: flex;
   align-items: center;
   margin-bottom: 1.75rem;
+
 }
 
 @media (max-width: 1024px) and (orientation: portrait) {
@@ -238,13 +194,12 @@ export default {
     max-height: none;
   }
 
-  #container #image-section {
+  #image-section {
     align-items: center;
   }
 
   #text-section {
     justify-content: center;
-    align-items: center;
   }
 }
 </style>

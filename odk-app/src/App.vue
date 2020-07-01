@@ -37,7 +37,7 @@ export default {
   color: var(--dark-blue-color) !important;
 }
 
-.title-2{
+.title-2 {
   font-family: "Open Sans", sans-serif !important;
   font-size: 1.125rem !important; /*20px*/
   font-weight: 700 !important;
@@ -88,7 +88,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   width: 100%;
-  /* height: 100%; */
+  height: 100%;
   display: flex;
   align-items: center;
 }

@@ -51,10 +51,23 @@ export default {
     };
   },
   methods: {
-    checkIDUsertype() {
-      if (localStorage.appId && localStorage.userType) {
-        this.$router.push("/client");
+    checkCredentials() {
+      if (localStorage.streamId) {
+        localStorage.streamId = this.generateId();
+        this.$router.push({
+          name: "streaming-client",
+          params: { uniqueId: localStorage.streamId }
+        });
       }
+    },
+
+    // ----
+
+    generateId() {
+      let uniqueId = Math.random()
+        .toString(32)
+        .substring(3);
+      return uniqueId;
     },
 
     // ----
@@ -89,8 +102,8 @@ export default {
     }
   },
   mounted() {
-    console.log("=> Recommendation page init:");
-    this.checkIDUsertype();
+    //IF USER HAS LOGGED IN BEFORE use that info but GENERATE NEW streamId for new session
+    this.checkCredentials();
   }
 };
 </script>

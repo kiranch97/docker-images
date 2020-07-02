@@ -1,13 +1,12 @@
 <template>
-  <div id="container">
-    <qrcode-stream :camera="camera" :track="track" @decode="sendWebSocketsMsg" @init="onInit">
+  <div id="qr-container">
+    <qrcode-stream :camera="camera" :track="track" @decode="sendQR" @init="onInit">
       <div v-if="validationWaiting" class="validation-waiting">
-        Scan a given QR-code
-        <b-icon pack="fas" icon="qrcode" size="is-large"></b-icon>
+        <div id="yellow-square"></div>
       </div>
-      <div v-if="validationPending" class="validation-pending">Validation in progress...</div>
-      <div v-if="validationFailure" class="validation-failure">Try again</div>
-      <div v-if="validationSuccess" class="validation-success">Success</div>
+      <div v-else-if="validationPending" class="validation-pending">Wordt gevalideerd...</div>
+      <div v-else-if="validationFailure" class="validation-failure">Probeer opniew</div>
+      <div v-else class="validation-success">Gevalideerd</div>
     </qrcode-stream>
   </div>
 </template>
@@ -23,8 +22,8 @@ export default {
   data() {
     return {
       userType: null,
-      apiWebsocketUrl: process.env.VUE_APP_API_WS_URL,
-      camera: "auto",
+      apiHttpUrl: process.env.VUE_APP_API_HTTP_URL,
+      camera: "front",
 
       // For QR
       track: false,
@@ -36,7 +35,7 @@ export default {
 
   computed: {
     validationWaiting() {
-      return this.isValid === "waiting" && this.camera === "auto";
+      return this.isValid === "waiting" && this.camera === "front";
     },
 
     // ----
@@ -61,57 +60,46 @@ export default {
   // ----
 
   methods: {
-    checkIdNull() {
-      if (
-        typeof localStorage.appId == "undefined" ||
-        localStorage.appId == null ||
-        !localStorage.userType
-      ) {
-        this.$router.push("/recommendation");
-      }
+    generateId() {
+      let uniqueId = Math.random()
+        .toString(32)
+        .substring(3);
+      return uniqueId;
     },
 
     // ----
 
-    setupWebSockets() {
- 
-      //Setup connection with Websocket server URL:PORT/ENDPOINT
-      let websocketUrl = this.apiWebsocketUrl + "/stream-login";
-      this.websocketConnection = new WebSocket(websocketUrl);
-      //Websocket events
-      this.websocketConnection.onmessage = this.receiveWebSocketsMsg;
-    },
-
-    // ----
-
-    async sendWebSocketsMsg(content) {
+    async sendQR(content) {
       this.turnCameraOff();
-      // await this.timeout(1000);
+      await this.timeout(1000);
 
-      // Send QR-code result to API for verification
-      let data = {
-        message: content
-      };
+      fetch(this.apiHttpUrl + "/authorized_login?credential_string=" + content, {
+        method: "GET"
+      })
+        .then(response => {
+          return response.json();
+        })
+        .then(results => {
+          if (results.success) {
+            this.isValid = true;
+            localStorage.vehicleType = results.vehicle_type;
+            localStorage.driverPhoneNumber = results.driver_phone_number;
 
-      this.websocketConnection.send(JSON.stringify(data));
-    },
+            let uniqueId = this.generateId();
+            localStorage.userType = "worker";
 
-    // ----
+            this.timeout(1000);
 
-    async receiveWebSocketsMsg(e) {
-      //Websocket event when Message sent by the server
-      let response = JSON.parse(e.data);
-
-      if (response.success) {
-        this.isValid = true;
-        // await this.timeout(1000);
-        this.$router.push("/client");
-        this.websocketConnection.close()
-      } else {
-        this.isValid = false;
-        // await this.timeout(1000);
-        this.turnCameraOn();
-      }
+            this.$router.push({
+              name: "streaming-client",
+              params: { uniqueId: uniqueId }
+            });
+          } else {
+            this.isValid = false;
+            this.timeout(1000);
+            this.turnCameraOn();
+          }
+        });
     },
 
     // ----
@@ -129,7 +117,7 @@ export default {
     // ----
 
     turnCameraOn() {
-      this.camera = "auto";
+      this.camera = "front";
     },
 
     // ----
@@ -145,33 +133,14 @@ export default {
         window.setTimeout(resolve, ms);
       });
     }
-  },
-
-  // ----
-
-  mounted() {
-    this.checkIdNull();
-    this.setupWebSockets();
-
-    console.log("Facing mode" + this.facingMode)
   }
 };
 </script>
 
 <style scoped>
-#container {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  max-width: 896px;
-  max-height: 414px;
-  margin: 0 auto;
-  background: var(--second-white-color);
-  display: flex;
-  flex-direction: row;
-  /* justify-content: center;
-  align-items: center; */
-  overflow: hidden !important;
+#qr-container {
+  width: 100%;
+  height: 100%;
 }
 
 .validation-success,
@@ -181,27 +150,50 @@ export default {
   position: absolute;
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.7);
   text-align: center;
   font-family: "Open Sans", sans-serif !important;
   font-weight: 600;
   font-size: 1.4rem;
-  padding: 10px;
   display: flex;
-  flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
 }
+
 .validation-waiting {
   background: none;
-  color: var(--yellow-color);
+  border: 50px solid rgba(0, 0, 0, 0.5);
 }
+
+/* Was trying blur, but ugly */
+/*  */
+/* .validation-waiting::before {
+  position: absolute;
+  width: calc(100% + 100px);
+  height: calc(100% + 100px);
+  border: inherit;
+  border-color: rgba(0,0,0,0.5);
+  background: inherit;
+  background-clip: border-box;
+  filter: blur(9px);
+  -webkit-filter: blur(9px);
+  content: "";
+} */
+
+#yellow-square {
+  width: 100%;
+  height: 100%;
+  border: 3px solid var(--yellow-color);
+}
+
 .validation-pending {
   color: var(--dark-blue-color);
 }
+
 .validation-success {
   color: var(--success-color);
 }
+
 .validation-failure {
   color: var(--error-color);
 }

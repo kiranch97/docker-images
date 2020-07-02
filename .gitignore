@@ -7,10 +7,6 @@ logs/
 # database
 pgdata/
 
-# moved to new repo
-odk-website/
-odk-frame-analyzer/
-
 # odk api
 frames-analysed/
 frames/

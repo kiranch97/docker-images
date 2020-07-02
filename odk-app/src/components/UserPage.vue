@@ -115,6 +115,7 @@ export default {
 #qr-section {
   width: 50%;
   height: 100%;
+  z-index: 0;
 }
 
 #text-section {
@@ -124,6 +125,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  z-index: 1;
 }
 
 #header-section {

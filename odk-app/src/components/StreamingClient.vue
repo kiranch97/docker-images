@@ -66,8 +66,15 @@ export default {
   //// https://medium.com/tsftech/using-web-sockets-to-update-images-8c66327f39a3
 
   name: "StreamingClient",
+
+  components: {
+    StreamTime,
+    StreamCount,
+    DefaultLoader,
+  },
+
   props: ["uniqueId"],
-  // ----
+
   data: function () {
     return {
       apiWebsocketUrl: process.env.VUE_APP_API_WS_URL,
@@ -742,11 +749,11 @@ body {
   transform: rotate(-90deg);
 }
 
-/deep/ .switch input[type="checkbox"]:checked + .check {
+.switch input[type="checkbox"]:checked + .check {
   background: rgba(255, 255, 255, 0.6) !important;
 }
 
-/deep/ .switch input[type="checkbox"]:focus:checked + .check {
+.switch input[type="checkbox"]:focus:checked + .check {
   box-shadow: none;
 }
 

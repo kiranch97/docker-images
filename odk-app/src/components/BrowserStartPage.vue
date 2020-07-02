@@ -110,14 +110,19 @@ export default {
         this.activeVendor = "firefoxAndroid";
       }
 
+      else if (isAndroid()) {
+        console.log("Device and browser: unsupported");
+        this.activeVendor = "others";
+      }
+
       else if (isiOS()) {
         console.log("Browser: WebKit-based, Device: iOS");
         this.activeVendor = "iOS";
       }
 
       else {
-        console.log("Device and browser: unsupported");
-        this.activeVendor = "others";
+        console.log("Browser: n/a, Device: Not Android or iOS");
+        this.activeVendor = "desktop";
       }
     },
   },

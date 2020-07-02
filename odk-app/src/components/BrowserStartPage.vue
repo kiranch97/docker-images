@@ -10,7 +10,7 @@
       <b-button id="add-button">Add to home screen</b-button>
 
       <!-- SUPPORTED BROWSERS MANUAL -->
-      <div v-if="activeVendor === 'chrome' || activeVendor === 'firefox'">
+      <div v-if="activeVendor === 'chrome' || activeVendor === 'firefoxAndroid'">
         <p class="body-1">
           <span id="add-to-home">Add to homescreen</span> to continue
         </p>
@@ -20,7 +20,7 @@
       </div>
 
       <!-- UNSUPPORTED BROWSERS MANUAL -->
-      <div v-else-if="activeVendor === 'webkit'">
+      <div v-else-if="activeVendor === 'iOS'">
         <p class="body-1">Not supported by iOS</p>
         <router-link :to="{ name:'installation-manual', params: { activeVendor } }">
           <p class="link">Why?</p>
@@ -29,7 +29,7 @@
 
       <div v-else>
         <p class="body-1">Please use another browser</p>
-        <router-link :to="{ name:'manual-page', params: { activeVendor } }">
+        <router-link :to="{ name:'installation-manual', params: { activeVendor } }">
           <p class="link">Which one?</p>
         </router-link>
       </div>
@@ -38,6 +38,8 @@
 </template>
 
 <script>
+import { isChrome, isFirefox, isMSEdge, isAndroid, isiOS } from "../utils/detect";
+
 export default {
   name: "BrowserStartPage",
 
@@ -90,46 +92,31 @@ export default {
       if (checkMedia) {
         console.log("This is running as standalone.");
 
-        // If user downloaded pwa then he doesnt have to see this page
+        // If user installed the PWA he does not have to see this page.
         this.$router.push("/recommendation");
       } else {
         console.log("This is running on the browser");
-
-        // if (process.env.VUE_APP_APP_MODE) {
-        //   console.log("development mode");
-        //   this.$router.push("/recommendation");
-        // }
       }
     },
 
     checkBrowserType () {
-      // CHROME
-      if (navigator.userAgent.indexOf("Chrome") != -1) {
-        console.log("Google Chrome");
+      if (isChrome() || isMSEdge()) {
+        console.log("Browser: Chromium");
         this.activeVendor = "chrome";
       }
 
-      // FIREFOX
-      else if (navigator.userAgent.indexOf("Firefox") != -1) {
-        console.log("Mozilla Firefox");
-        this.activeVendor = "firefox";
+      else if (isFirefox() && isAndroid()) {
+        console.log("Browser: Mozilla Firefox, Device: Android");
+        this.activeVendor = "firefoxAndroid";
       }
 
-      // EDGE
-      else if (navigator.userAgent.indexOf("Edge") != -1) {
-        console.log("Microsoft Edge");
-        this.activeVendor = "chrome";
+      else if (isiOS()) {
+        console.log("Browser: WebKit-based, Device: iOS");
+        this.activeVendor = "iOS";
       }
 
-      // SAFARI
-      else if (navigator.userAgent.indexOf("Safari") != -1) {
-        console.log("Safari");
-        this.activeVendor = "webkit";
-      }
-
-      // OTHERS
       else {
-        console.log("Others");
+        console.log("Device and browser: unsupported");
         this.activeVendor = "others";
       }
     },

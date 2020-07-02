@@ -30,7 +30,7 @@
       ]
     },
     {
-      "sysName": "firefox",
+      "sysName": "firefoxAndroid",
       "browserName": "Firefox, Android",
       "steps": [
         {
@@ -57,18 +57,18 @@
       ]
     },
     {
-      "sysName": "webkit",
+      "sysName": "iOS",
       "browserName": "iOS",
       "attention": "Attention:",
       "recommendation": "At this moment you cannot use this app on iOS devices.",
-      "body": "Unfortunately video stream in a PWA is still not supported by any browser, in iOS. We recommend you to use Chrome, Firefox or Edge on an Android phone."
+      "body": "Unfortunately video stream in a PWA is still not supported by any browser, in iOS. We recommend you to use Google Chrome, Mozilla Firefox or Microsoft Edge on an Android phone."
     },
     {
       "sysName": "others",
       "browserName": "Other browsers, Android",
       "attention": "Attention:",
       "recommendation": "We recommend you to use Chrome, Firefox or Edge.",
-      "body": "Unfortunately we cannot garantee the optimal functionality of this PWA in all browsers. Please use Chrome, Firefox or Edge for tested results."
+      "body": "Unfortunately we cannot garantee the optimal functionality of this PWA in all browsers. Please use Google Chrome, Mozilla Firefox or Microsoft Edge for tested results."
     }
   ]
 }

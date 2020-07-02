@@ -123,7 +123,7 @@ export default {
   },
 
   created(){
-    if (localStorage.appId){
+    if (localStorage.streamId){
       this.$router.push("/client");
       console.log("Skip onboarding!")
     }

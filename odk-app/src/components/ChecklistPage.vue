@@ -122,14 +122,6 @@ export default {
     "onboarding-animation": OnboardingAnimation
   },
   methods: {
-    checkIDUsertype() {
-      if (localStorage.appId && localStorage.userType) {
-        this.$router.push("/client");
-      }
-    },
-
-    // ----
-
     checkAppMode() {
       let checkMedia = window.matchMedia("(display-mode: standalone)").matches;
       if (checkMedia) {
@@ -140,6 +132,27 @@ export default {
         //   ? console.log("development mode")
         //   : this.$router.push({ path: "/" });
       }
+    },
+
+    // ----
+
+    checkCredentials() {
+      if (localStorage.streamId) {
+        localStorage.streamId = this.generateId();
+        this.$router.push({
+          name: "streaming-client",
+          params: { uniqueId: localStorage.streamId }
+        });
+      }
+    },
+
+    // ----
+
+    generateId() {
+      let uniqueId = Math.random()
+        .toString(32)
+        .substring(3);
+      return uniqueId;
     },
 
     // ----
@@ -237,15 +250,13 @@ export default {
       }
     }
   },
-
-  // ----
-
   mounted() {
     // Init
     // check if locationPermission, camPermission en landscape orientation is active
-    this.checkIDUsertype();
     this.checkAppMode();
     this.checkAppOrientation();
+    //IF USER HAS LOGGED IN BEFORE use that info but GENERATE NEW streamId for new session
+    this.checkCredentials();
 
     document.getElementById("buttonspan").style.marginLeft = "1.75rem";
     document.getElementById("buttonspan2").style.marginLeft = "1.75rem";

@@ -10,6 +10,9 @@ import VueAwesomeSwiper from "vue-awesome-swiper";
 import "swiper/dist/css/swiper.css";
 import VieOtpInput from "@bachdgvn/vue-otp-input";
 import * as VueSpinnersCss from "vue-spinners-css";
+import * as VueScrollTo from "vue-scrollto";
+
+Vue.use(VueScrollTo);
 
 // import { makeServer } from './server'
 

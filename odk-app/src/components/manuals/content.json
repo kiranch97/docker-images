@@ -10,22 +10,22 @@
         {
           "step": "Step 1",
           "instruction": "Open browser's settings",
-          "stepImage": "chrome-1"
+          "stepImage": "manual/chrome-1.png"
         },
         {
           "step": "Step 2",
           "instruction": "Scroll down and tap Add to Home screen.",
-          "stepImage": "chrome-2"
+          "stepImage": "manual/chrome-2.png"
         },
         {
           "step": "Step 3",
           "instruction": "Confirm by tapping Add.",
-          "stepImage": "chrome-3"
+          "stepImage": "manual/chrome-3.png"
         },
         {
           "step": "Step 4",
           "instruction": "Open app from home screen, as any other native app.",
-          "stepImage": "chrome-4"
+          "stepImage": "manual/chrome-4.png"
         }
       ]
     },
@@ -37,27 +37,54 @@
           "step": "Step 1",
           "instruction": "Tap",
           "icon": "add2hs",
-          "stepImage": "firefox-1"
+          "stepImage": "manual/firefox-1.png"
         },
         {
           "step": "Step 2",
           "instruction": "Confirm by tapping Add to Home screen.",
-          "stepImage": "firefox-2"
+          "stepImage": "manual/firefox-2.png"
         },
         {
           "step": "Step 3",
           "instruction": "Choose by tapping Add automatically or by dragging the image to your home screen.",
-          "stepImage": "firefox-3"
+          "stepImage": "manual/firefox-3.png"
         },
         {
           "step": "Step 4",
           "instruction": "Open app from home screen, as any other native app.",
-          "stepImage": "firefox-4"
+          "stepImage": "manual/firefox-4.png"
         }
       ]
     },
     {
-      "sysName": "others",
+      "sysName": "edgeAndroid",
+      "browserName": "Edge, Android",
+      "steps": [
+        {
+          "step": "Step 1",
+          "instruction": "Tap",
+          "icon": "add2hs",
+          "stepImage": "manual/edge-1.jpg"
+        },
+        {
+          "step": "Step 2",
+          "instruction": "Confirm by tapping Add to Home screen.",
+          "stepImage": "manual/edge-2.jpg"
+        },
+        {
+          "step": "Step 3",
+          "instruction": "Choose by tapping Add automatically or by dragging the image to your home screen.",
+          "stepImage": "manual/edge-3.jpg"
+        },
+        {
+          "step": "Step 4",
+          "instruction": "Open app from home screen, as any other native app.",
+          "stepImage": "manual/edge-4.jpg"
+        }
+      ]
+    },
+    {
+      "sysName": "othersAndroid",
       "browserName": "Other browsers, Android",
       "attention": "Attention:",
       "recommendation": "We recommend you to use Chrome, Firefox or Edge.",

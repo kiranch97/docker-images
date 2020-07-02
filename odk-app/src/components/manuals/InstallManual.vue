@@ -27,7 +27,10 @@
           class="card-header"
           role="button"
         >
-          <p class="card-header-title is-size-6 has-text-weight-medium">
+          <p
+            :data-sys-name="manual.sysName"
+            class="card-header-title is-size-6 has-text-weight-medium"
+          >
             {{ manual.browserName }}
           </p>
           <a class="card-header-icon is-size-3">
@@ -54,9 +57,10 @@
             >
               <h2 class="title is-5">{{ step.step }}</h2>
               <p>{{ step.instruction }}</p>
+
               <img
-                :src="require(`../../assets/manual/${step.stepImage}.png`)"
-                alt="step.instruction"
+                :src="require(`../../assets/${step.stepImage}`)"
+                :alt="step.instruction"
                 :class="$style['manual-image']"
               >
             </section>
@@ -81,6 +85,8 @@
 import content from "./content.json";
 
 export default {
+  name: "InstallManual",
+
   data () {
     return {
       content,
@@ -99,7 +105,16 @@ export default {
 
   mounted () {
     if (this.activeVendor) {
+      const scrollOptions = {
+        easing: "ease-in",
+        offset: -50,
+        force: true,
+        cancelable: true,
+      };
+
       this.accordion.isOpen = this.content.manuals.findIndex(manual => manual.sysName === this.activeVendor);
+
+      this.$scrollTo(this.$el.querySelector(`[data-sys-name="${[this.content.manuals[this.accordion.isOpen].sysName]}"]`), 250, scrollOptions);
     }
   },
 };

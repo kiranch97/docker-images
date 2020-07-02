@@ -10,7 +10,7 @@
       <b-button id="add-button">Add to home screen</b-button>
 
       <!-- SUPPORTED BROWSERS MANUAL -->
-      <div v-if="activeVendor === 'chrome' || activeVendor === 'firefoxAndroid'">
+      <div v-if="activeVendor === 'chrome' || activeVendor === 'edgeAndroid' || activeVendor === 'firefoxAndroid'">
         <p class="body-1">
           <span id="add-to-home">Add to homescreen</span> to continue
         </p>
@@ -27,10 +27,17 @@
         </router-link>
       </div>
 
-      <div v-else>
+      <div v-else-if="activeVendor === 'othersAndroid'">
         <p class="body-1">Please use another browser</p>
         <router-link :to="{ name:'installation-manual', params: { activeVendor } }">
           <p class="link">Which one?</p>
+        </router-link>
+      </div>
+
+      <div v-else>
+        <p class="body-1">This app is intended for Android phones</p>
+        <router-link :to="{ name:'installation-manual', params: { activeVendor } }">
+          <p class="link">Why?</p>
         </router-link>
       </div>
     </div>
@@ -100,19 +107,24 @@ export default {
     },
 
     checkBrowserType () {
-      if (isChrome() || isMSEdge()) {
-        console.log("Browser: Chromium");
+      if (isAndroid() && isChrome()) {
+        console.log("Browser: Chromium, Device: Android");
         this.activeVendor = "chrome";
       }
 
-      else if (isFirefox() && isAndroid()) {
+      if (isAndroid() && isMSEdge()) {
+        console.log("Browser: Microsoft Edge, Device: Android");
+        this.activeVendor = "edgeAndroid";
+      }
+
+      else if (isAndroid() && isFirefox()) {
         console.log("Browser: Mozilla Firefox, Device: Android");
         this.activeVendor = "firefoxAndroid";
       }
 
       else if (isAndroid()) {
         console.log("Device and browser: unsupported");
-        this.activeVendor = "others";
+        this.activeVendor = "othersAndroid";
       }
 
       else if (isiOS()) {

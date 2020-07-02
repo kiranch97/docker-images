@@ -50,7 +50,7 @@
 <script>
 export default {
   name: "RecommendationPage",
-  
+
   data () {
     return {
       rmdOne: true,
@@ -58,17 +58,32 @@ export default {
       rmdThree: false,
     };
   },
-  
   mounted () {
-    this.checkIDUsertype();
+    //IF USER HAS LOGGED IN BEFORE use that info but GENERATE NEW streamId for new session
+    this.checkCredentials();
   },
-  
+
   methods: {
-    checkIDUsertype () {
-      if (localStorage.appId && localStorage.userType) {
-        this.$router.push("/client");
+    checkCredentials () {
+      if (localStorage.streamId) {
+        localStorage.streamId = this.generateId();
+        this.$router.push({
+          name: "streaming-client",
+          params: { uniqueId: localStorage.streamId },
+        });
       }
     },
+
+    // ----
+
+    generateId () {
+      const uniqueId = Math.random()
+        .toString(32)
+        .substring(3);
+      return uniqueId;
+    },
+
+    // ----
 
     switchRmd () {
       //SWITCH THROUGH THE OPTIONS AND REDIRECT THE USERS TO THE CHECKLIST PAGE

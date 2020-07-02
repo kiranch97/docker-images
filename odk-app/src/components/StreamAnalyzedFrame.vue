@@ -18,9 +18,9 @@ export default {
   methods: {
     fetchAnalysedFrames() {
       let frameEndpointBase =
-        this.apiHttpUrl + "/last_analysed_frames?app_id={{APP_ID}}";
+        this.apiHttpUrl + "/last_analysed_frames?stream_id={{STREAM_ID}}";
 
-      let frameEndpoint = frameEndpointBase.replace("{{APP_ID}}", this.appId);
+      let frameEndpoint = frameEndpointBase.replace("{{STREAM_ID}}", this.streamId);
 
       fetch(frameEndpoint, {
         method: "GET",
@@ -85,7 +85,7 @@ export default {
   },
 
   mounted() {
-    this.appId = localStorage.appId;
+    this.streamId = localStorage.streamId;
     this.userType - localStorage.userType;
 
     // console.log(

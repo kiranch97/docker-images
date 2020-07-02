@@ -1,4 +1,5 @@
 import BrowserStartPage from "./components/BrowserStartPage.vue";
+import WelcomePage from "./components/WelcomePage.vue";
 import RecommendationPage from "./components/RecommendationPage.vue";
 import ChecklistPage from "./components/ChecklistPage.vue";
 import UserPage from "./components/UserPage.vue";
@@ -12,6 +13,11 @@ export const routes = [
     name: "browser-startpage",
     component: BrowserStartPage,
     props: true,
+  },
+  {
+    path: "/welcome",
+    name: "welcome-page",
+    component: WelcomePage,
   },
   {
     path: "/recommendation",

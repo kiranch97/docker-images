@@ -157,7 +157,7 @@ class FrameBroker:
         self.logger.info(websocket)
         self.connections.append(websocket)
 
-    async def send_message_on_queues(self, frame_data: dict):
+    async def send_message_on_queue(self, frame_data: dict):
 
         # add time on queue
         # frame_data['_debug_rmq_time_on_queue'] = int(round(time.time() * 1000))

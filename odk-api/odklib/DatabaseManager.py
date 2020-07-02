@@ -1,13 +1,20 @@
 import logging
+import os
+import simplejson as json
 
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
+# from twilio.rest import Client
 
 from odklib.AnalysedFrame import AnalysedFrame
 
 
-class DatabaseManager:
+# account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
+# auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
+# client = Client(account_sid, auth_token)
 
+
+class DatabaseManager:
     RETURN_CODES = {'ERROR': 1,
                     'ERROR_SERVER_ERROR': 2,
                     'ERROR_INVALID_INPUT': 3
@@ -118,13 +125,14 @@ class DatabaseManager:
         # TODO: for now storing location data here,
         #  data model should be reviewed to handle more variable information from services
 
-        location_data = analysed_frame_data.get('location')
-        analysed_frame_data['take_frame']['location'] = location_data
+        # location_data = analysed_frame_data.get('location')
+        # analysed_frame_data['take_frame']['location'] = location_data
 
         new_analysed_frame = AnalysedFrame(
+            stream_id=analysed_frame_data.get(
+                'stream_id'),
             created_at=analysed_frame_data.get(
-                'take_frame', {}).get(
-                    'timestamp'),
+                'timestamp'),
             frame_meta=analysed_frame_data.get(
                 'frame_meta'),
             detected_objects=analysed_frame_data.get(
@@ -135,19 +143,50 @@ class DatabaseManager:
                 'ml_done_at'),
             ml_time_taken=analysed_frame_data.get(
                 'ml_time_taken'),
+            location=analysed_frame_data.get(
+                'location'),
             frame_name=analysed_frame_data.get(
                 'frame_name'),
-            user_type=analysed_frame_data.get(
-                'user_type'),
-            take_frame=analysed_frame_data.get(
-                'take_frame'),
+            vehicle_type=analysed_frame_data.get(
+                'vehicle_type'),
+            driver_phone_number=analysed_frame_data.get(
+                'driver_phone_number')
         )
+
+        # new_analysed_frame = AnalysedFrame(
+        #     created_at=analysed_frame_data.get(
+        #         'take_frame', {}).get(
+        #             'timestamp'),
+        #     frame_meta=analysed_frame_data.get(
+        #         'frame_meta'),
+        #     detected_objects=analysed_frame_data.get(
+        #         'detected_objects'),
+        #     counts=analysed_frame_data.get(
+        #         'counts'),
+        #     ml_done_at=analysed_frame_data.get(
+        #         'ml_done_at'),
+        #     ml_time_taken=analysed_frame_data.get(
+        #         'ml_time_taken'),
+        #     frame_name=analysed_frame_data.get(
+        #         'frame_name'),
+        #     user_type=analysed_frame_data.get(
+        #         'user_type'),
+        #     take_frame=analysed_frame_data.get(
+        #         'take_frame'),
+        # )
 
         try:
             self.db_session.add(new_analysed_frame)
             self.db_session.commit()
 
             new_analysed_dict = new_analysed_frame.to_public_dict()
+
+            # body = json.dumps(analysed_frame_data)
+            # from_whatsapp_number = "whatsapp:+14155238886"
+            # to_whatsapp_number = "whatsapp:+31{}".format(analysed_frame_data["vehicle_number"])
+            # client.messages.create(body=body,
+            #                        from_=from_whatsapp_number,
+            #                        to=to_whatsapp_number)
 
             return {"status": "success",
                     "message": "Created frame!",
@@ -174,7 +213,7 @@ class DatabaseManager:
             analysed_frames_by_app_id = \
                 self.db_session.query(AnalysedFrame).filter(
                     AnalysedFrame.created_by_app == app_id).filter(
-                        AnalysedFrame.created_at >= day).all()
+                    AnalysedFrame.created_at >= day).all()
 
             detected_objects_by_type = {}
 
@@ -202,7 +241,7 @@ class DatabaseManager:
                 "status": "error",
                 "code": self.RETURN_CODES['ERROR_SERVER_ERROR'],
                 "message": e
-             }
+            }
 
     # ----
 
@@ -218,7 +257,7 @@ class DatabaseManager:
         try:
             frame = self.db_session.query(AnalysedFrame).filter(
                 AnalysedFrame.created_by_app == app_id).order_by(
-                    AnalysedFrame.created_at.desc()).first()
+                AnalysedFrame.created_at.desc()).first()
 
             frame.to_public_dict()
 
@@ -229,7 +268,7 @@ class DatabaseManager:
             return {"status": "error",
                     "code": self.RETURN_CODES['ERROR_SERVER_ERROR'],
                     "message": e
-                   }
+                    }
 
     # ----
 
@@ -257,13 +296,13 @@ class DatabaseManager:
                 analysed_frames_by_app_id = \
                     self.db_session.query(AnalysedFrame).filter(
                         AnalysedFrame.created_by_app == stream_id).filter(
-                            AnalysedFrame.created_at >= day).all()
+                        AnalysedFrame.created_at >= day).all()
 
                 last_analysed_frame_by_app_id = \
                     self.db_session.query(AnalysedFrame).filter(
                         AnalysedFrame.created_by_app == stream_id).filter(
-                            AnalysedFrame.created_at >= day).order_by(
-                                AnalysedFrame.created_at.desc()).first()
+                        AnalysedFrame.created_at >= day).order_by(
+                        AnalysedFrame.created_at.desc()).first()
 
                 for frame in analysed_frames_by_app_id:
 
@@ -302,7 +341,7 @@ class DatabaseManager:
             return {"status": "error",
                     "code": self.RETURN_CODES['ERROR_SERVER_ERROR'],
                     "message": e
-                   }
+                    }
 
     # ----
 
@@ -341,17 +380,17 @@ class DatabaseManager:
                         detected_objects_by_type["total"] += 1
 
             return {
-                    "_entity_name": "get_dash_day_total",
-                    "day": day,
-                    "detected_objects_by_type": detected_objects_by_type
-                   }
+                "_entity_name": "get_dash_day_total",
+                "day": day,
+                "detected_objects_by_type": detected_objects_by_type
+            }
 
         except Exception as e:
             self.logger.error(e)
             return {"status": "error",
                     "code": self.RETURN_CODES['ERROR_SERVER_ERROR'],
                     "message": e
-                   }
+                    }
 
     # ----
 
@@ -368,7 +407,7 @@ class DatabaseManager:
             analysed_frames = \
                 self.db_session.query(AnalysedFrame).filter(
                     AnalysedFrame.created_at >= day).order_by(
-                        AnalysedFrame.created_at.desc()).all()
+                    AnalysedFrame.created_at.desc()).all()
 
             dash_map_data = {}
 
@@ -405,10 +444,10 @@ class DatabaseManager:
                 }
 
             return dash_map_data
-        
+
         except Exception as e:
             self.logger.error(e)
             return {"status": "error",
                     "code": self.RETURN_CODES['ERROR_SERVER_ERROR'],
                     "message": e
-                   }
+                    }

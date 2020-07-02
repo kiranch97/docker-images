@@ -1,46 +1,34 @@
 <template>
   <div id="container">
-    <div id="qr-section">
-      <login-page />
+    <div id="image-section">
+      <img id="intro-img" src="../assets/pwa/intro.png" alt>
     </div>
-
     <div id="text-section">
       <div id="header-section">
-        <p class="caption-1">Laatste stap</p>
-        <p id="title" class="odk-title">Scan je QR-Code</p>
-        <p
-          class="body-1"
-        >
-          Als chauffeur van de Gemeente Amsterdam heb je een QR-Code ontvangen om je account mee te gebruiken. Houd deze voor de camera om verder te gaan.
-        </p>
+        <p id="title" class="odk-title">Object Detection Kit</p>
+        <p class="body-1">Houd de straten schoon door te scannen tijdens het rijden</p>
       </div>
-
       <div id="buttons-section">
-        <p class="link" @click="saveId('demo')">Ik ben geen gemeente chauffeur</p>
-        <p
-          class="caption-1"
-        >
-          Als je voor deze optie kiest zal de gescande data niet worden opgeslagen.
-        </p>
+        <router-link to="/recommendation">
+          <button id="yellow-button" size="is-medium">Beginnen</button>
+        </router-link>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import LoginPage from "./LoginPage";
-
 export default {
-  name: "UserPage",
+  name: "WelcomePage",
 
-  components: {
-    "login-page": LoginPage,
-  },
   data () {
     return {
       buttonDisabled: true,
     };
   },
+
+  // ----
+
   mounted () {
     // Init
     //IF USER IN BROWSER AND development mode is off redirect them to BrowserStartPage
@@ -77,26 +65,13 @@ export default {
       }
     },
 
+    // ----
+
     generateId () {
       const uniqueId = Math.random()
         .toString(32)
         .substring(3);
       return uniqueId;
-    },
-
-    // ----
-
-    saveId (user) {
-      if (user == "worker") {
-        localStorage.userType = "waste_department";
-      } else {
-        const uniqueId = this.generateId();
-        localStorage.userType = "demo";
-        this.$router.push({
-          name: "streaming-client",
-          params: { uniqueId: uniqueId },
-        });
-      }
     },
   },
 };
@@ -110,24 +85,34 @@ export default {
   max-width: 896px;
   max-height: 414px;
   margin: 0 auto;
+  padding: 0 2rem 0 1rem;
   background: var(--second-white-color);
   display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
 
-#qr-section {
+#image-section {
   width: 50%;
   height: 100%;
-  z-index: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#intro-img {
+  object-fit: cover;
 }
 
 #text-section {
   width: 50%;
   height: 100%;
-  padding: 2.5rem 4rem 2.5rem 3rem;
+  max-width: 20rem;
+  padding: 2.5rem 0 2.5rem 3rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  z-index: 1;
 }
 
 #header-section {
@@ -144,17 +129,43 @@ export default {
   width: 100%;
   display: flex;
   flex-direction: column;
-  text-align: left;
 }
 
-.link {
-  color: var(--pink-color) !important;
-  text-decoration: underline !important;
-  margin-bottom: 0.25rem;
+#yellow-button,
+#transparent-button {
+  width: 100%;
+  font-family: "Open Sans", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 30px;
 }
 
-.link:hover {
-  cursor: pointer;
+#yellow-button {
+  background: var(--yellow-color);
+  color: var(--second-purple-color);
+}
+
+#yellow-button:active {
+  background: rgba(246, 211, 101, 0.7);
+}
+
+#yellow-button:disabled {
+  background: #edebf2;
+  color: #b8b1c3;
+}
+
+#transparent-button {
+  background: transparent;
+  color: var(--second-purple-color);
+  border: 2px solid var(--second-purple-color);
+  margin-top: 1rem;
+}
+
+#transparent-button:active {
+  background: rgba(105, 89, 133, 0.6);
 }
 
 @media screen and (max-width: 756px) {

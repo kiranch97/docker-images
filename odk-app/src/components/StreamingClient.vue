@@ -4,10 +4,8 @@
       <video id="video" autoplay="true" />
       <canvas id="canvas" style="display: none;" />
     </div>
-
     <div id="stream-information">
-      <stream-count :websocket-stream-state="websocketStreamState" />
-
+      <stream-count :websocket-stream-state="websocketStreamState" :count-result="countResult" />
       <div id="stream-status">
         <div id="status-box">
           <div v-if="!recordToggle" class="blink-icon" />
@@ -19,14 +17,12 @@
           />
           <stream-time id="stream-timer" ref="streamtimer" />
         </div>
-
         <transition name="fade">
           <div v-if="disconnectState" id="error-prompt">
             <p>Geen internet verbinding</p>
           </div>
         </transition>
       </div>
-
       <div id="stream-controls">
         <!-- CAMERA FLIP BUTTON-->
         <div id="stream-camera-flip">
@@ -37,7 +33,6 @@
             @click="flipCamera()"
           >
         </div>
-
         <div id="stream-start-settings">
           <!-- PLAY/PAUSE BUTTON -->
           <div v-if="!isAuto">
@@ -49,19 +44,17 @@
             </button>
           </div>
         </div>
-
         <!-- <div id="switch-container"> -->
         <!-- MODE SWITCH BUTTON -->
-        <!-- <b-switch v-model="isAuto" class="stream-switch" size="is-large">
-            <p id="auto-mode">A</p>
-            <p id="manual-mode">M</p>
-          </b-switch> -->
+        <!-- <b-switch v-model="isAuto" class="stream-switch" size="is-large"> -->
+        <!-- <p id="auto-mode">A</p> -->
+        <!-- <p id="manual-mode">M</p> -->
+        <!-- </b-switch> -->
         <!-- </div> -->
       </div>
     </div>
   </div>
 </template>
-
 <script>
 import StreamTime from "./StreamTime";
 import StreamCount from "./StreamCount";
@@ -73,17 +66,7 @@ export default {
   //// https://medium.com/tsftech/using-web-sockets-to-update-images-8c66327f39a3
 
   name: "StreamingClient",
-
-  // ==== Components ====
-
-  components: {
-    // "stream-details": StreamDetails,
-    "stream-time": StreamTime,
-    "stream-count": StreamCount,
-    DefaultLoader,
-    // "stream-analyzer": StreamAnalyzedFrame
-    // "device-login": DeviceLogin
-  },
+  props: ["uniqueId"],
   // ----
   data: function () {
     return {
@@ -105,6 +88,7 @@ export default {
         minImageWidth: 608,
         minImageHeight: 608,
         TAKE_PICTURE_EVERY_MS: process.env.VUE_APP_CAPTURE_INTERVAL,
+        REQUEST_COUNTS_EVERY_MS: process.env.VUE_APP_REQUEST_COUNTS_INTERVAL,
       },
       // ---- end settings ----
 
@@ -124,7 +108,9 @@ export default {
       hasInternetConnection: null,
       connectionRetrieved: false,
       websocketConnection: null,
-      intervalHandler: null,
+      intervalHandlerPicture: null,
+      intervalHandlerCountRequest: null,
+      countResult: null,
       // ---- CAMERA CONSTRAITS ----
       prefCameraOption: process.env.VUE_APP_DEFAULT_CAMERA_OPTION, // 'environment' or 'user'
       currentCameraOption: null,
@@ -141,8 +127,10 @@ export default {
       deviceSpeed: null,
       timeFormat: null,
       todayDate: null,
-      appId: null,
+      streamId: null,
       userType: null,
+      vehicleType: null,
+      driverPhoneNumber: null,
       streamTime: "00:00:00",
     };
   },
@@ -160,36 +148,31 @@ export default {
     },
   },
 
-  // ----
-
-  watch: {
-    //watching the computed combined.currentLocation property
-    // combined(newValue) {
-    //   console.log("GPS position changed");
-    //   console.log(newValue);
-    //   setTimeout(()=> {
-    //     if(this.deviceSpeed == null || 0 && this.isAuto){
-    //       console.log("Hold Streaming")
-    //     }
-    //   },3000)
-    // }
-  },
-
-  mounted: function () {
+  mounted () {
     //Init
-    console.log("=> Streaming Client init:");
     this.setup();
     this.showStream();
 
-    //Retrieve localstorage appID and userType
-    this.appId = localStorage.appId;
+    this.check;
+
+    //Retrieve localstorage streamId, userType, vehicleType and driverPhoneNumber
+    this.streamId = localStorage.streamId;
     this.userType = localStorage.userType;
+    this.vehicleType = localStorage.vehicleType;
+    this.driverPhoneNumber = localStorage.driverPhoneNumber;
 
     //IF USER DOENST HAVE ID REDIRECT THEM TO PWA START PAGE
     this.checkIdNull();
 
     console.log("Capture rate set to: " + this.SETTINGS.TAKE_PICTURE_EVERY_MS);
 
+    //Set interval when connection is offline
+    //Change stream state to OFF and close websocket connection
+    //When user has access to internet again. and iniates a new websocket stream, Clear the interval
+    //Check the user stream state. If user was streaming, restart stream. If not dont do anything.
+
+    // this.websocketStreamState = this.streamState.OFF;
+    // setInterval(this.checkInternetState, 3000);
   },
 
   // ==== methods ====
@@ -222,7 +205,7 @@ export default {
       this.setupWebSockets();
       //Change circle to pause button when stream starts
       this.recordToggle = false;
-      //Hide camera flip so user can switch orientation while streaming
+      //Hide camera flip so user can't switch orientation while streaming
       this.cameraIconActive = false;
       //$refs is used when calling functions from child components (In this case to start the timer function)
       this.$refs.streamtimer.start();
@@ -234,9 +217,13 @@ export default {
 
     startTimeTrigger: function () {
       //Interval function to take screenshots of Video stream canvas
-      this.intervalHandler = setInterval(
+      this.intervalHandlerPicture = setInterval(
         this.takePicture,
         this.SETTINGS.TAKE_PICTURE_EVERY_MS
+      );
+      this.intervalHandlerCountRequest = setInterval(
+        this.requestCounts,
+        this.SETTINGS.REQUEST_COUNTS_EVERY_MS
       );
     },
 
@@ -261,14 +248,16 @@ export default {
 
     sendImage: function (base64Img) {
       this.formatDate(new Date());
-      this.appId = localStorage.appId;
+      this.streamId = localStorage.streamId;
       this.userType = localStorage.userType;
 
       //Send data to websocket API
       const data = {
         img: base64Img,
-        app_id: this.appId,
+        stream_id: this.streamId,
         user_type: this.userType,
+        vehicle_type: this.vehicleType,
+        driver_phone_number: this.driverPhoneNumber,
         lng: this.positionLo,
         lat: this.positionLa,
         timestamp: this.timeFormat,
@@ -276,6 +265,22 @@ export default {
 
       this.websocketConnection.send(JSON.stringify(data));
       // console.log(this.websocketConnection);
+    },
+
+    // ----
+
+    requestCounts () {
+      this.streamId = localStorage.streamId;
+      const day = this.todayDateFunc(new Date());
+
+      // Request app counts data from websocket API
+      const requestForCounts = {
+        request_type: "app_counts",
+        stream_id: this.streamId,
+        day: day,
+      };
+
+      this.websocketConnection.send(JSON.stringify(requestForCounts));
     },
 
     // ----
@@ -300,8 +305,6 @@ export default {
           curScope.currentStream = stream;
           video.srcObject = stream;
           video.play();
-          console.log(`==> Stream has started with ${curScope.rearCamResolution.width} x ${curScope.rearCamResolution.height} resolution `);
-
         })
         .catch(function (err) {
           console.log("==> Error occured in 'showStream':");
@@ -335,7 +338,8 @@ export default {
         //Close websocket connection
         this.websocketConnection.close();
         //Clear snapshot interval
-        clearInterval(this.intervalHandler);
+        clearInterval(this.intervalHandlerPicture);
+        clearInterval(this.intervalHandlerCountRequest);
         console.log("connection Closed");
         //Change pause to circle button when stream stops
         this.recordToggle = true;
@@ -351,7 +355,8 @@ export default {
       if (
         this.websocketConnection.readyState === this.websocketConnection.OPEN
       ) {
-        clearInterval(this.intervalHandler);
+        clearInterval(this.intervalHandlerPicture);
+        clearInterval(this.intervalHandlerCountRequest);
         console.log("No messages sent anymore");
         this.$refs.streamtimer.stop();
       }
@@ -422,8 +427,11 @@ export default {
 
     receiveWebSocketsMsg: function (e) {
       //Websocket event when Message sent by the server
-      console.log("Websocket connection initialized");
-      console.log(e.data);
+      if (e.data.includes("detected_objects")) {
+        this.countResult = e.data;
+      } else {
+        console.log(e.data);
+      }
     },
 
     // ----
@@ -463,6 +471,15 @@ export default {
         document.getElementById("status-box").style.background = "#c83737";
         setTimeout(this.setupWebSockets, 5000);
       }
+    },
+
+    // ----
+
+    generateId () {
+      const uniqueId = Math.random()
+        .toString(32)
+        .substring(3);
+      return uniqueId;
     },
 
     // ----
@@ -515,13 +532,18 @@ export default {
 
     // ----
 
-    checkIdNull: function () {
-      if (
-        typeof localStorage.appId == "undefined" ||
-        localStorage.appId == null ||
-        !localStorage.userType
-      ) {
-        this.$router.push("/recommendation");
+    checkIdNull () {
+      // if user comes from user / login page (set streamId)
+      if (this.uniqueId != undefined) {
+        localStorage.streamId = this.uniqueId;
+      }
+      // if user has streamId (change streamId for new session)
+      else if (localStorage.streamId) {
+        localStorage.streamId = this.generateId();
+      }
+      // if user has no localStorage.streamId (send to (first) welcome page)
+      else {
+        this.$router.push("/welcome");
       }
     },
 
@@ -657,10 +679,10 @@ body {
 
 #stream-controls {
   width: 20%;
-  height: 100%;
+  height: 100vh;
   max-height: 426px;
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
 }
 
 #stream-camera-flip {

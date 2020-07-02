@@ -42,7 +42,7 @@ export default {
       constructionBinCount: 0,
       matrasCount: 0,
       totalCount: 0,
-      appId: null,
+      streamId: null,
       requestHeaders: {
         "Content-Type": "application/json",
         Authorization: "No Auth",
@@ -105,7 +105,7 @@ export default {
   },
 
   mounted () {
-    this.appId = localStorage.appId;
+    this.streamId = localStorage.streamId;
     this.userType = localStorage.userType;
 
     // Fetch once when landing
@@ -115,10 +115,10 @@ export default {
   methods: {
     fetchAnalysedResults () {
       const curEndPointBase =
-        this.apiHttpUrl + "/detected_objects?app_id={{APP_ID}}&day={{DATE}}";
+        this.apiHttpUrl + "/detected_objects?stream_id={{STREAM_ID}}&day={{DATE}}";
 
       const curEndPoint = curEndPointBase
-        .replace("{{APP_ID}}", this.appId)
+        .replace("{{STREAM_ID}}", this.streamId)
         .replace("{{DATE}}", this.todayDateFunc(new Date()));
 
       fetch(curEndPoint, {

@@ -10,6 +10,9 @@ module.exports = {
     "eslint:recommended",
     "plugin:vue/recommended",
   ],
+  globals: {
+    "process": "readonly",
+  },
   rules: {
     "comma-dangle": [2, "always-multiline"],
     "no-console": "warn",

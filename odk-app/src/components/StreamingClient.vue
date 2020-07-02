@@ -39,13 +39,13 @@
             </button>
           </div>
         </div>
-        <div id="switch-container">
-          <!-- MODE SWITCH BUTTON -->
-          <b-switch v-model="isAuto" class="stream-switch" size="is-large">
-            <p id="auto-mode">A</p>
-            <p id="manual-mode">M</p>
-          </b-switch>
-        </div>
+        <!-- <div id="switch-container"> -->
+        <!-- MODE SWITCH BUTTON -->
+        <!-- <b-switch v-model="isAuto" class="stream-switch" size="is-large"> -->
+        <!-- <p id="auto-mode">A</p> -->
+        <!-- <p id="manual-mode">M</p> -->
+        <!-- </b-switch> -->
+        <!-- </div> -->
       </div>
     </div>
   </div>
@@ -174,9 +174,11 @@ export default {
   methods: {
     setup: function() {
       //Check User_Type . If "waste_department" -> Automode, if testuser -> Manual mode
-      localStorage.userType === "waste_department"
-        ? (this.isAuto = true)
-        : (this.isAuto = false);
+      // @todo Fix confusing issue with automatically switching mode depending on user type. (-RJS)
+      // localStorage.userType === "waste_department"
+      //   ? (this.isAuto = true)
+      //   : (this.isAuto = false);
+      this.isAuto = false;
 
       //Initialize noSleep object constructor
       this.noSleep = new NoSleep();
@@ -197,7 +199,7 @@ export default {
       this.setupWebSockets();
       //Change circle to pause button when stream starts
       this.recordToggle = false;
-      //Hide camera flip so user can switch orientation while streaming
+      //Hide camera flip so user can't switch orientation while streaming
       this.cameraIconActive = false;
       //$refs is used when calling functions from child components (In this case to start the timer function)
       this.$refs.streamtimer.start();
@@ -528,11 +530,11 @@ export default {
       // if user comes from user / login page (set streamId)
       if (this.uniqueId != undefined) {
         localStorage.streamId = this.uniqueId;
-      } 
+      }
       // if user has streamId (change streamId for new session)
       else if (localStorage.streamId) {
         localStorage.streamId = this.generateId();
-      } 
+      }
       // if user has no localStorage.streamId (send to (first) welcome page)
       else {
         this.$router.push("/welcome");

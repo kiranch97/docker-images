@@ -23,7 +23,7 @@ export default {
     return {
       userType: null,
       apiHttpUrl: process.env.VUE_APP_API_HTTP_URL,
-      camera: "auto",
+      camera: "front",
 
       // For QR
       track: false,
@@ -35,7 +35,7 @@ export default {
 
   computed: {
     validationWaiting() {
-      return this.isValid === "waiting" && this.camera === "auto";
+      return this.isValid === "waiting" && this.camera === "front";
     },
 
     // ----
@@ -117,7 +117,7 @@ export default {
     // ----
 
     turnCameraOn() {
-      this.camera = "auto";
+      this.camera = "front";
     },
 
     // ----

@@ -18,9 +18,9 @@ class DiskWriter:
             img = frame_data.get(
                 'take_frame', {}).get(
                     'img')
-            app_id = frame_data.get(
+            stream_id = frame_data.get(
                 'take_frame', {}).get(
-                    'app_id')
+                    'stream_id')
             gps_lat = frame_data.get(
                 'take_frame', {}).get(
                     'lat')
@@ -37,8 +37,8 @@ class DiskWriter:
 
             img = frame_data.get(
                 'img')
-            app_id = frame_data.get(
-                'app_id')
+            stream_id = frame_data.get(
+                'stream_id')
             gps_lat = frame_data.get(
                 'lat')
             gps_lng = frame_data.get(
@@ -47,7 +47,7 @@ class DiskWriter:
                 'timestamp').replace(
                     ':', '-').split(" ")[1]
 
-        if app_id is None:
+        if stream_id is None:
             # print("No Device data, file not saved")
             pass
         elif gps_lat is None or gps_lng is None:
@@ -60,7 +60,7 @@ class DiskWriter:
             gps_location = "{0}-{1}".format(gps_lat, gps_lng)
             filename = "{0}-{1}.jpeg".format(timestamp, gps_location)
 
-            dir_path = "{0}/{1}/{2}".format(FRAME_DIR, frame_date, app_id)
+            dir_path = "{0}/{1}/{2}".format(FRAME_DIR, frame_date, stream_id)
 
             if not os.path.exists(dir_path):
                 os.makedirs(dir_path)
@@ -173,12 +173,12 @@ class DiskWriter:
 
     # ----
 
-    async def count_app_id_today_files(self,
+    async def count_stream_id_today_files(self,
                                        frame_data,
                                        running_clients,
                                        stats):
         # Data from client
-        app_id = frame_data.get('app_id')
+        stream_id = frame_data.get('stream_id')
         # Needed extras
         frame_date = datetime.now().strftime("%Y-%m-%d")
         DIR_TODAY = "frames\\{}".format(frame_date)
@@ -186,16 +186,16 @@ class DiskWriter:
         for all_paths, d, f in os.walk(self.FRAME_DIR):
             if all_paths == DIR_TODAY:
                 # Get all folders in path of today
-                for today_app_id_paths, d, f, in os.walk(all_paths):
-                    DIR_APP_ID_TODAY = "{0}\\{1}".format(DIR_TODAY, app_id)
-                    if today_app_id_paths == DIR_APP_ID_TODAY:
+                for today_stream_id_paths, d, f, in os.walk(all_paths):
+                    DIR_stream_id_TODAY = "{0}\\{1}".format(DIR_TODAY, stream_id)
+                    if today_stream_id_paths == DIR_stream_id_TODAY:
                         try:
-                            running_clients[app_id]['frames_today'] = sum(
-                                [len(today_app_id_files) for
+                            running_clients[stream_id]['frames_today'] = sum(
+                                [len(today_stream_id_files) for
                                  p,
                                  d,
-                                 today_app_id_files in
-                                 os.walk(today_app_id_paths)])
+                                 today_stream_id_files in
+                                 os.walk(today_stream_id_paths)])
 
                         except Exception:
                             pass
@@ -203,7 +203,7 @@ class DiskWriter:
                     # [len(device_files) for
                     #  p,
                     #  d,
-                    #  device_files in os.walk(today_app_id_paths)])
+                    #  device_files in os.walk(today_stream_id_paths)])
                     # print("Folder: {0} # of Photos: {1}".format(
-                    #   today_app_id_paths,
+                    #   today_stream_id_paths,
                     #   amount_of_frames_per_folder_today))

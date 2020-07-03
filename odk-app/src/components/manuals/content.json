@@ -92,14 +92,14 @@
     },
     {
       "sysName": "iOS",
-      "browserName": "iOS",
+      "browserName": "Any browser, iOS",
       "attention": "Attention:",
       "recommendation": "At this moment you cannot use this app on iOS devices.",
-      "body": "Unfortunately video stream in a PWA is still not supported by any browser, in iOS. We recommend you to use Google Chrome, Mozilla Firefox or Microsoft Edge on an Android phone."
+      "body": "Unfortunately video stream in a PWA is still not supported by any browser in iOS. We recommend you to use Google Chrome, Mozilla Firefox or Microsoft Edge on an Android phone."
     },
     {
       "sysName": "desktop",
-      "browserName": "Desktop",
+      "browserName": "Any browser, Desktop",
       "attention": "Attention:",
       "recommendation": "This PWA is to use on the go, so it is optimised for mobile.",
       "body": "Anyway feel free to try it out on desktop. Just keep in mind that not all browsers will support PWAs or/and video stream."

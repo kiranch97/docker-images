@@ -56,7 +56,7 @@ class AnalysedFrame(DBObj):
         self.stream_id = stream_id
         # if type(take_frame) is dict:
         #     self.created_at = take_frame.get("timestamp")
-        #     self.created_by_app = take_frame.get("app_id")
+        #     self.created_by_app = take_frame.get("stream_id")
         self.frame_meta = frame_meta
         self.detected_objects = detected_objects
         self.counts = counts

@@ -175,8 +175,8 @@ class FrameBroker:
             routing_key=self.ml_queue_name,
         )
 
-        self.logger.debug("=> Broker: queue new frame - app_id : '{0}'".format(
-            frame_data['app_id']))
+        self.logger.debug("=> Broker: queue new frame - stream_id : '{0}'".format(
+            frame_data['stream_id']))
 
     def remove_websocket(self, websocket: WebSocket):
         self.connections.remove(websocket)

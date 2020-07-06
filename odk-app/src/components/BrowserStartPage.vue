@@ -191,6 +191,12 @@ export default {
   font-weight: 700;
 }
 
+.link {
+  color: var(--pink-color) !important;
+  text-decoration: underline !important;
+  padding-top: 1rem;
+}
+
 #image-section {
   display: flex;
   justify-content: center;
@@ -240,12 +246,13 @@ export default {
     max-height: none;
   }
 
-  #image-section {
+  #container #image-section {
     align-items: center;
   }
 
   #text-section {
     justify-content: center;
+    align-items: center;
   }
 }
 </style>

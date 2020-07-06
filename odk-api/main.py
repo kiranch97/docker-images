@@ -75,7 +75,7 @@ async def ws_stream(ws: WebSocket):
             # When data from client is a request (detected_objects)
             if "request_type" in stream_data:
                 try:
-                    r_do = dbm.get_detected_objects(stream_data["app_id"], stream_data["day"])
+                    r_do = dbm.get_detected_objects(stream_data["stream_id"], stream_data["day"])
                     if "status" in r_do and r_do["status"] == "error":
                         status_code = 500
                         content = {"status_code": status_code}
@@ -112,9 +112,9 @@ async def ws_stream(ws: WebSocket):
 
 
 @app.get("/detected_objects")
-def get_detected_objects(app_id: str, day: str):
+def get_detected_objects(stream_id: str, day: str):
     status_code = 200
-    r_do = dbm.get_detected_objects(app_id, day)
+    r_do = dbm.get_detected_objects(stream_id, day)
     if "status" in r_do and r_do["status"] == "error":
         status_code = 500
     return JSONResponse(content=r_do, status_code=status_code)
@@ -144,17 +144,17 @@ def check_credentials(credential_string: str):
 
 
 @app.get("/last_analysed_frames")
-def get_last_analysed_frames(app_id: str):
+def get_last_analysed_frames(stream_id: str):
     # TODO: store a single analysed frame in server memory which app can retrieve
-    # r_laf = dbm.get_last_analysed_frames(app_id)
+    # r_laf = dbm.get_last_analysed_frames(stream_id)
     # return r_laf
     return None
 
 
 @app.get("/dash_stream_devices")
-def get_dash_stream_devices(app_id: str, day: str):
+def get_dash_stream_devices(stream_id: str, day: str):
     status_code = 200
-    r_dsd = dbm.get_dash_stream_devices(app_id, day)
+    r_dsd = dbm.get_dash_stream_devices(stream_id, day)
     if "status" in r_dsd and r_dsd["status"] == "error":
         status_code = 500
     return JSONResponse(content=r_dsd, status_code=status_code)

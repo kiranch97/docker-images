@@ -15,7 +15,7 @@ module.exports = {
   },
   rules: {
     "comma-dangle": [2, "always-multiline"],
-    "no-console": "warn",
+    "no-console": "none",
     "no-debugger": process.env.NODE_ENV === "isProd" ? "error" : "warn",
     "prefer-const": "error",
     "quotes": [2, "double", {

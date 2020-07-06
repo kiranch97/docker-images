@@ -110,29 +110,19 @@ export default {
       if (isAndroid() && isChrome()) {
         console.log("Browser: Chromium, Device: Android");
         this.activeVendor = "chrome";
-      }
-
-      if (isAndroid() && isMSEdge()) {
+      } else if (isAndroid() && isMSEdge()) {
         console.log("Browser: Microsoft Edge, Device: Android");
         this.activeVendor = "edgeAndroid";
-      }
-
-      else if (isAndroid() && isFirefox()) {
+      } else if (isAndroid() && isFirefox()) {
         console.log("Browser: Mozilla Firefox, Device: Android");
         this.activeVendor = "firefoxAndroid";
-      }
-
-      else if (isAndroid()) {
+      } else if (isAndroid()) {
         console.log("Device and browser: unsupported");
         this.activeVendor = "othersAndroid";
-      }
-
-      else if (isiOS()) {
+      } else if (isiOS()) {
         console.log("Browser: WebKit-based, Device: iOS");
         this.activeVendor = "iOS";
-      }
-
-      else {
+      } else {
         console.log("Browser: n/a, Device: Not Android or iOS");
         this.activeVendor = "desktop";
       }

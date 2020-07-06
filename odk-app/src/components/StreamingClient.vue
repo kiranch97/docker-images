@@ -5,7 +5,7 @@
       <canvas id="canvas" style="display: none;" />
     </div>
     <div id="stream-information">
-      <stream-count :websocket-stream-state="websocketStreamState" :count-result="countResult" />
+      <stream-count :websocket-stream-state="websocketStreamState" />
       <div id="stream-status">
         <div id="status-box">
           <div v-if="!recordToggle" class="blink-icon" />
@@ -73,7 +73,7 @@ export default {
     DefaultLoader,
   },
 
-  props: ["uniqueId"],
+  props: { uniqueId: String },
 
   data: function () {
     return {
@@ -95,7 +95,6 @@ export default {
         minImageWidth: 608,
         minImageHeight: 608,
         TAKE_PICTURE_EVERY_MS: process.env.VUE_APP_CAPTURE_INTERVAL,
-        REQUEST_COUNTS_EVERY_MS: process.env.VUE_APP_REQUEST_COUNTS_INTERVAL,
       },
       // ---- end settings ----
 
@@ -155,23 +154,21 @@ export default {
     },
   },
 
-  mounted () {
-    //Init
-    this.setup();
-    this.showStream();
-
-    this.check;
+  beforeMount () {
+    //IF USER DOENST HAVE ID REDIRECT THEM TO PWA START PAGE
+    this.checkIdNull();
 
     //Retrieve localstorage streamId, userType, vehicleType and driverPhoneNumber
     this.streamId = localStorage.streamId;
     this.userType = localStorage.userType;
     this.vehicleType = localStorage.vehicleType;
     this.driverPhoneNumber = localStorage.driverPhoneNumber;
+  },
 
-    //IF USER DOENST HAVE ID REDIRECT THEM TO PWA START PAGE
-    this.checkIdNull();
-
-    console.log("Capture rate set to: " + this.SETTINGS.TAKE_PICTURE_EVERY_MS);
+  mounted () {
+    //Init
+    this.setup();
+    this.showStream();
 
     //Set interval when connection is offline
     //Change stream state to OFF and close websocket connection
@@ -228,10 +225,6 @@ export default {
         this.takePicture,
         this.SETTINGS.TAKE_PICTURE_EVERY_MS
       );
-      this.intervalHandlerCountRequest = setInterval(
-        this.requestCounts,
-        this.SETTINGS.REQUEST_COUNTS_EVERY_MS
-      );
     },
 
     // ----
@@ -271,23 +264,6 @@ export default {
       };
 
       this.websocketConnection.send(JSON.stringify(data));
-      // console.log(this.websocketConnection);
-    },
-
-    // ----
-
-    requestCounts () {
-      this.streamId = localStorage.streamId;
-      const day = this.todayDateFunc(new Date());
-
-      // Request app counts data from websocket API
-      const requestForCounts = {
-        request_type: "app_counts",
-        stream_id: this.streamId,
-        day: day,
-      };
-
-      this.websocketConnection.send(JSON.stringify(requestForCounts));
     },
 
     // ----
@@ -347,7 +323,6 @@ export default {
         //Clear snapshot interval
         clearInterval(this.intervalHandlerPicture);
         clearInterval(this.intervalHandlerCountRequest);
-        console.log("connection Closed");
         //Change pause to circle button when stream stops
         this.recordToggle = true;
         //Show camera flip icon to user when video stream is paused
@@ -364,7 +339,6 @@ export default {
       ) {
         clearInterval(this.intervalHandlerPicture);
         clearInterval(this.intervalHandlerCountRequest);
-        console.log("No messages sent anymore");
         this.$refs.streamtimer.stop();
       }
     },
@@ -375,7 +349,6 @@ export default {
       this.positionLa = position.coords.latitude;
       this.positionLo = position.coords.longitude;
       this.deviceSpeed = position.coords.speed;
-      // console.log("Speed: " + position.coords.speed)
     },
 
     // ----
@@ -389,12 +362,6 @@ export default {
         this.height = this.SETTINGS.minImageHeight;
         this.width =
           (this.video.videoWidth / this.video.videoHeight) * this.height;
-
-        // console.log("VIDEO W: " + this.video.videoWidth);
-        // console.log("VIDEO H: " + this.video.videoHeight);
-
-        // console.log("IMAGE W: " + this.width);
-        // console.log("IMAGE H: " + this.height);
 
         this.video.setAttribute("width", this.width);
         this.video.setAttribute("height", this.height);
@@ -434,11 +401,7 @@ export default {
 
     receiveWebSocketsMsg: function (e) {
       //Websocket event when Message sent by the server
-      if (e.data.includes("detected_objects")) {
-        this.countResult = e.data;
-      } else {
         console.log(e.data);
-      }
     },
 
     // ----
@@ -459,8 +422,6 @@ export default {
         document.getElementById("status-box").style.background =
           "rgba(76, 71, 85, 0.8)";
       }
-
-      // console.log(e);
     },
 
     // ----

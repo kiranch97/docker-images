@@ -22,10 +22,15 @@ import _ from "lodash";
 export default {
   name: "StreamCount",
 
-  props: ["websocketStreamState"],
+  props: { "websocket-stream-state": String },
 
   data () {
     return {
+      // ---- settings ----
+      SETTINGS: {
+        REQUEST_COUNTS_EVERY_MS: process.env.VUE_APP_RESULT_INTERVAL,
+      },
+      // ---- end settings ----
       // ----
       swiperOption: {
         direction: "vertical",
@@ -42,7 +47,6 @@ export default {
       constructionBinCount: 0,
       matrasCount: 0,
       totalCount: 0,
-      streamId: null,
       requestHeaders: {
         "Content-Type": "application/json",
         Authorization: "No Auth",
@@ -73,10 +77,10 @@ export default {
         //   itemPicture: "Christmas-tree",
         //   count: this.christmasTreeCount
         // },
-        {
-          itemPicture: "Construction-container",
-          count: this.constructionBinCount,
-        },
+        // {
+        //   itemPicture: "Construction-container",
+        //   count: this.constructionBinCount,
+        // },
         {
           itemPicture: "Matresses",
           count: this.matrasCount,
@@ -88,6 +92,7 @@ export default {
   },
 
   watch: {
+    // Fetch results (counts) when websocket connection
     websocketStreamState () {
       if (
         this.websocketStreamState == null ||
@@ -98,13 +103,14 @@ export default {
       } else if (this.websocketStreamState == "on") {
         this.fetchResults = setInterval(
           this.fetchAnalysedResults,
-          this.countFetchRate
+          this.SETTINGS.REQUEST_COUNTS_EVERY_MS
         );
       }
     },
   },
 
   mounted () {
+    // Retrieve streamId and userType
     this.streamId = localStorage.streamId;
     this.userType = localStorage.userType;
 
@@ -131,22 +137,20 @@ export default {
         .then(results => {
           if (results.length == 0) return;
 
-          // this.binCount = results.detected_objects_by_type.container_small || 0;
+          this.binCount = results.detected_objects_by_type.container_small || 0;
           this.trashCount = results.detected_objects_by_type.garbage_bag || 0;
           this.cardboardCount = results.detected_objects_by_type.cardboard || 0;
+          this.matrasCount = results.detected_objects_by_type.matras || 0;
           // this.christmasTreeCount = results.detected_objects_by_type.christmas_tree || 0;
           // this.constructionBinCount = results.detected_objects_by_type.construction_container || 0;
-          // this.matrasCount = results.detected_objects_by_type.matras || 0;
-
-          // console.log(results.detected_objects_by_type)
 
           this.totalCount =
-            // this.binCount +
+            this.binCount +
             this.trashCount +
-            this.cardboardCount;
+            this.cardboardCount +
+            this.matrasCount;
             // this.christmasTreeCount +
             // this.constructionBinCount +
-            // this.matrasCount;
         })
         .catch(er => {
           console.log("==> Error occured in 'fetchAnalysedResults':" + er);

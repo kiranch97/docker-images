@@ -38,11 +38,13 @@ export const routes = [
     path: "/login",
     name: "login-page",
     component: LoginPage,
+    props: true,
   },
   {
     path: "/client",
     name: "streaming-client",
     component: StreamingClient,
+    props: true,
   },
   {
     path: "/installation-manual",

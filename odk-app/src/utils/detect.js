@@ -1,15 +1,15 @@
 // Browsers
 
 export function isChrome () {
-  return /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+  return /Chrome/i.test(navigator.userAgent) && /Google Inc/i.test(navigator.vendor);
 }
 
 export function isFirefox () {
-  return /Firefox/.test(navigator.userAgent);
+  return /Firefox/i.test(navigator.userAgent);
 }
 
 export function isMSEdge () {
-  return /Edge/.test(navigator.userAgent);
+  return /Edge/i.test(navigator.userAgent);
 }
 
 export function isMSIE () {
@@ -17,7 +17,7 @@ export function isMSIE () {
 }
 
 export function isSafari () {
-  return /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor);
+  return /Safari/i.test(navigator.userAgent) && /Apple Computer/i.test(navigator.vendor);
 }
 
 export function isWebKit () {
@@ -27,9 +27,9 @@ export function isWebKit () {
 // Platforms
 
 export function isAndroid () {
-  return /android/.test(navigator.userAgent);
+  return /Android/i.test(navigator.userAgent);
 }
 
 export function isiOS () {
-  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  return /iPad|iPhone|iPod/i.test(navigator.userAgent) && !window.MSStream;
 }

@@ -1,9 +1,10 @@
 <template>
   <div id="setup-images">
-    <!-- animation div, used by Lottie -->
-    <div ref="container" id="animLottie" class="animation"></div>
-    <!-- robot animation trigger, used by ScrollMagic -->
-    <div id="trigger" class="scene"></div>
+    <!-- Animation container, used by Lottie -->
+    <div id="animLottie" ref="container" class="animation" />
+
+    <!-- Robot animation trigger, used by ScrollMagic -->
+    <div id="trigger" class="scene" />
   </div>
 </template>
 
@@ -11,28 +12,27 @@
 import { animationData } from "../assets/animation/data";
 
 export default {
-  data() {
+  data () {
     return {
-      robotAnim: null
+      robotAnim: null,
     };
   },
 
-  mounted() {
+  mounted () {
     const { container } = this.$refs;
-    //animation data
+
+    // ScrollMagic options
     var setupAnimData = {
       container: container,
       renderer: "svg",
       loop: true,
       autoplay: true,
-      animationData: animationData
+      animationData: animationData,
     };
 
-    // console.log(setupAnimData);
-    this.robotAnim = bodymovin.loadAnimation(setupAnimData); // eslint-disable-line
-
-
-  }
+    // eslint-disable-next-line no-undef
+    this.robotAnim = bodymovin.loadAnimation(setupAnimData);
+  },
 };
 </script>
 

@@ -20,6 +20,7 @@ pycparser==2.19
 pydantic==1.2
 PyJWT==1.7.1
 pytest==5.3.3
+pytest-sqlalchemy==0.2.1
 requests==2.22.0
 simplejson==3.17.0
 six==1.13.0

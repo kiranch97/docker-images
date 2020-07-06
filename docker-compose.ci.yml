@@ -33,6 +33,7 @@ services:
       - RMQ_USER
       - RMQ_PASSWORD
       - RMQ_URL
+      - QR_LOGIN_PASSWORD
     expose:
       - "80"
   

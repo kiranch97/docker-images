@@ -5,12 +5,12 @@
     </div>
 
     <swiper id="swiper" :options="swiperOption">
-      <swiper-slide v-for="item in orderSwiperItems" v-bind:key="item.id" class="swiper-item">
-        <img class="icons" :src="require(`../assets/objects/${item.itemPicture}.png`)" />
+      <swiper-slide v-for="item in orderSwiperItems" :key="item.id" class="swiper-item">
+        <img class="icons" :src="require(`../assets/objects/${item.itemPicture}.png`)">
 
         <p v-if="item.count > 0" class="count">{{ item.count }}</p>
 
-        <div :class="{ 'count-fade': item.count }"></div>
+        <div :class="{ 'count-fade': item.count }" />
       </swiper-slide>
     </swiper>
   </div>
@@ -20,35 +20,18 @@
 import _ from "lodash";
 
 export default {
-  name: "stream-count",
+  name: "StreamCount",
 
   props: ["websocketStreamState"],
 
-  watch: {
-    websocketStreamState() {
-      if (
-        this.websocketStreamState == null ||
-        this.websocketStreamState === "off"
-      ) {
-        clearInterval(this.fetchResults);
-        this.fetchAnalysedResults();
-      } else if (this.websocketStreamState == "on") {
-        this.fetchResults = setInterval(
-          this.fetchAnalysedResults,
-          this.countFetchRate
-        );
-      }
-    }
-  },
-
-  data() {
+  data () {
     return {
       // ----
       swiperOption: {
         direction: "vertical",
         slidesPerView: 5,
         spaceBetween: 15,
-        freeMode: true
+        freeMode: true,
       },
       // ----
       //Detectable objects counts
@@ -62,28 +45,29 @@ export default {
       streamId: null,
       requestHeaders: {
         "Content-Type": "application/json",
-        Authorization: "No Auth"
+        Authorization: "No Auth",
       },
+      // eslint-disable-next-line no-undef
       apiHttpUrl: process.env.VUE_APP_API_HTTP_URL,
       countFetchRate: 1000,
-      fetchResults: null
+      fetchResults: null,
     };
   },
 
   computed: {
-    orderSwiperItems: function() {
-      let swiperItems = [
+    orderSwiperItems: function () {
+      const swiperItems = [
         {
           itemPicture: "Cardboard",
-          count: this.cardboardCount
+          count: this.cardboardCount,
         },
         {
           itemPicture: "Garbage-bag",
-          count: this.trashCount
+          count: this.trashCount,
         },
         {
           itemPicture: "Garbage-bins",
-          count: this.binCount
+          count: this.binCount,
         },
         // {
         //   itemPicture: "Christmas-tree",
@@ -91,30 +75,55 @@ export default {
         // },
         {
           itemPicture: "Construction-container",
-          count: this.constructionBinCount
+          count: this.constructionBinCount,
         },
         {
           itemPicture: "Matresses",
-          count: this.matrasCount
-        }
+          count: this.matrasCount,
+        },
       ];
 
       return _.orderBy(swiperItems, "count", "desc");
-    }
+    },
+  },
+
+  watch: {
+    websocketStreamState () {
+      if (
+        this.websocketStreamState == null ||
+        this.websocketStreamState === "off"
+      ) {
+        clearInterval(this.fetchResults);
+        this.fetchAnalysedResults();
+      } else if (this.websocketStreamState == "on") {
+        this.fetchResults = setInterval(
+          this.fetchAnalysedResults,
+          this.countFetchRate
+        );
+      }
+    },
+  },
+
+  mounted () {
+    this.streamId = localStorage.streamId;
+    this.userType = localStorage.userType;
+
+    // Fetch once when landing
+    this.fetchAnalysedResults();
   },
 
   methods: {
-    fetchAnalysedResults() {
-      let curEndPointBase =
+    fetchAnalysedResults () {
+      const curEndPointBase =
         this.apiHttpUrl + "/detected_objects?stream_id={{STREAM_ID}}&day={{DATE}}";
 
-      let curEndPoint = curEndPointBase
+      const curEndPoint = curEndPointBase
         .replace("{{STREAM_ID}}", this.streamId)
         .replace("{{DATE}}", this.todayDateFunc(new Date()));
 
       fetch(curEndPoint, {
         method: "GET",
-        headers: this.requestHeaders
+        headers: this.requestHeaders,
       })
         .then(response => {
           return response.json();
@@ -134,7 +143,7 @@ export default {
           this.totalCount =
             // this.binCount +
             this.trashCount +
-            this.cardboardCount 
+            this.cardboardCount;
             // this.christmasTreeCount +
             // this.constructionBinCount +
             // this.matrasCount;
@@ -144,31 +153,23 @@ export default {
         });
     },
 
-    todayDateFunc(date) {
-      let year = date.getFullYear();
-      let month = this.addZero(date.getMonth() + 1);
-      let day = this.addZero(date.getDate());
+    todayDateFunc (date) {
+      const year = date.getFullYear();
+      const month = this.addZero(date.getMonth() + 1);
+      const day = this.addZero(date.getDate());
       this.todayDate = year + "-" + month + "-" + day;
 
       return this.todayDate;
     },
 
-    addZero(i) {
+    addZero (i) {
       if (i < 10) {
         i = "0" + i;
       }
 
       return i;
-    }
+    },
   },
-
-  mounted() {
-    this.streamId = localStorage.streamId;
-    this.userType = localStorage.userType;
-
-    // Fetch once when landing
-    this.fetchAnalysedResults();
-  }
 };
 </script>
 

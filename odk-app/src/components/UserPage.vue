@@ -1,21 +1,27 @@
 <template>
   <div id="container">
     <div id="qr-section">
-      <login-page></login-page>
+      <login-page />
     </div>
+
     <div id="text-section">
       <div id="header-section">
         <p class="caption-1">Laatste stap</p>
-        <p class="odk-title" id="title">Scan je QR-Code</p>
+        <p id="title" class="odk-title">Scan je QR-Code</p>
         <p
           class="body-1"
-        >Als chauffeur van de Gemeente Amsterdam heb je een QR-Code ontvangen om je account mee te gebruiken. Houd deze voor de camera om verder te gaan.</p>
+        >
+          Als chauffeur van de Gemeente Amsterdam heb je een QR-Code ontvangen om je account mee te gebruiken. Houd deze voor de camera om verder te gaan.
+        </p>
       </div>
+
       <div id="buttons-section">
         <p class="link" @click="saveId('demo')">Ik ben geen gemeente chauffeur</p>
         <p
           class="caption-1"
-        >Als je voor deze optie kiest zal de gescande data niet worden opgeslagen.</p>
+        >
+          Als je voor deze optie kiest zal de gescande data niet worden opgeslagen.
+        </p>
       </div>
     </div>
   </div>
@@ -25,24 +31,30 @@
 import LoginPage from "./LoginPage";
 
 export default {
-  name: "user-page",
-  data() {
-    return {
-      buttonDisabled: true
-    };
-  },
-
-  // ----
+  name: "UserPage",
 
   components: {
-    "login-page": LoginPage
+    "login-page": LoginPage,
+  },
+  data () {
+    return {
+      buttonDisabled: true,
+    };
+  },
+  mounted () {
+    // Init
+    //IF USER IN BROWSER AND development mode is off redirect them to BrowserStartPage
+    this.checkAppMode();
+    //IF USER HAS LOGGED IN BEFORE use that info but GENERATE NEW streamId for new session
+    this.checkCredentials();
   },
 
   // ----
 
   methods: {
-    checkAppMode() {
-      let checkMedia = window.matchMedia("(display-mode: standalone)").matches;
+    checkAppMode () {
+      const checkMedia = window.matchMedia("(display-mode: standalone)").matches;
+
       if (checkMedia) {
         console.log("This is running as standalone.");
       } else {
@@ -55,20 +67,18 @@ export default {
 
     // ----
 
-    checkCredentials() {
+    checkCredentials () {
       if (localStorage.streamId) {
         localStorage.streamId = this.generateId();
         this.$router.push({
           name: "streaming-client",
-          params: { uniqueId: localStorage.streamId }
+          params: { uniqueId: localStorage.streamId },
         });
       }
     },
 
-    // ----
-
-    generateId() {
-      let uniqueId = Math.random()
+    generateId () {
+      const uniqueId = Math.random()
         .toString(32)
         .substring(3);
       return uniqueId;
@@ -76,26 +86,19 @@ export default {
 
     // ----
 
-    saveId(user) {
+    saveId (user) {
       if (user == "worker") {
         localStorage.userType = "waste_department";
       } else {
-        let uniqueId = this.generateId();
+        const uniqueId = this.generateId();
         localStorage.userType = "demo";
         this.$router.push({
           name: "streaming-client",
-          params: { uniqueId: uniqueId }
+          params: { uniqueId: uniqueId },
         });
       }
-    }
+    },
   },
-  mounted() {
-    // Init
-    //IF USER IN BROWSER AND development mode is off redirect them to BrowserStartPage
-    this.checkAppMode();
-    //IF USER HAS LOGGED IN BEFORE use that info but GENERATE NEW streamId for new session
-    this.checkCredentials();
-  }
 };
 </script>
 
@@ -107,7 +110,6 @@ export default {
   max-width: 896px;
   max-height: 414px;
   margin: 0 auto;
-  /* padding: 0 2rem 0 0; */
   background: var(--second-white-color);
   display: flex;
 }
@@ -162,7 +164,6 @@ export default {
 
   .body-1 {
     font-size: 0.9rem !important;
-
     line-height: 1.25rem !important;
   }
 
@@ -170,8 +171,5 @@ export default {
   #transparent-button {
     font-size: 0.9rem;
   }
-}
-
-@media screen and (max-width: 660px) {
 }
 </style>

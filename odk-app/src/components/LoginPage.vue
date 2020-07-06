@@ -64,15 +64,6 @@ export default {
 
   // ----
 
-  mounted () {
-    this.checkIdNull();
-    this.setupWebSockets();
-
-    console.log("Facing mode" + this.facingMode);
-  },
-
-  // ----
-
   methods: {
     generateId () {
       const uniqueId = Math.random()

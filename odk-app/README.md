@@ -15,10 +15,10 @@ _insert intro here_
 ```
 $ npm install
 $ npm run serve
-``` 
+```
 
 ### Build
 ```
 $ npm install
 $ npm run serve
-``` 
+```

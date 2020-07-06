@@ -20,7 +20,7 @@ reload_nginx:
         - docker restart odk-proxy
     rules:
         - if: '$CI_COMMIT_BRANCH == "master"'
-        - changes:
+          changes:
             - nginx.conf
 
 # POSTGRES DATABASE

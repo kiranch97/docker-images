@@ -12,8 +12,9 @@
 
 <script>
 export default {
-  name: "streamtime",
-  data: function() {
+  name: "Streamtime",
+
+  data: function () {
     return {
       time: "00:00:00",
       timeBegan: null,
@@ -23,8 +24,9 @@ export default {
       running: false,
     };
   },
+
   methods: {
-    start() {
+    start () {
       if (this.running) return;
 
       if (this.timeBegan === null) {
@@ -40,18 +42,13 @@ export default {
       this.running = true;
     },
 
-    ///////---------
-
-    stop() {
+    stop () {
       this.running = false;
       this.timeStopped = new Date();
       clearInterval(this.started);
     },
 
-
-     ///////---------
-
-    reset() {
+    reset () {
       this.running = false;
       clearInterval(this.started);
       this.stoppedDuration = 0;
@@ -60,20 +57,16 @@ export default {
       this.time = "00:00:00";
     },
 
-
-     ///////---------
-
-    clockRunning() {
+    clockRunning () {
       var currentTime = new Date(),
         timeElapsed = new Date(
           currentTime - this.timeBegan - this.stoppedDuration
         ),
         hour = timeElapsed.getUTCHours(),
         min = timeElapsed.getUTCMinutes(),
-        sec = timeElapsed.getUTCSeconds();
+        sec = timeElapsed.getUTCSeconds()
         // ms = timeElapsed.getUTCMilliseconds();
-
-      // console.log(timeElapsed)
+      ;
 
       this.time =
         this.zeroPrefix(hour, 2) +
@@ -85,18 +78,19 @@ export default {
         // this.zeroPrefix(ms, 3);
     },
 
-
-     ///////---------
-
-    zeroPrefix(num, digit) {
+    zeroPrefix (num, digit) {
       var zero = "";
       for (var i = 0; i < digit; i++) {
         zero += "0";
       }
       return (zero + num).slice(-digit);
-    }
+    },
   },
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.clock {
+  outline: none;
+}
+</style>

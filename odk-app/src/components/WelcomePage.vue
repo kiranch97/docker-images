@@ -1,11 +1,11 @@
 <template>
   <div id="container">
     <div id="image-section">
-      <img id="intro-img" src="../assets/pwa/intro.png" alt />
+      <img id="intro-img" src="../assets/pwa/intro.png" alt>
     </div>
     <div id="text-section">
       <div id="header-section">
-        <p class="odk-title" id="title">Object Detection Kit</p>
+        <p id="title" class="odk-title">Object Detection Kit</p>
         <p class="body-1">Houd de straten schoon door te scannen tijdens het rijden</p>
       </div>
       <div id="buttons-section">
@@ -19,18 +19,30 @@
 
 <script>
 export default {
-  name: "welcome-page",
-  data() {
+  name: "WelcomePage",
+
+  data () {
     return {
-      buttonDisabled: true
+      buttonDisabled: true,
     };
   },
 
   // ----
 
+  mounted () {
+    // Init
+    //IF USER IN BROWSER AND development mode is off redirect them to BrowserStartPage
+    this.checkAppMode();
+    //IF USER HAS LOGGED IN BEFORE use that info but GENERATE NEW streamId for new session
+    this.checkCredentials();
+  },
+
+  // ----
+
   methods: {
-    checkAppMode() {
-      let checkMedia = window.matchMedia("(display-mode: standalone)").matches;
+    checkAppMode () {
+      const checkMedia = window.matchMedia("(display-mode: standalone)").matches;
+
       if (checkMedia) {
         console.log("This is running as standalone.");
       } else {
@@ -43,35 +55,25 @@ export default {
 
     // ----
 
-    checkCredentials() {
+    checkCredentials () {
       if (localStorage.streamId) {
         localStorage.streamId = this.generateId();
         this.$router.push({
           name: "streaming-client",
-          params: { uniqueId: localStorage.streamId }
+          params: { uniqueId: localStorage.streamId },
         });
       }
     },
 
     // ----
 
-    generateId() {
-      let uniqueId = Math.random()
+    generateId () {
+      const uniqueId = Math.random()
         .toString(32)
         .substring(3);
       return uniqueId;
-    }
+    },
   },
-
-  // ----
-
-  mounted() {
-    // Init
-    //IF USER IN BROWSER AND development mode is off redirect them to BrowserStartPage
-    this.checkAppMode();
-    //IF USER HAS LOGGED IN BEFORE use that info but GENERATE NEW streamId for new session
-    this.checkCredentials();
-  }
 };
 </script>
 
@@ -173,7 +175,6 @@ export default {
 
   .body-1 {
     font-size: 0.9rem !important;
-
     line-height: 1.25rem !important;
   }
 
@@ -181,8 +182,5 @@ export default {
   #transparent-button {
     font-size: 0.9rem;
   }
-}
-
-@media screen and (max-width: 660px) {
 }
 </style>

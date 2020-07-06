@@ -1,8 +1,13 @@
 <template>
   <div id="qr-container">
-    <qrcode-stream :camera="camera" :track="track" @decode="sendQR" @init="onInit">
+    <qrcode-stream
+      :camera="camera"
+      :track="track"
+      @decode="sendQR"
+      @init="onInit"
+    >
       <div v-if="validationWaiting" class="validation-waiting">
-        <div id="yellow-square"></div>
+        <div id="yellow-square" />
       </div>
       <div v-else-if="validationPending" class="validation-pending">Wordt gevalideerd...</div>
       <div v-else-if="validationFailure" class="validation-failure">Probeer opniew</div>
@@ -15,11 +20,11 @@
 import { QrcodeStream } from "vue-qrcode-reader";
 
 export default {
-  name: "login-page",
+  name: "LoginPage",
 
   components: { QrcodeStream },
 
-  data() {
+  data () {
     return {
       userType: null,
       apiHttpUrl: process.env.VUE_APP_API_HTTP_URL,
@@ -27,41 +32,50 @@ export default {
 
       // For QR
       track: false,
-      isValid: "waiting"
+      isValid: "waiting",
     };
   },
 
   // ----
 
   computed: {
-    validationWaiting() {
+    validationWaiting () {
       return this.isValid === "waiting" && this.camera === "front";
     },
 
     // ----
 
-    validationPending() {
+    validationPending () {
       return this.isValid === "waiting" && this.camera === "off";
     },
 
     // ----
 
-    validationSuccess() {
+    validationSuccess () {
       return this.isValid === true;
     },
 
     // ----
 
-    validationFailure() {
+    validationFailure () {
       return this.isValid === false;
-    }
+    },
+  },
+
+  // ----
+
+  mounted () {
+    this.checkIdNull();
+    this.setupWebSockets();
+
+    console.log("Facing mode" + this.facingMode);
   },
 
   // ----
 
   methods: {
-    generateId() {
-      let uniqueId = Math.random()
+    generateId () {
+      const uniqueId = Math.random()
         .toString(32)
         .substring(3);
       return uniqueId;
@@ -69,12 +83,12 @@ export default {
 
     // ----
 
-    async sendQR(content) {
+    async sendQR (content) {
       this.turnCameraOff();
       await this.timeout(1000);
 
       fetch(this.apiHttpUrl + "/authorized_login?credential_string=" + content, {
-        method: "GET"
+        method: "GET",
       })
         .then(response => {
           return response.json();
@@ -85,14 +99,14 @@ export default {
             localStorage.vehicleType = results.vehicle_type;
             localStorage.driverPhoneNumber = results.driver_phone_number;
 
-            let uniqueId = this.generateId();
+            const uniqueId = this.generateId();
             localStorage.userType = "worker";
 
             this.timeout(1000);
 
             this.$router.push({
               name: "streaming-client",
-              params: { uniqueId: uniqueId }
+              params: { uniqueId: uniqueId },
             });
           } else {
             this.isValid = false;
@@ -104,36 +118,36 @@ export default {
 
     // ----
 
-    onInit(promise) {
+    onInit (promise) {
       promise.catch(console.error).then(this.resetValidationState);
     },
 
     // ----
 
-    resetValidationState() {
+    resetValidationState () {
       this.isValid = "waiting";
     },
 
     // ----
 
-    turnCameraOn() {
+    turnCameraOn () {
       this.camera = "front";
     },
 
     // ----
 
-    turnCameraOff() {
+    turnCameraOff () {
       this.camera = "off";
     },
 
     // ----
 
-    timeout(ms) {
+    timeout (ms) {
       return new Promise(resolve => {
         window.setTimeout(resolve, ms);
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -164,21 +178,6 @@ export default {
   background: none;
   border: 50px solid rgba(0, 0, 0, 0.5);
 }
-
-/* Was trying blur, but ugly */
-/*  */
-/* .validation-waiting::before {
-  position: absolute;
-  width: calc(100% + 100px);
-  height: calc(100% + 100px);
-  border: inherit;
-  border-color: rgba(0,0,0,0.5);
-  background: inherit;
-  background-clip: border-box;
-  filter: blur(9px);
-  -webkit-filter: blur(9px);
-  content: "";
-} */
 
 #yellow-square {
   width: 100%;

@@ -57,6 +57,7 @@ services:
       - PGDATA=/pgdata
     ports:
         - "5432:5432"
+        - "15672:15672"
     volumes:
         - /pgdata-docker:/pgdata
     logging:

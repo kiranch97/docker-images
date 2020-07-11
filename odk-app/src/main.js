@@ -3,6 +3,7 @@ import App from "./App.vue";
 import Buefy from "buefy";
 import Vuelidate from "vuelidate";
 import VueRouter from "vue-router";
+import moment from "vue-moment";
 import { routes } from "./routes";
 import "./registerServiceWorker";
 import "buefy/dist/buefy.css";
@@ -36,6 +37,7 @@ Vue.use(VueSpinnersCss);
 Vue.use(Vuelidate);
 Vue.use(Buefy);
 Vue.use(VueRouter);
+Vue.use(moment);
 Vue.use(VueAwesomeSwiper, /* { default global options } */);
 
 new Vue({

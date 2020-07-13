@@ -1,22 +1,22 @@
 <template>
-  <div id="container">
-    <div id="qr-section">
+  <div class="container">
+    <div class="qr-section">
       <login-page />
     </div>
 
-    <div id="text-section">
-      <div id="header-section">
+    <div class="text-section">
+      <div class="header-section">
         <p class="caption-1">Laatste stap</p>
-        <p id="title" class="odk-title">Scan je QR-Code</p>
-        <p
-          class="body-1"
-        >
+        <h1>Scan je QR-Code</h1>
+        <p style="margin-top: .5em;">
           Als chauffeur van de Gemeente Amsterdam heb je een QR-Code ontvangen om je account mee te gebruiken. Houd deze voor de camera om verder te gaan.
         </p>
       </div>
 
-      <div id="buttons-section">
-        <p class="link" @click="saveId('demo')">Ik ben geen gemeente chauffeur</p>
+      <div class="buttons-section">
+        <p style="margin-bottom: .5em;">
+          <span class="link" @click="saveId('demo')">Ik ben geen gemeente chauffeur</span>
+        </p>
         <p
           class="caption-1"
         >
@@ -102,74 +102,51 @@ export default {
 };
 </script>
 
-<style scoped>
-#container {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  max-width: 896px;
-  max-height: 414px;
-  margin: 0 auto;
-  background: var(--second-white-color);
+<style lang="scss" scoped>
+.container {
   display: flex;
+  position: relative;
+  margin: 0 auto;
+  background: var(--color-white-bis);
+  width: 100vw;
+  max-width: 896px;
+  height: 100vh;
+  max-height: 414px;
 }
 
-#qr-section {
-  width: 50%;
-  height: 100%;
+.qr-section {
   z-index: 0;
-}
-
-#text-section {
   width: 50%;
   height: 100%;
-  padding: 2.5rem 4rem 2.5rem 3rem;
+}
+
+.text-section {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   z-index: 1;
+  padding: 2.5rem 4rem 2.5rem 3rem;
+  width: 50%;
+  height: 100%;
 }
 
-#header-section {
+.header-section {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
   align-items: flex-start;
-  text-align: left;
+  justify-content: flex-start;
   width: 100%;
-  margin-top: 2rem;
+  text-align: left;
 }
 
-#buttons-section {
-  width: 100%;
+.caption-1 {
+  margin: 0;
+}
+
+.buttons-section {
   display: flex;
   flex-direction: column;
+  width: 100%;
   text-align: left;
-}
-
-.link {
-  color: var(--pink-color) !important;
-  text-decoration: underline !important;
-  margin-bottom: 0.25rem;
-}
-
-.link:hover {
-  cursor: pointer;
-}
-
-@media screen and (max-width: 756px) {
-  .odk-title {
-    font-size: 1.25rem !important;
-  }
-
-  .body-1 {
-    font-size: 0.9rem !important;
-    line-height: 1.25rem !important;
-  }
-
-  #yellow-button,
-  #transparent-button {
-    font-size: 0.9rem;
-  }
 }
 </style>

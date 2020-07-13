@@ -1,0 +1,170 @@
+// Import Bulma and Buefy styles
+@import "~bulma";
+@import "~buefy/src/scss/buefy";
+
+a,
+.link {
+  position: relative;
+  color: $link;
+
+  &:not(.no-anim) {
+    &::after {
+      position: absolute;
+      bottom: -5px;
+      left: 3px;
+      transition: width 250ms ease;
+      background-color: $link;
+      width: 0px;
+      height: 2px;
+      content: "";
+    }
+
+    &:hover {
+      &::after {
+        background-color: $link-hover;
+      }
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &:hover,
+    &:focus,
+    &:active {
+      cursor: pointer;
+
+      &::after {
+        width: calc(100% - 6px);
+      }
+    }
+  }
+
+}
+
+.button {
+  @extend .is-primary;
+
+  position: relative;
+  transition: all 150ms ease-in;
+  height: $size-1;
+  overflow: hidden;
+  font-family: $family-sans-serif;
+  font-weight: $weight-semibold;
+
+  // Spans are inserted by Buefy.
+  &>span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  &,
+  &.is-primary {
+
+    &:hover,
+    &.is-hovered {
+      background-color: lighten($primary, 15%);
+    }
+
+    &:focus,
+    &.is-focused {
+      border-color: darken($primary, 8%);
+      background-color: lighten($primary, 8%);
+    }
+  }
+
+  &.is-secondary {
+
+    &:hover,
+    &.is-hovered {
+      background-color: lighten($secondary, 15%);
+    }
+
+    &:focus,
+    &.is-focused {
+      border-color: darken($secondary, 8%);
+      background-color: lighten($secondary, 8%);
+    }
+  }
+
+  &.is-primary,
+  &.is-secondary {
+    &[disabled] {
+      border-color: transparent;
+      background-color: scale-color($primary, $lightness: 75%, $saturation: -50%);
+      color: scale-color($primary, $lightness: 30%, $saturation: -50%);
+    }
+  }
+
+  &.is-outlined {
+
+    &.is-primary,
+    &.is-secondary {
+      &[disabled] {
+        border-color: scale-color($primary, $lightness: 50%, $saturation: -50%);
+        background-color: transparent;
+        color: scale-color($primary, $lightness: 30%, $saturation: -50%);
+      }
+    }
+
+    &.is-primary {
+
+      &:hover,
+      &.is-hovered {
+        background-color: scale-color($primary, $lightness: 70%, $saturation: -50%);
+        color: $primary;
+      }
+
+      &:focus,
+      &.is-focused {
+        border-color: darken($primary, 8%);
+        background-color: scale-color($primary, $lightness: 55%, $saturation: -60%);
+        color: $primary;
+      }
+    }
+  }
+
+  // @todo Implement ripple animation on click properly.
+  // &:before {
+  //   position: absolute;
+  //   top: 50%;
+  //   left: 50%;
+  //   transform: translate(-50%, -50%);
+  //   visibility: hidden;
+  //   z-index: 2;
+  //   border-radius: inherit;
+  //   background-color: currentColor;
+  //   width: 0;
+  //   height: 0;
+  //   content: '';
+  // }
+
+  // &:not(:active) {
+  //   &:before {
+  //     transition: visibility .4s step-end;
+  //     animation: ripple 0.4s cubic-bezier(0, 0, 0.2, 1);
+  //   }
+  // }
+
+  // &:active {
+  //   &:before {
+  //     visibility: visible;
+  //   }
+  // }
+}
+
+@keyframes ripple {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: .5;
+  }
+
+  100% {
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+  }
+}

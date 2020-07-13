@@ -73,7 +73,12 @@ export default {
     DefaultLoader,
   },
 
-  props: { uniqueId: String },
+  props: {
+    uniqueId: {
+      type: String,
+      default: null,
+    },
+  },
 
   data: function () {
     return {
@@ -536,7 +541,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 :root {
   font-size: 16px;
 }
@@ -578,6 +583,10 @@ body {
   width: 100%;
   height: 100%;
   display: flex;
+
+  /* @note Following is for debugging purposes */
+  // background-image: url("http://www.getsready.com/wp-content/uploads/2016/02/amsterdam-4.jpg");
+  // background-size: cover;
 }
 
 #stream-results {
@@ -610,16 +619,28 @@ body {
 }
 
 #error-prompt {
+  display: flex;
   position: absolute;
+  top: 4.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: var(--color-white);
   width: 14rem;
   height: 2.5rem;
-  background: var(--white-color);
-  font-weight: 600;
-  top: 4.5rem;
-  border-radius: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  color: var(--color-error);
+
+  &::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+    background: var(--color-error);
+    width: .5rem;
+    height: 100%;
+    content: "";
+  }
 }
 
 .fade-enter-active {
@@ -684,7 +705,7 @@ body {
 
 #manual-mode {
   position: absolute;
-  color: var(--main-purple-color);
+  color: var(--color-purple);
   font-size: 1rem;
   font-weight: 600;
   left: 10.5px;
@@ -701,7 +722,7 @@ body {
 
 #auto-mode {
   position: absolute;
-  color: var(--main-purple-color);
+  color: var(--color-purple);
   font-size: 1rem;
   font-weight: 600;
   left: 24px;
@@ -724,10 +745,10 @@ body {
 }
 
 .play-pause-circle {
-  width: 3.2rem;
-  height: 3.2rem;
+  width: 3.5rem;
+  height: 3.5rem;
   background: none;
-  border: 4px solid white;
+  border: 5px solid white;
   border-radius: 50%;
   outline: none;
   transition: all 0.5s;
@@ -737,9 +758,9 @@ body {
 }
 
 .inner-circle {
-  width: 2rem;
-  height: 2rem;
-  background: var(--white-color);
+  width: calc(2rem + 1px);
+  height: calc(2rem + 1px);
+  background: var(--color-white);
   border-radius: 50%;
   outline: none;
   opacity: 0.5;
@@ -747,19 +768,19 @@ body {
 }
 
 .inner-button {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: calc(1.5rem + 1px);
+  height: calc(1.5rem + 1px);
   background: #db1f48;
   border-radius: 20%;
   transition: all 0.5s;
 }
 
 .pause-box {
-  width: 3.2rem;
-  height: 3.2rem;
+  width: 3.5rem;
+  height: 3.5rem;
   background: none;
   outline: none;
-  border: 4px solid white;
+  border: 5px solid white;
   border-radius: 50%;
   position: relative;
   display: flex;
@@ -773,7 +794,7 @@ body {
   position: absolute;
   width: 0.6rem;
   height: 0.6rem;
-  background: var(--error-color);
+  background: var(--color-error);
   left: 1.3rem;
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.6);
   border-radius: 50%;
@@ -783,7 +804,7 @@ body {
 }
 
 #stream-timer {
-  color: var(--white-color);
+  color: var(--color-white);
   font-size: 16px;
   font-weight: 600;
   text-shadow: 0 2px 3px rgba(0, 0, 0, 0.6);
@@ -795,7 +816,7 @@ body {
 }
 
 .stream-counts {
-  color: var(--white-color);
+  color: var(--color-white);
   transform: rotate(90deg);
 }
 

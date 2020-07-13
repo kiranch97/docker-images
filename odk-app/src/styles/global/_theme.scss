@@ -1,0 +1,112 @@
+// Import Bulma's core
+@import "~bulma/sass/utilities/_all";
+
+/*
+ * Colours
+ */
+
+// -- Prime colours
+$white: rgb(255, 255, 255);
+$white-invert: findColorInvert($white);
+$black: rgb(0, 0, 0);
+$black-invert: findColorInvert($black);
+$white-bis: rgb(249, 248, 250);
+$white-bis-invert: findColorInvert($white-bis);
+$grey-light: rgb(244, 243, 246);
+$grey-light-invert: findColorInvert($grey-light);
+$grey: rgb(226, 222, 233);
+$grey-invert: findColorInvert($grey);
+$grey-dark: rgb(25, 21, 32);
+$grey-dark-invert: findColorInvert($grey);
+$yellow: rgb(246, 211, 101);
+$yellow-invert: findColorInvert($yellow);
+$pink: rgb(200, 55, 96);
+$pink-invert: findColorInvert($pink);
+$red: rgb(225, 82, 74);
+$red-invert: findColorInvert($red);
+$purple: rgb(58, 34, 93);
+$purple-invert: findColorInvert($purple);
+$purple-dark: rgb(47, 28, 80);
+$purple-dark-invert: findColorInvert($purple-dark);
+$blue-dark: rgb(21, 21, 34);
+$blue-dark-invert: findColorInvert($blue-dark);
+
+// -- Semantic colours
+$primary: $purple;
+$primary-invert: findColorInvert($primary);
+$secondary: $yellow;
+$secondary-invert: findColorInvert($secondary);
+$success: rgb(55, 200, 139);
+$success-invert: findColorInvert($success);
+$danger: rgb(200, 55, 55);
+$danger-invert: findColorInvert($danger);
+
+// -- Setup $colors to use as bulma classes (e.g. 'is-primary')
+$colors: ("white": ($white, $black),
+  "black": ($black, $white),
+  "light": ($light, $light-invert),
+  "dark": ($dark, $dark-invert),
+  "primary": ($primary, $primary-invert),
+  "secondary": ($secondary, $secondary-invert),
+  "info": ($info, $info-invert),
+  "success": ($success, $success-invert),
+  "warning": ($warning, $warning-invert),
+  "danger": ($danger, $danger-invert),
+);
+
+
+/*
+ * Typography
+ */
+
+$family-sans-serif: "Open Sans",
+sans-serif;
+$family-monospace: monospace;
+$render-mode: optimizeLegibility;
+$size-1: 3rem;
+$size-2: 2.5rem;
+$size-3: 2rem;
+$size-4: 1.5rem;
+$size-5: 1.25rem;
+$size-6: 1rem;
+$size-7: 0.75rem;
+$weight-light: 300;
+$weight-normal: 400;
+$weight-medium: 500;
+$weight-semibold: 600;
+$weight-bold: 700;
+
+
+/*
+ * Miscellaneous
+ */
+
+// Radii
+$radius-small: 2px;
+$radius: 4px;
+$radius-large: 6px;
+$radius-rounded: 290486px;
+
+
+/*
+ * Elements
+ */
+
+// Control elements
+$control-border-width: 2px;
+
+// Links
+$link: $pink;
+$link-invert: $pink-invert;
+$link-light: lighten($link, 30%);
+$link-dark: darken($link, 30%);
+$link-visited: $purple;
+
+$link-hover: $link-light;
+$link-hover-border: $link-light;
+
+$link-focus: $link-light;
+$link-focus-border: $link-light;
+
+$link-active: $link;
+$link-active-border: $link;

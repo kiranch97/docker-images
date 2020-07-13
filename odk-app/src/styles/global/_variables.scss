@@ -1,0 +1,19 @@
+:root {
+  // Prime colours
+  --color-white: #{$white};
+  --color-black: #{$black};
+  --color-white-bis: #{$white-bis};
+  --color-grey-light: #{$grey-light};
+  --color-grey: #{$grey};
+  --color-grey-dark: #{$grey-dark};
+  --color-yellow: #{$yellow};
+  --color-pink: #{$pink};
+  --color-red: #{$red};
+  --color-purple: #{$purple};
+  --color-purple-dark: #{$purple-dark};
+  --color-blue-dark: #{$blue-dark};
+
+  // Semantic colours
+  --color-success: #{$success};
+  --color-error: #{$danger};
+}

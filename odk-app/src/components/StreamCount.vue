@@ -22,7 +22,12 @@ import _ from "lodash";
 export default {
   name: "StreamCount",
 
-  props: { "websocket-stream-state": String },
+  props: {
+    websocketStreamState: {
+      type: String,
+      default: () => {},
+    },
+  },
 
   data () {
     return {
@@ -189,7 +194,7 @@ export default {
 }
 
 .stream-counts {
-  color: var(--white-color);
+  color: var(--color-white);
   transform: rotate(90deg);
 }
 
@@ -204,7 +209,7 @@ export default {
 #stream-total {
   width: 50px;
   height: 50px;
-  background: var(--main-purple-color);
+  background: var(--color-purple);
   border-bottom-right-radius: 50%;
   border-bottom-left-radius: 50%;
   z-index: 2;
@@ -215,7 +220,7 @@ export default {
 
 .total-counts {
   font-size: 1.5rem;
-  color: var(--white-color);
+  color: var(--color-white);
 }
 
 .icons {
@@ -229,7 +234,7 @@ export default {
   right: 0;
   font-weight: 700;
   font-size: 1.5rem;
-  color: var(--white-color);
+  color: var(--color-white);
   z-index: 1;
 }
 
@@ -252,7 +257,7 @@ export default {
   width: 50px !important;
   height: 50px !important;
   border-radius: 50%;
-  background: var(--white-color);
+  background: var(--color-white);
   display: flex;
   justify-content: center;
   align-items: center;

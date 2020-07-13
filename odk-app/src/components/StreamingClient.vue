@@ -171,7 +171,6 @@ export default {
   },
 
   mounted () {
-    //Init
     this.setup();
     this.showStream();
 
@@ -183,8 +182,6 @@ export default {
     // this.websocketStreamState = this.streamState.OFF;
     // setInterval(this.checkInternetState, 3000);
   },
-
-  // ==== methods ====
 
   methods: {
     setup: function () {
@@ -205,8 +202,6 @@ export default {
       this.photo = document.getElementById("photo");
     },
 
-    // ----
-
     startStream: function () {
       //ADD SCREENLOCK ACTIVATION WHILE STREAMING
       this.noSleep.enable();
@@ -222,8 +217,6 @@ export default {
       this.startTimeTrigger();
     },
 
-    // ----
-
     startTimeTrigger: function () {
       //Interval function to take screenshots of Video stream canvas
       this.intervalHandlerPicture = setInterval(
@@ -231,8 +224,6 @@ export default {
         this.SETTINGS.TAKE_PICTURE_EVERY_MS
       );
     },
-
-    // ----
 
     takePicture: function () {
       const context = this.canvas.getContext("2d");
@@ -249,10 +240,8 @@ export default {
       }
     },
 
-    // ----
-
     sendImage: function (base64Img) {
-      this.formatDate(new Date());
+      this.timeFormat = this.$moment().format("YYYY-MM-DD HH:mm:ss.SSS");
       this.streamId = localStorage.streamId;
       this.userType = localStorage.userType;
 
@@ -270,8 +259,6 @@ export default {
 
       this.websocketConnection.send(JSON.stringify(data));
     },
-
-    // ----
 
     showStream () {
       const video = this.video;
@@ -311,8 +298,6 @@ export default {
       }
     },
 
-    // ----
-
     pauseStream: function () {
       this.websocketStreamState = this.streamState.OFF;
 
@@ -336,8 +321,6 @@ export default {
       }
     },
 
-    // ----
-
     holdStream () {
       if (
         this.websocketConnection.readyState === this.websocketConnection.OPEN
@@ -348,15 +331,11 @@ export default {
       }
     },
 
-    // ----
-
     updatePosition: function (position) {
       this.positionLa = position.coords.latitude;
       this.positionLo = position.coords.longitude;
       this.deviceSpeed = position.coords.speed;
     },
-
-    // ----
 
     onStartedStream: function () {
       // resize video
@@ -377,8 +356,6 @@ export default {
       }
     },
 
-    // ----
-
     clearPhoto: function () {
       const context = this.canvas.getContext("2d");
       context.fillStyle = "#AAA";
@@ -387,8 +364,6 @@ export default {
       const data = this.canvas.toDataURL("image/jpeg");
       this.photo.setAttribute("src", data);
     },
-
-    // ----
 
     setupWebSockets: function () {
       //Setup connection with Websocket server URL:PORT/ENDPOINT
@@ -402,14 +377,10 @@ export default {
       this.websocketConnection.onclose = this.receiveWebSocketsMsgOnClose;
     },
 
-    // ----
-
     receiveWebSocketsMsg: function (e) {
       //Websocket event when Message sent by the server
         console.log(e.data);
     },
-
-    // ----
 
     receiveWebSocketsMsgOnOpen: function () {
       //Websocket even when websocket connection between client and server is established
@@ -429,8 +400,6 @@ export default {
       }
     },
 
-    // ----
-
     receiveWebSocketsMsgOnClose: function () {
       //Set Play/Pause button to inital state
       this.recordToggle = true;
@@ -446,64 +415,12 @@ export default {
       }
     },
 
-    // ----
-
     generateId () {
       const uniqueId = Math.random()
         .toString(32)
         .substring(3);
       return uniqueId;
     },
-
-    // ----
-
-    formatDate: function (date) {
-      const year = date.getFullYear();
-      const month = this.addZero(date.getMonth() + 1);
-      const day = this.addZero(date.getDate());
-      const hour = this.addZero(date.getHours());
-      const min = this.addZero(date.getMinutes());
-      const sec = this.addZero(date.getSeconds());
-      const millisec = this.addZeroMillisec(date.getMilliseconds());
-
-      this.timeFormat = `${year}-${month}-${day} ${hour}:${min}:${sec}.${millisec}`;
-
-      return this.timeFormat;
-    },
-
-    // ----
-
-    todayDateFunc: function (date) {
-      const year = date.getFullYear();
-      const month = this.addZero(date.getMonth() + 1);
-      const day = this.addZero(date.getDate());
-
-      this.todayDate = year + "-" + month + "-" + day;
-
-      return this.todayDate;
-    },
-
-    // ----
-
-    addZero: function (i) {
-      if (i < 10) {
-        i = "0" + i;
-      }
-      return i;
-    },
-
-    // ----
-
-    addZeroMillisec: function (i) {
-      if (i < 100) {
-        i = "00" + i;
-      } else if (i >= 100 < 1000) {
-        i = "0" + i;
-      }
-      return i;
-    },
-
-    // ----
 
     checkIdNull () {
       // if user comes from user / login page (set streamId)

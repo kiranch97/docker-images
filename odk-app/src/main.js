@@ -3,6 +3,7 @@ import App from "./App.vue";
 import { Button, Collapse, Switch } from "buefy";
 import Vuelidate from "vuelidate";
 import VueRouter from "vue-router";
+import moment from "vue-moment";
 import { routes } from "./routes";
 import "./registerServiceWorker";
 import VueAwesomeSwiper from "vue-awesome-swiper";
@@ -30,6 +31,7 @@ Vue.use(Switch);
 Vue.use(Vuelidate);
 Vue.use(VueSpinnersCss);
 Vue.use(VueScrollTo);
+Vue.use(moment);
 Vue.use(VueAwesomeSwiper, /* { default global options } */);
 
 new Vue({

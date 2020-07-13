@@ -33,7 +33,7 @@
           >
             {{ manual.browserName }}
           </p>
-          <a class="card-header-icon is-size-3">
+          <a class="card-header-icon is-size-3 no-anim">
             <div
               v-if="props.open"
               :class="$style['icon-collapse']"
@@ -127,8 +127,6 @@ export default {
   background: white;
   width: 100%;
   max-width: 414px;
-  height: 100%;
-  min-height: calc(100vh - 1px);
   overflow-y: auto;
   text-align: left;
 
@@ -144,12 +142,25 @@ export default {
 }
 
 .card {
-  margin: 0.5rem auto;
+  margin: 0.75rem auto;
+  border-radius: 6px;
   box-shadow: none;
-  background-color: var(--second-white-color);
+  background-color: var(--color-white-bis);
 
   &-header {
     box-shadow: none;
+    height: 54px;
+
+    &-icon {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    &-title {
+      margin: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
   }
 }
 </style>
@@ -160,7 +171,7 @@ export default {
     display: flex;
     flex: 0 1 auto;
     align-items: center;
-    background: var(--main-purple-color);
+    background: var(--color-purple);
     width: 100%;
     height: 5rem;
 
@@ -172,7 +183,7 @@ export default {
 
   &-body {
     flex: 1 1 100%;
-    padding: 2.375rem 1.5rem;
+    padding: 2.375rem 1rem;
   }
 
   &-step {
@@ -194,7 +205,7 @@ export default {
     flex: 0 1 auto;
     align-items: center;
     justify-content: center;
-    background: var(--main-purple-color);
+    background: var(--color-purple);
     width: 100%;
     height: 4rem;
     color: white;
@@ -205,8 +216,11 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
+  transform: translateY(-2px);
+  width: 1.675rem;
+  height: 1.675rem;
+  text-align: center;
   color: black;
+  font-size: 1.1em;
 }
 </style>

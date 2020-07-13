@@ -1,117 +1,138 @@
 <template>
-  <div id="container">
-    <div id="image-section">
-      <onboarding-animation />
+  <div class="container">
+    <div
+      class="image-section"
+      aria-hidden="true"
+    >
+      <onboarding-animation style="transform: translateX(-15%)" />
     </div>
 
-    <div id="text-section">
-      <div id="header-section">
-        <p id="title" class="odk-title">Voordat u begint</p>
+    <div class="text-section">
+      <div class="header-section">
+        <h1>Voordat u begint</h1>
       </div>
-      <div id="buttons-section">
-        <button
-          id="transparent-button"
-          :class="{ 'check-item-complete' : landscapeOrientation}"
-          rounded
-          size="is-medium"
-        >
-          <svg
-            v-if="landscapeOrientation"
-            class="check-icon"
-            width="24px"
-            height="24px"
-            viewBox="0 0 24 24"
-            version="1.1"
-            xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink"
-          >
-            <g
-              id="Icons/Check"
-              stroke="none"
-              stroke-width="1"
-              fill="none"
-              fill-rule="evenodd"
-            >
-              <path
-                id="Path-3"
-                d="M18.3050227,6.62611652 C18.7931781,6.13796116 19.5846343,6.13796116 20.0727897,6.62611652 C20.5284013,7.0817282 20.5587755,7.80154862 20.163912,8.29238813 L20.0727897,8.39388348 L11.2351441,17.2315291 C10.5919276,17.8747456 9.57257605,17.9125818 8.88510839,17.3450379 L8.76027032,17.2315291 L4.91611652,13.3873753 C4.42796116,12.8992199 4.42796116,12.1077637 4.91611652,11.6196083 C5.3717282,11.1639967 6.09154862,11.1336225 6.58238813,11.528486 L6.68388348,11.6196083 L9.997,14.933 L18.3050227,6.62611652 Z"
-                fill="#2F1C50"
-              />
-            </g>
-          </svg>
-          <span>Houd uw telefoon liggend</span>
-        </button>
 
-        <button
-          id="loc-check-button"
+      <div class="buttons-section">
+        <b-button
+          expanded
+          outlined
           rounded
-          size="is-medium"
+          type="is-primary"
+          :class="{ 'check-item-complete' : landscapeOrientation}"
+        >
+          <div>
+            <div style="width: 32px;">
+              <svg
+                v-if="landscapeOrientation"
+                class="check-icon"
+                width="24px"
+                height="24px"
+                viewBox="0 0 24 24"
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+              >
+                <g
+                  class="Icons/Check"
+                  stroke="none"
+                  stroke-width="1"
+                  fill="none"
+                  fill-rule="evenodd"
+                >
+                  <path
+                    class="Path-3"
+                    d="M18.3050227,6.62611652 C18.7931781,6.13796116 19.5846343,6.13796116 20.0727897,6.62611652 C20.5284013,7.0817282 20.5587755,7.80154862 20.163912,8.29238813 L20.0727897,8.39388348 L11.2351441,17.2315291 C10.5919276,17.8747456 9.57257605,17.9125818 8.88510839,17.3450379 L8.76027032,17.2315291 L4.91611652,13.3873753 C4.42796116,12.8992199 4.42796116,12.1077637 4.91611652,11.6196083 C5.3717282,11.1639967 6.09154862,11.1336225 6.58238813,11.528486 L6.68388348,11.6196083 L9.997,14.933 L18.3050227,6.62611652 Z"
+                    fill="#2F1C50"
+                  />
+                </g>
+              </svg>
+            </div>
+            <span>Houd uw telefoon liggend</span>
+          </div>
+        </b-button>
+
+        <b-button
+          class="loc-check-button"
+          expanded
+          outlined
+          rounded
+          type="is-primary"
           :class="{ 'check-item-complete' : locationPermission}"
           @click="askLocPermission()"
         >
-          <svg
-            v-if="locationPermission"
-            class="check-icon"
-            width="24px"
-            height="24px"
-            viewBox="0 0 24 24"
-            version="1.1"
-            xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink"
-          >
-            <g
-              id="Icons/Check"
-              stroke="none"
-              stroke-width="1"
-              fill="none"
-              fill-rule="evenodd"
-            >
-              <path
-                id="Path-3"
-                d="M18.3050227,6.62611652 C18.7931781,6.13796116 19.5846343,6.13796116 20.0727897,6.62611652 C20.5284013,7.0817282 20.5587755,7.80154862 20.163912,8.29238813 L20.0727897,8.39388348 L11.2351441,17.2315291 C10.5919276,17.8747456 9.57257605,17.9125818 8.88510839,17.3450379 L8.76027032,17.2315291 L4.91611652,13.3873753 C4.42796116,12.8992199 4.42796116,12.1077637 4.91611652,11.6196083 C5.3717282,11.1639967 6.09154862,11.1336225 6.58238813,11.528486 L6.68388348,11.6196083 L9.997,14.933 L18.3050227,6.62611652 Z"
-                fill="#2F1C50"
-              />
-            </g>
-          </svg>
-          <span id="buttonspan">GPS-locatie inschakelen</span>
-        </button>
+          <div>
+            <div style="width: 32px;">
+              <svg
+                v-if="locationPermission"
+                class="check-icon"
+                width="24px"
+                height="24px"
+                viewBox="0 0 24 24"
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+              >
+                <g
+                  class="Icons/Check"
+                  stroke="none"
+                  stroke-width="1"
+                  fill="none"
+                  fill-rule="evenodd"
+                >
+                  <path
+                    class="Path-3"
+                    d="M18.3050227,6.62611652 C18.7931781,6.13796116 19.5846343,6.13796116 20.0727897,6.62611652 C20.5284013,7.0817282 20.5587755,7.80154862 20.163912,8.29238813 L20.0727897,8.39388348 L11.2351441,17.2315291 C10.5919276,17.8747456 9.57257605,17.9125818 8.88510839,17.3450379 L8.76027032,17.2315291 L4.91611652,13.3873753 C4.42796116,12.8992199 4.42796116,12.1077637 4.91611652,11.6196083 C5.3717282,11.1639967 6.09154862,11.1336225 6.58238813,11.528486 L6.68388348,11.6196083 L9.997,14.933 L18.3050227,6.62611652 Z"
+                    fill="#2F1C50"
+                  />
+                </g>
+              </svg>
+            </div>
+            <span class="buttonspan">GPS-locatie inschakelen</span>
+          </div>
+        </b-button>
 
-        <button
-          id="camera-check-button"
+        <b-button
+          expanded
+          outlined
+          rounded
+          type="is-primary"
+          :disabled="!locationPermission"
           :class="{ 'check-item-complete' : camPermission}"
-          class="camera-button"
-          size="is-medium"
-          disabled="true"
+          class="camera-button camera-check-button"
           @click="askCamPermission()"
         >
-          <svg
-            v-if="camPermission"
-            class="check-icon"
-            width="24px"
-            height="24px"
-            viewBox="0 0 24 24"
-            version="1.1"
-            xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink"
-          >
-            <g
-              id="Icons/Check"
-              stroke="none"
-              stroke-width="1"
-              fill="none"
-              fill-rule="evenodd"
-            >
-              <path
-                id="Path-3"
-                d="M18.3050227,6.62611652 C18.7931781,6.13796116 19.5846343,6.13796116 20.0727897,6.62611652 C20.5284013,7.0817282 20.5587755,7.80154862 20.163912,8.29238813 L20.0727897,8.39388348 L11.2351441,17.2315291 C10.5919276,17.8747456 9.57257605,17.9125818 8.88510839,17.3450379 L8.76027032,17.2315291 L4.91611652,13.3873753 C4.42796116,12.8992199 4.42796116,12.1077637 4.91611652,11.6196083 C5.3717282,11.1639967 6.09154862,11.1336225 6.58238813,11.528486 L6.68388348,11.6196083 L9.997,14.933 L18.3050227,6.62611652 Z"
-                fill="#2F1C50"
-              />
-            </g>
-          </svg>
-          <span id="buttonspan2">Camera inschakelen</span>
-        </button>
+          <div>
+            <div style="width: 32px;">
+              <svg
+                v-if="camPermission"
+                class="check-icon"
+                width="24px"
+                height="24px"
+                viewBox="0 0 24 24"
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+              >
+                <g
+                  class="Icons/Check"
+                  stroke="none"
+                  stroke-width="1"
+                  fill="none"
+                  fill-rule="evenodd"
+                >
+                  <path
+                    class="Path-3"
+                    d="M18.3050227,6.62611652 C18.7931781,6.13796116 19.5846343,6.13796116 20.0727897,6.62611652 C20.5284013,7.0817282 20.5587755,7.80154862 20.163912,8.29238813 L20.0727897,8.39388348 L11.2351441,17.2315291 C10.5919276,17.8747456 9.57257605,17.9125818 8.88510839,17.3450379 L8.76027032,17.2315291 L4.91611652,13.3873753 C4.42796116,12.8992199 4.42796116,12.1077637 4.91611652,11.6196083 C5.3717282,11.1639967 6.09154862,11.1336225 6.58238813,11.528486 L6.68388348,11.6196083 L9.997,14.933 L18.3050227,6.62611652 Z"
+                    fill="#2F1C50"
+                  />
+                </g>
+              </svg>
+            </div>
+            <span class="buttonspan2">Camera inschakelen</span>
+          </div>
+        </b-button>
       </div>
-      <p id="tip" class="body-1">Als u deze stappen niet volgt, zal u ODK niet kunnen gebruiken</p>
+      <p class="tip">Als u deze stappen niet volgt, zal u ODK niet kunnen gebruiken</p>
     </div>
   </div>
 </template>
@@ -120,20 +141,25 @@
 import OnboardingAnimation from "./OnboardingAnimation.vue";
 export default {
   name: "ChecklistPage",
+
   components: {
     "onboarding-animation": OnboardingAnimation,
   },
+
   data () {
     return {
-      ///UI properties
+      /// UI properties.
       landscapeOrientation: false,
       locationPermission: false,
       camPermission: false,
-      //GEOLOCATION COORDINATES
+
+      // Geolocation coordinates.
+      geoLocUnchecked: true,
       positionLa: null,
       positionLo: null,
       currentCameraOption: null,
-      //FRONT CAMERA RESOLUTION
+
+      // Front camera resolution.
       rearCamResolution: {
         width: 1280,
         height: 720,
@@ -141,21 +167,17 @@ export default {
     };
   },
 
-  // ----
-
   mounted () {
-    // Init
-    // check if locationPermission, camPermission en landscape orientation is active
+    // Check if locationPermission, camPermission en landscape orientation are active.
     this.checkAppMode();
     this.checkAppOrientation();
-    //IF USER HAS LOGGED IN BEFORE use that info but GENERATE NEW streamId for new session
+
+    // Use data of previous login, but generate a new streamId for the session.
     this.checkCredentials();
 
-    document.getElementById("buttonspan").style.marginLeft = "1.75rem";
-    document.getElementById("buttonspan2").style.marginLeft = "1.75rem";
-
-    //TODO: IF THIS.checkAppOrientation = TRUE  then go to /client immedietly
+    // @todo If `this.checkAppOrientation = true` go to /client immedietly
   },
+
   methods: {
     checkAppMode () {
       const checkMedia = window.matchMedia("(display-mode: standalone)").matches;
@@ -169,8 +191,6 @@ export default {
       }
     },
 
-    // ----
-
     checkCredentials () {
       if (localStorage.streamId) {
         localStorage.streamId = this.generateId();
@@ -181,8 +201,6 @@ export default {
       }
     },
 
-    // ----
-
     generateId () {
       const uniqueId = Math.random()
         .toString(32)
@@ -190,44 +208,37 @@ export default {
       return uniqueId;
     },
 
-    // ----
-
     askLocPermission () {
-      // console.log(navigator.geolocation)
-      if (navigator.geolocation) {
+      if ("geolocation" in navigator) {
         navigator.geolocation.watchPosition(
           this.updatePosition,
-          this.accesDenied
+          this.accessDenied,
         );
+
         this.locationPermission = !this.locationPermission;
-        document.getElementById("buttonspan").style.marginLeft = "0";
-        document.querySelector(".camera-button").removeAttribute("disabled");
       } else {
         console.log("Geolocation wordt niet ondersteund door deze browser");
       }
+
       this.checkAllPermission();
     },
 
-    // ----
-
-    accesDenied (error) {
-      if (error.code == error.PERMISSION_DENIED)
+    accessDenied (error) {
+      if (error.code == error.PERMISSION_DENIED) {
         this.locationPermission = false;
-      console.log("you denied the geolocation permission :-(");
-      document.getElementById("buttonspan").style.marginLeft = "1.75rem";
-      document.querySelector(".camera-button").disabled = true;
-    },
+      }
 
-    // ----
+      console.log("Geolocation permission was denied.");
+    },
 
     updatePosition: function (position) {
       this.positionLa = position.coords.latitude;
       this.positionLo = position.coords.longitude;
     },
 
-    // ----
-
     askCamPermission () {
+      const curScope = this;
+
       this.currentConstraints = {
         video: {
           facingMode: this.currentCameraOption,
@@ -236,8 +247,7 @@ export default {
         },
         audio: false,
       };
-      //INNER SCOPE
-      const curScope = this;
+
       navigator.mediaDevices
         .getUserMedia(this.currentConstraints)
         .then(mediaStream => {
@@ -258,22 +268,17 @@ export default {
         });
     },
 
-    // ----
-
     checkAppOrientation () {
       if (window.innerWidth > window.innerHeight) {
-        // you're in landscape mode
         console.log("orientation = landscape");
         this.landscapeOrientation = !this.landscapeOrientation;
       } else {
-        //Check item not complete
-        console.log("orientation = !landscape");
+        console.log("orientation = portrait");
         this.landscapeOrientation = false;
       }
+
       this.checkAllPermission();
     },
-
-    // ----
 
     checkAllPermission () {
       if (
@@ -281,30 +286,30 @@ export default {
         this.camPermission &&
         this.landscapeOrientation
       ) {
-        this.$router.push("/user");
+        setTimeout(() => {
+          this.$router.push("/user");
+        }, 1000);
       }
     },
   },
 };
 </script>
 
-<style scoped>
-#container {
+<style lang="scss" scoped>
+.container {
   position: relative;
   width: 100vw;
   height: 100vh;
-  max-width: 896px;
-  max-height: 414px;
   margin: 0 auto;
   padding: 0 2rem 0 1rem;
-  background: var(--second-white-color);
+  background: var(--color-white-bis);
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
 }
 
-#image-section {
+.image-section {
   width: 50%;
   height: 100%;
   display: flex;
@@ -312,11 +317,11 @@ export default {
   align-items: center;
 }
 
-#intro-img {
+.intro-img {
   object-fit: cover;
 }
 
-#text-section {
+.text-section {
   width: 50%;
   height: 100%;
   max-width: 20rem;
@@ -326,7 +331,7 @@ export default {
   justify-content: space-between;
 }
 
-#header-section {
+.header-section {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -335,66 +340,14 @@ export default {
   width: 100%;
 }
 
-#camera-check-button,
-#loc-check-button {
-  display: flex;
-  align-items: center;
-  justify-content: left;
-  margin-top: 1rem;
-  border: 2px solid var(--second-purple-color);
-  border-radius: 30px;
-  background: transparent;
-  padding: 0.5rem 1rem;
-  width: 100%;
-  text-align: center;
-  color: var(--second-purple-color);
-  font-family: "Open Sans", sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
-}
+.button {
+  margin-bottom: .75rem;
 
-#camera-check-button:active,
-#loc-check-button:active {
-  background: rgba(105, 89, 133, 0.6);
-}
-
-#camera-check-button:disabled,
-#loc-check-button:disabled {
-  background: transparent;
-  color: #b8b1c3;
-  border: 2px solid #ebebf2;
-}
-
-#loc-check-button span {
-  width: calc(100% - 24px);
-  text-align: left;
-}
-
-#transparent-button {
-  display: flex;
-  align-items: center;
-  justify-content: left;
-  margin-top: 1rem;
-  border: 2px solid var(--second-purple-color);
-  border-radius: 30px;
-  background: transparent;
-  padding: 0.5rem 1rem;
-  width: 100%;
-  text-align: center;
-  color: var(--second-purple-color);
-  font-family: "Open Sans", sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-#transparent-button:active {
-  background: rgba(105, 89, 133, 0.6);
-}
-
-#transparent-button:disabled {
-  background: transparent;
-  color: #b8b1c3;
-  border: 2px solid #ebebf2;
+  div:first-of-type {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
 }
 
 .check-item-complete {
@@ -405,23 +358,31 @@ export default {
   margin-right: 0.25rem;
 }
 
-#tip {
+.tip {
   text-align: left;
 }
 
-@media screen and (max-width: 756px) {
-  .odk-title {
-    font-size: 1.25rem !important;
+@media (orientation: portrait) {
+  .container {
+    flex-direction: column;
   }
 
-  .body-1 {
-    font-size: 0.9rem !important;
-    line-height: 1.25rem !important;
+  .image-section,
+  .text-section {
+    width: 100%;
   }
+}
 
-  #yellow-button,
-  #transparent-button {
-    font-size: 0.9rem;
+@media (orientation: landscape) and (min-width: 900px) {
+  .container {
+    max-width: 896px;
+  }
+}
+
+
+@media (orientation: landscape) and (min-height: 500px) {
+  .container {
+    max-height: 414px;
   }
 }
 </style>

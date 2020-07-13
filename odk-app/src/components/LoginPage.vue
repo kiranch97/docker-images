@@ -157,9 +157,6 @@ export default {
   height: 100%;
   background: rgba(255, 255, 255, 0.7);
   text-align: center;
-  font-family: "Open Sans", sans-serif !important;
-  font-weight: 600;
-  font-size: 1.4rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -173,19 +170,19 @@ export default {
 #yellow-square {
   width: 100%;
   height: 100%;
-  border: 3px solid var(--yellow-color);
+  border: 3px solid var(--color-yellow);
 }
 
 .validation-pending {
-  color: var(--dark-blue-color);
+  color: var(--color-blue-dark);
 }
 
 .validation-success {
-  color: var(--success-color);
+  color: var(--color-success);
 }
 
 .validation-failure {
-  color: var(--error-color);
+  color: var(--color-error);
 }
 
 .icon {

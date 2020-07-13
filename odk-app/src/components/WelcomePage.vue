@@ -1,16 +1,22 @@
 <template>
-  <div id="container">
-    <div id="image-section">
-      <img id="intro-img" src="../assets/pwa/intro.png" alt>
+  <div class="container">
+    <div class="image-section">
+      <img class="intro-img" src="../assets/pwa/intro.png" alt>
     </div>
-    <div id="text-section">
-      <div id="header-section">
-        <p id="title" class="odk-title">Object Detection Kit</p>
-        <p class="body-1">Houd de straten schoon door te scannen tijdens het rijden</p>
+
+    <div class="text-section">
+      <div class="header-section">
+        <h1>Object Detection Kit</h1>
+        <p>Houd de straten schoon door te scannen tijdens het rijden</p>
       </div>
-      <div id="buttons-section">
-        <router-link to="/recommendation">
-          <button id="yellow-button" size="is-medium">Beginnen</button>
+
+      <div class="buttons-section">
+        <router-link
+          to="/recommendation"
+          tag="b-button"
+          class="is-secondary is-rounded is-expanded"
+        >
+          Beginnen
         </router-link>
       </div>
     </div>
@@ -18,16 +24,18 @@
 </template>
 
 <script>
+import { startupCheck } from "../mixins/startupCheck";
+
 export default {
   name: "WelcomePage",
+
+  mixins: [ startupCheck ],
 
   data () {
     return {
       buttonDisabled: true,
     };
   },
-
-  // ----
 
   mounted () {
     // Init
@@ -37,24 +45,7 @@ export default {
     this.checkCredentials();
   },
 
-  // ----
-
   methods: {
-    checkAppMode () {
-      const checkMedia = window.matchMedia("(display-mode: standalone)").matches;
-
-      if (checkMedia) {
-        console.log("This is running as standalone.");
-      } else {
-        console.log("This is running on the browser");
-        // process.env.VUE_APP_APP_MODE
-        //   ? console.log("development mode")
-        //   : this.$router.push({ path: "/" });
-      }
-    },
-
-    // ----
-
     checkCredentials () {
       if (localStorage.streamId) {
         localStorage.streamId = this.generateId();
@@ -64,8 +55,6 @@ export default {
         });
       }
     },
-
-    // ----
 
     generateId () {
       const uniqueId = Math.random()
@@ -78,7 +67,7 @@ export default {
 </script>
 
 <style scoped>
-#container {
+.container {
   position: relative;
   width: 100vw;
   height: 100vh;
@@ -86,14 +75,14 @@ export default {
   max-height: 414px;
   margin: 0 auto;
   padding: 0 2rem 0 1rem;
-  background: var(--second-white-color);
+  background: var(--color-white-bis);
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
 }
 
-#image-section {
+.image-section {
   width: 50%;
   height: 100%;
   display: flex;
@@ -101,11 +90,12 @@ export default {
   align-items: center;
 }
 
-#intro-img {
+.intro-img {
   object-fit: cover;
+  transform: translateX(-15%);
 }
 
-#text-section {
+.text-section {
   width: 50%;
   height: 100%;
   max-width: 20rem;
@@ -115,7 +105,7 @@ export default {
   justify-content: space-between;
 }
 
-#header-section {
+.header-section {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -125,62 +115,9 @@ export default {
   margin-top: 2rem;
 }
 
-#buttons-section {
+.buttons-section {
   width: 100%;
   display: flex;
   flex-direction: column;
-}
-
-#yellow-button,
-#transparent-button {
-  width: 100%;
-  font-family: "Open Sans", sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
-  text-align: center;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 30px;
-}
-
-#yellow-button {
-  background: var(--yellow-color);
-  color: var(--second-purple-color);
-}
-
-#yellow-button:active {
-  background: rgba(246, 211, 101, 0.7);
-}
-
-#yellow-button:disabled {
-  background: #edebf2;
-  color: #b8b1c3;
-}
-
-#transparent-button {
-  background: transparent;
-  color: var(--second-purple-color);
-  border: 2px solid var(--second-purple-color);
-  margin-top: 1rem;
-}
-
-#transparent-button:active {
-  background: rgba(105, 89, 133, 0.6);
-}
-
-@media screen and (max-width: 756px) {
-  .odk-title {
-    font-size: 1.25rem !important;
-  }
-
-  .body-1 {
-    font-size: 0.9rem !important;
-    line-height: 1.25rem !important;
-  }
-
-  #yellow-button,
-  #transparent-button {
-    font-size: 0.9rem;
-  }
 }
 </style>

@@ -1,48 +1,70 @@
 <template>
-  <div id="container">
-    <div id="image-section">
-      <div id="image-section-one">
+  <div class="container">
+    <div class="image-section">
+      <div class="image-section-one">
         <img
-          id="recommendation-img"
-          :class="{ fade: rmdOne}"
+          class="recommendation-img"
+          :class="{ 'is-opaque': step === 0 }"
           src="../assets/pwa/recommendation1.png"
           alt
         >
         <img
-          id="recommendation-img"
-          :class="{ fade: rmdThree}"
+          class="recommendation-img"
+          :class="{ 'is-opaque': step === 1 }"
           src="../assets/pwa/recommendation3.png"
           alt
         >
       </div>
-      <div id="image-section-two">
+
+      <div class="image-section-two">
         <img
-          id="recommendation-img"
-          :class="{ fade: rmdTwo}"
+          class="recommendation-img"
+          :class="{ 'is-opaque': step === 2 }"
           src="../assets/pwa/recommendation2.png"
           alt
         >
       </div>
     </div>
-    <div id="text-section">
-      <div id="header-section">
-        <p class="caption-1">Het wordt aanbevolen om</p>
-        <p id="title" class="odk-title">Uw telefoon op te laden</p>
-        <p id="body" class="body-1">tijdens het rijden. Het streamen verbruikt veel batterij</p>
+
+    <div class="text-section">
+      <div class="header-section">
+        <p class="caption-1">
+          {{ content.caption }}
+        </p>
+        <h1 class="title">
+          {{ content.steps[step].title }}
+        </h1>
+        <p class="body">
+          {{ content.steps[step].body }}
+        </p>
       </div>
-      <div id="buttons-section">
-        <button
-          id="yellow-button"
+
+      <transition-group
+        name="fadeout"
+        tag="div"
+        class="buttons-section"
+      >
+        <b-button
+          ref="buttonNext"
+          key="buttonNext"
+          type="is-secondary"
           rounded
-          size="is-medium"
-          @click="switchRmd()"
+          class="fadeout-item"
+          @click="switchRmd"
         >
           Volgende
-        </button>
-        <router-link to="/checklist">
-          <button id="transparent-button" rounded size="is-medium">Overslaan</button>
+        </b-button>
+
+        <router-link
+          v-if="step < 2"
+          key="buttonSkip"
+          to="/checklist"
+          tag="b-button"
+          class="is-primary is-rounded is-outlined fadeout-item"
+        >
+          Overslaan
         </router-link>
-      </div>
+      </transition-group>
     </div>
   </div>
 </template>
@@ -53,13 +75,29 @@ export default {
 
   data () {
     return {
-      rmdOne: true,
-      rmdTwo: false,
-      rmdThree: false,
+      step: 0,
+      content: {
+        caption: "Het wordt aanbevolen om",
+        steps: [
+          {
+            title: "Uw telefoon op te laden",
+            body: "tijdens het rijden. Het streamen verbruikt veel batterij",
+          },
+          {
+            title: "Uw dataverbruik te controleren",
+            body: "Het streamen kost veel data. Een ongelimiteerd abonnement wordt geadviseerd",
+          },
+          {
+            title: "Uw eigen modus te kiezen",
+            body: "Met handmatige modus kunt u er zelf voor kiezen wanneer u wilt streamen. De automatische modus zal de stream kunnen starten en stoppen op basis van uw rijsnelheid",
+          },
+        ],
+      },
     };
   },
+
   mounted () {
-    //IF USER HAS LOGGED IN BEFORE use that info but GENERATE NEW streamId for new session
+    // Use data of previous login, but generate a new streamId for the session.
     this.checkCredentials();
   },
 
@@ -74,38 +112,22 @@ export default {
       }
     },
 
-    // ----
-
     generateId () {
       const uniqueId = Math.random()
         .toString(32)
         .substring(3);
+
       return uniqueId;
     },
 
-    // ----
-
     switchRmd () {
-      //SWITCH THROUGH THE OPTIONS AND REDIRECT THE USERS TO THE CHECKLIST PAGE
-      if (this.rmdOne) {
-        this.rmdOne = !this.rmdOne;
-        this.rmdTwo = !this.rmdTwo;
-        document.getElementById("title").innerHTML =
-          "Uw dataverbruik te controleren";
-        document.getElementById("body").innerHTML =
-          "Het streamen kost veel data. Een ongelimiteerd abonnement wordt geadviseerd";
-      } else if (this.rmdTwo) {
-        this.rmdTwo = !this.rmdTwo;
-        this.rmdThree = !this.rmdThree;
-        document.getElementById("transparent-button").style.display = "none";
-        document.getElementById("title").innerHTML = "Uw eigen modus te kiezen";
-        document.getElementById("body").innerHTML =
-          "Met handmatige modus kunt u er zelf voor kiezen wanneer u wilt streamen. De automatische modus zal de stream kunnen starten en stoppen op basis van uw rijsnelheid";
-        document.getElementById("buttons-section").style.justifyContent =
-          "flex-end";
-      } else if (this.rmdThree) {
-        this.$router.push("/checklist");
-      }
+      this.step >= 2 ? this.$router.push("/checklist") : this.step++;
+
+      this.$refs.buttonNext.$el.focus();
+
+      setTimeout(() => {
+        this.$refs.buttonNext.$el.blur();
+      }, 250);
     },
 
     skipRmd () {
@@ -115,42 +137,38 @@ export default {
 };
 </script>
 
-<style scoped>
-#container {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  max-width: 896px;
-  max-height: 414px;
-  margin: 0 auto;
-  padding: 0 2rem 0 1rem;
-  background: var(--second-white-color);
+<style lang="scss" scoped>
+.container {
   display: flex;
+  position: relative;
   flex-direction: row;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  background: var(--color-grey-light);
+  padding: 0 2rem 0 1rem;
+  width: 100vw;
+  max-width: 896px;
+  height: 100vh;
+  max-height: 414px;
 }
 
-#image-section {
+.image-section {
   width: 50%;
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-}
 
-#image-section-one {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
+  &-one {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
 
-#image-section-two {
-  display: flex;
-}
-
-.odk-title {
-  line-height: 1.75rem !important;
+  &-two {
+    display: flex;
+  }
 }
 
 .rmdimageone {
@@ -159,18 +177,19 @@ export default {
   margin: 1rem;
 }
 
-#recommendation-img {
+.recommendation-img {
   max-height: 150px;
   object-fit: contain;
   opacity: 0.5;
   margin: 1rem;
 }
 
-.fade {
-  opacity: 1 !important;
+.is-opaque {
+  opacity: 1;
+  transition: opacity 350ms ease;
 }
 
-#text-section {
+.text-section {
   width: 50%;
   height: 100%;
   max-width: 20rem;
@@ -180,7 +199,7 @@ export default {
   justify-content: space-between;
 }
 
-#header-section {
+.header-section {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -189,62 +208,38 @@ export default {
   width: 100%;
 }
 
-#buttons-section {
-  width: 100%;
+.caption-1 {
+  margin-bottom: .5em;
+}
+
+.title {
+  margin-bottom: 0;
+}
+
+.buttons-section {
   display: flex;
+  position: relative;
   flex-direction: column;
-}
-
-#yellow-button,
-#transparent-button {
   width: 100%;
-  font-family: "Open Sans", sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
-  text-align: center;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 30px;
 }
 
-#yellow-button {
-  background: var(--yellow-color);
-  color: var(--second-purple-color);
-}
-
-#yellow-button:active {
-  background: rgba(246, 211, 101, 0.7);
-}
-
-#yellow-button:disabled {
-  background: #edebf2;
-  color: #b8b1c3;
-}
-
-#transparent-button {
-  background: transparent;
-  color: var(--second-purple-color);
-  border: 2px solid var(--second-purple-color);
-  margin-top: 1rem;
-}
-
-#transparent-button:active {
-  background: rgba(105, 89, 133, 0.6);
-}
-
-@media screen and (max-width: 756px) {
-  .odk-title {
-    font-size: 1.25rem !important;
+.button {
+  &:last-of-type {
+    margin-top: 1rem;
   }
+}
 
-  .body-1 {
-    font-size: 0.9rem !important;
-    line-height: 1.25rem !important;
-  }
+.fadeout-item {
+  transition: all 500ms ease-out;
+}
 
-  #yellow-button,
-  #transparent-button {
-    font-size: 0.9rem;
-  }
+.fadeout-enter,
+.fadeout-leave-to {
+  opacity: 0;
+}
+
+.fadeout-leave-active {
+  position: absolute;
+  width: 100%;
 }
 </style>

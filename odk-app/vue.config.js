@@ -1,10 +1,13 @@
-// eslint-disable-next-line no-undef
+/* eslint-disable no-undef */
+const path = require("path");
+
 module.exports = {
-  // devServer: {
-  //   proxy: 'https://localhost:8090'
-  // }
   pluginOptions: {
-    lintStyleOnBuild: false,
-    stylelint: {},
+    "style-resources-loader": {
+      preProcessor: "scss",
+      patterns: [
+        path.resolve(__dirname, "./src/styles/global/*.scss"),
+      ],
+    },
   },
 };

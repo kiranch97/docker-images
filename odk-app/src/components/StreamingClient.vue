@@ -1,13 +1,18 @@
 <template>
-  <div id="container">
-    <div id="video-stream">
-      <video id="video" autoplay="true" />
+  <div class="container">
+    <div class="stream">
+      <video id="video" class="stream-video" autoplay="true" />
       <canvas id="canvas" style="display: none;" />
     </div>
-    <div id="stream-information">
-      <stream-count :websocket-stream-state="websocketStreamState" />
-      <div id="stream-status">
-        <div id="status-box">
+
+    <div class="hud">
+      <stream-count
+        class="hud-streamresults"
+        :websocket-stream-state="websocketStreamState"
+      />
+
+      <div class="hud-streamstatus">
+        <div id="status-box" :class="{ 'is-recording': !recordToggle }">
           <div v-if="!recordToggle" class="blink-icon" />
           <DefaultLoader
             id="loader"
@@ -15,7 +20,10 @@
             :size="spinnersize"
             color="white"
           />
-          <stream-time id="stream-timer" ref="streamtimer" />
+          <stream-time
+            ref="streamtimer"
+            class="streamtimer"
+          />
         </div>
         <transition name="fade">
           <div v-if="disconnectState" id="error-prompt">
@@ -23,34 +31,53 @@
           </div>
         </transition>
       </div>
-      <div id="stream-controls">
+
+      <div class="hud-streamcontrols">
         <!-- CAMERA FLIP BUTTON-->
         <div id="stream-camera-flip">
-          <img
+          <svg
             v-if="cameraIconActive"
             class="stream-flip"
-            src="../assets/flip.png"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
             @click="flipCamera()"
           >
+            <path fill="#fff" fill-rule="evenodfd" d="M14.571 5.33c.71 0 1.286.576 1.286 1.286v.047h3.214c1.066 0 1.929.864 1.929 1.929v8.143a1.928 1.928 0 01-1.929 1.928H4.93A1.928 1.928 0 013 16.735V8.592c0-1.065.863-1.929 1.929-1.929h3.213v-.047c0-.71.576-1.286 1.287-1.286h5.142zm-4.315 3.899a4.004 4.004 0 00-1.857 5.342l.002.003c.014.028.03.054.045.083l-.06 2.107a.413.413 0 00.401.426H8.8a.414.414 0 00.413-.402l.03-1.064a3.988 3.988 0 004.499.704 3.969 3.969 0 002.035-2.287 3.963 3.963 0 00-.042-2.735l.158-2.116a.414.414 0 00-.826-.062l-.071.957a4.005 4.005 0 00-4.74-.956zm4.318 1.753l-1.42-.106a.415.415 0 00-.061.826l1.918.143c.216.656.215 1.36-.016 2.025-.278.8-.85 1.444-1.613 1.813-.763.37-1.623.42-2.424.141a3.146 3.146 0 01-1.255-.808l1.346.038c.227.017.419-.173.426-.401a.414.414 0 00-.402-.426l-1.945-.056a3.174 3.174 0 011.489-4.197 3.174 3.174 0 013.957 1.008z" />
+          </svg>
         </div>
+
         <div id="stream-start-settings">
           <!-- PLAY/PAUSE BUTTON -->
           <div v-if="!isAuto">
-            <button v-if="recordToggle" class="play-pause-circle" @click="startStream()">
+            <button
+              v-if="!disconnectState && recordToggle"
+              class="play-pause-circle"
+              @click="startStream"
+            >
               <div class="inner-circle" />
             </button>
-            <button v-else class="pause-box" @click="pauseStream()">
+            <button
+              v-else
+              class="pause-box"
+              @click="pauseStream"
+            >
               <div class="inner-button" />
             </button>
           </div>
         </div>
-        <!-- <div id="switch-container"> -->
-        <!-- MODE SWITCH BUTTON -->
-        <!-- <b-switch v-model="isAuto" class="stream-switch" size="is-large"> -->
-        <!-- <p id="auto-mode">A</p> -->
-        <!-- <p id="manual-mode">M</p> -->
-        <!-- </b-switch> -->
-        <!-- </div> -->
+
+        <div id="switch-container">
+          <!-- MODE SWITCH BUTTON -->
+          <b-switch
+            v-if="switchIconActive"
+            v-model="isAuto"
+            class="stream-switch"
+            size="is-large"
+          >
+            <p id="auto-mode">A</p>
+            <p id="manual-mode">M</p>
+          </b-switch>
+        </div>
       </div>
     </div>
   </div>
@@ -94,6 +121,8 @@ export default {
       isAuto: null,
       //FLIP CAMERA
       cameraIconActive: true,
+      switchIconActive: false,
+
 
       // ---- settings ----
       SETTINGS: {
@@ -203,17 +232,18 @@ export default {
     },
 
     startStream: function () {
-      //ADD SCREENLOCK ACTIVATION WHILE STREAMING
+      // Add screenlock activation while streaming.
       this.noSleep.enable();
-      //Setup connection with Websocket server
+
+      // Setup connection with Websocket server
       this.setupWebSockets();
-      //Change circle to pause button when stream starts
+
+      // Change circle to pause button when stream starts
       this.recordToggle = false;
-      //Hide camera flip so user can't switch orientation while streaming
+
+      // Hide camera flip so user can't switch orientation while streaming.
       this.cameraIconActive = false;
-      //$refs is used when calling functions from child components (In this case to start the timer function)
       this.$refs.streamtimer.start();
-      //document.getElementById("stream-status").innerHTML = "Streaming";
       this.startTimeTrigger();
     },
 
@@ -395,8 +425,6 @@ export default {
         this.$refs.streamtimer.start();
 
         this.disconnectState = false;
-        document.getElementById("status-box").style.background =
-          "rgba(76, 71, 85, 0.8)";
       }
     },
 
@@ -410,7 +438,6 @@ export default {
       } else {
         this.websocketConnection = null;
         this.disconnectState = true;
-        document.getElementById("status-box").style.background = "#c83737";
         setTimeout(this.setupWebSockets, 5000);
       }
     },
@@ -459,21 +486,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-:root {
-  font-size: 16px;
-}
-
-body {
-  overflow: hidden;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
-#container {
+.container {
   position: relative;
   width: 100vw;
   height: 100vh;
@@ -485,42 +498,44 @@ body {
   align-items: center;
 }
 
-#video-stream {
+.stream {
   position: relative;
   width: 100%;
+
+  &-video {
+    width: 100%;
+    height: auto;
+  }
 }
 
-#video {
-  width: 100%;
-  height: auto;
-}
-
-#stream-information {
+.hud {
   position: absolute;
   width: 100%;
   height: 100%;
   display: flex;
 
-  /* @note Following is for debugging purposes */
-  // background-image: url("http://www.getsready.com/wp-content/uploads/2016/02/amsterdam-4.jpg");
-  // background-size: cover;
-}
+  &-streamresults {
+    flex: 0 1 auto;
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
-#stream-results {
-  width: 20%;
-  height: 100vh;
-  padding-left: 33.891px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-}
+  &-streamstatus {
+    flex: 0 1 auto;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
 
-#stream-status {
-  width: 60%;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
+  &-streamcontrols {
+    flex: 0 1 auto;
+    width: 20%;
+    max-height: 426px;
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 #status-box {
@@ -533,6 +548,10 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+
+  &.is-recording {
+    background-color: var(--color-error);
+  }
 }
 
 #error-prompt {
@@ -583,69 +602,52 @@ body {
   }
 }
 
-#stream-controls {
-  width: 20%;
-  height: 100vh;
-  max-height: 426px;
-  display: flex;
-  flex-direction: column;
-}
-
 #stream-camera-flip {
-  height: 30%;
-  padding-right: 33.891px;
   display: flex;
-  justify-content: flex-end;
   align-items: center;
+  justify-content: center;
+  height: 30%;
 }
 
 #stream-start-settings {
-  position: relative;
-  height: 40%;
-  right: 20px;
   display: flex;
-  justify-content: flex-end;
   align-items: center;
+  justify-content: center;
+  height: 40%;
 }
 
 #switch-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 30%;
 }
 
 .stream-switch {
-  position: absolute;
-  right: 0.5rem;
-  bottom: 2rem;
-  transition: 0.5 all;
+  margin-right: 0;
+  transition: all 500ms;
   transform: rotate(90deg);
 }
 
 #manual-mode {
   position: absolute;
+  bottom: 7px;
+  left: 10.5px;
+  transform: rotate(-90deg);
   color: var(--color-purple);
   font-size: 1rem;
   font-weight: 600;
-  left: 10.5px;
-  bottom: 7px;
-  transform: rotate(-90deg);
-}
-
-#loader {
-  position: absolute;
-  width: 18px;
-  height: 18px;
-  left: 0.7rem;
 }
 
 #auto-mode {
   position: absolute;
-  color: var(--color-purple);
-  font-size: 1rem;
-  font-weight: 600;
-  left: 24px;
   right: 0.6rem;
   bottom: 7px;
+  left: 24px;
   transform: rotate(-90deg);
+  color: var(--main-purple-color);
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 .switch input[type="checkbox"]:checked + .check {
@@ -656,9 +658,16 @@ body {
   box-shadow: none;
 }
 
+#loader {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  left: 0.7rem;
+}
+
 .stream-flip {
-  width: 1.5rem;
-  height: 0.9969375rem;
+  width: 2.25rem;
+  height: 2.25rem;
 }
 
 .play-pause-circle {
@@ -680,14 +689,13 @@ body {
   background: var(--color-white);
   border-radius: 50%;
   outline: none;
-  opacity: 0.5;
   transition: all 0.5s;
 }
 
 .inner-button {
   width: calc(1.5rem + 1px);
   height: calc(1.5rem + 1px);
-  background: #db1f48;
+  background: var(--color-error);
   border-radius: 20%;
   transition: all 0.5s;
 }
@@ -711,16 +719,15 @@ body {
   position: absolute;
   width: 0.6rem;
   height: 0.6rem;
-  background: var(--color-error);
+  background: var(--color-white);
   left: 1.3rem;
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.6);
   border-radius: 50%;
-  -webkit-animation: blink 1.5s infinite both;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
   animation: blink 1.5s infinite both;
   z-index: 10;
 }
 
-#stream-timer {
+.streamtimer {
   color: var(--color-white);
   font-size: 16px;
   font-weight: 600;

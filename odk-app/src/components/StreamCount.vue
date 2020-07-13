@@ -4,8 +4,12 @@
       <p class="total-counts">{{ totalCount }}</p>
     </div>
 
-    <swiper id="swiper" :options="swiperOption">
-      <swiper-slide v-for="item in orderSwiperItems" :key="item.id" class="swiper-item">
+    <swiper id="swiper" :options="swiperOption" style="overflow: visible;">
+      <swiper-slide
+        v-for="item in orderSwiperItems"
+        :key="item.id"
+        class="swiper-item"
+      >
         <img class="icons" :src="require(`../assets/objects/${item.itemPicture}.png`)">
 
         <p v-if="item.count > 0" class="count">{{ item.count }}</p>
@@ -25,7 +29,7 @@ export default {
   props: {
     websocketStreamState: {
       type: String,
-      default: () => {},
+      default: "off",
     },
   },
 
@@ -196,14 +200,6 @@ export default {
 .stream-counts {
   color: var(--color-white);
   transform: rotate(90deg);
-}
-
-#stream-results {
-  width: 50px;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start !important;
 }
 
 #stream-total {

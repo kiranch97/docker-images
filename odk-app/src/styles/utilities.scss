@@ -1,0 +1,61 @@
+.is-fullheight {
+  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
+  max-height: none;
+}
+
+.is-column {
+  flex-direction: column;
+}
+
+.is-row {
+  flex-direction: row;
+}
+
+.align {
+  &-center {
+    align-items: center;
+  }
+
+  &-space-around {
+    align-items: space-around;
+  }
+
+  &-space-between {
+    align-items: space-between;
+  }
+
+  &-start {
+    align-items: flex-start;
+  }
+
+  &-end {
+    align-items: flex-end;
+  }
+}
+
+.justify {
+  &-center {
+    justify-content: center;
+  }
+
+  &-space-around {
+    justify-content: space-around;
+  }
+
+  &-space-between {
+    justify-content: space-between;
+  }
+
+  &-start {
+    justify-content: flex-start;
+  }
+
+  &-end {
+    justify-content: flex-end;
+  }
+}
+
+.is-white {
+  background-color: var(--color-white);
+}

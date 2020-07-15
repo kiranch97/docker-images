@@ -1,7 +1,10 @@
 <template>
-  <div class="container">
+  <odk-container
+    :fullwidth="true"
+    :fullheight="true"
+  >
     <div class="image-section" aria-hidden="true">
-      <img class="intro-img" src="../assets/pwa/intro.png" alt="Object Detection Kit abstract figure">
+      <img src="../assets/pwa/intro.png" alt="Object Detection Kit abstract figure">
     </div>
 
     <div class="text-section">
@@ -26,7 +29,7 @@
         </p>
 
         <p>
-          <router-link :to="{ name:'installation-manual', params: { activeVendor } }">
+          <router-link :to="{ name:'installation-manual', params: { openCard: activeVendor } }">
             How to install a PWA?
           </router-link>
         </p>
@@ -37,7 +40,7 @@
         <p>Not supported by iOS</p>
 
         <p>
-          <router-link :to="{ name:'installation-manual', params: { activeVendor } }">
+          <router-link :to="{ name:'installation-manual', params: { openCard: activeVendor } }">
             Why?
           </router-link>
         </p>
@@ -47,7 +50,7 @@
         <p>Please use another browser</p>
 
         <p>
-          <router-link :to="{ name:'installation-manual', params: { activeVendor } }">
+          <router-link :to="{ name:'installation-manual', params: { openCard: activeVendor } }">
             Which one?
           </router-link>
         </p>
@@ -57,13 +60,13 @@
         <p>This app is intended for Android phones</p>
 
         <p>
-          <router-link :to="{ name:'installation-manual', params: { activeVendor } }">
+          <router-link :to="{ name:'installation-manual', params: { openCard: activeVendor } }">
             Why?
           </router-link>
         </p>
       </div>
     </div>
-  </div>
+  </odk-container>
 </template>
 
 <script>
@@ -139,31 +142,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.container {
-  display: flex;
-  position: relative;
-  top: 3rem;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  margin: 0 auto;
-  background: var(--color-grey-light);
-  width: 100%;
-  height: 90vh;
-  max-height: 896px;
-}
-
 .image-section {
   display: flex;
+  align-items: center;
   justify-content: center;
   height: 50%;
-}
 
-.intro-img {
-  max-height: 426px;
-  width: 80%;
-  object-fit: contain;
-  transform: translate(-20%, -5%);
+  img {
+    transform: translate(-15%, -5%);
+    transition: transform 150ms ease;
+    width: 100%;
+    object-fit: contain;
+  }
 }
 
 .text-section {
@@ -171,39 +161,28 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 0 8%;
+  padding: 0 2rem;
   height: 50%;
   min-height: 20rem;
-}
 
-.button {
-  margin: 1.5rem auto;
-}
-
-@media (max-width: 1024px) and (orientation: portrait) {
-  .container {
-    top: 0;
+  .button {
+    margin: 1.5rem auto;
   }
+}
 
+@media (orientation: landscape) {
   .image-section {
-    display: flex;
-    justify-content: center;
-  }
-}
+    width: 45%;
+    height: auto;
 
-@media (max-width: 1024px) and (orientation: landscape) {
-  .container {
-    top: 0;
-    flex-direction: row;
-  }
-
-  .container .image-section {
-    align-items: center;
+    img {
+      transform: scale(1.1);
+    }
   }
 
   .text-section {
-    justify-content: center;
-    align-items: center;
+    width: 55%;
+    height: auto;
   }
 }
 </style>

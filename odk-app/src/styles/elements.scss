@@ -63,10 +63,10 @@ a,
   &,
   &.is-primary {
 
-    &:hover,
-    &.is-hovered {
-      background-color: lighten($primary, 15%);
-    }
+    // &:hover,
+    // &.is-hovered {
+    //   background-color: lighten($primary, 15%);
+    // }
 
     &:focus,
     &.is-focused {
@@ -77,10 +77,10 @@ a,
 
   &.is-secondary {
 
-    &:hover,
-    &.is-hovered {
-      background-color: lighten($secondary, 15%);
-    }
+    // &:hover,
+    // &.is-hovered {
+    //   background-color: lighten($secondary, 15%);
+    // }
 
     &:focus,
     &.is-focused {
@@ -111,11 +111,11 @@ a,
 
     &.is-primary {
 
-      &:hover,
-      &.is-hovered {
-        background-color: scale-color($primary, $lightness: 70%, $saturation: -50%);
-        color: $primary;
-      }
+      // &:hover,
+      // &.is-hovered {
+      //   background-color: scale-color($primary, $lightness: 70%, $saturation: -50%);
+      //   color: $primary;
+      // }
 
       &:focus,
       &.is-focused {

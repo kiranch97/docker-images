@@ -1,0 +1,187 @@
+{
+  "title": "How to clear stored data?",
+  "subtext": "Choose the device you are using.",
+  "copyright": "© 2020 ODK by Gemeente Amsterdam",
+  "manuals": [
+    {
+      "sysName": "android",
+      "cardTitle": "Android",
+      "steps": [
+        {
+          "components": [
+            {
+              "cTag": "h2",
+              "cProps": {
+                "class": "title is-5"
+              },
+              "cContent": "Step 1"
+            },
+            {
+              "cTag": "p",
+              "cContent": "Go back to your home screen."
+            },
+            {
+              "cTag": "img",
+              "cSrc": "manual/chrome-1.png",
+              "cProps": {
+                "alt": "Open browser's settings",
+                "class": "manual-image"
+              }
+            }
+          ]
+        },
+        {
+          "components": [
+            {
+              "cTag": "h2",
+              "cProps": {
+                "class": "title is-5"
+              },
+              "cContent": "Step 2"
+            },
+            {
+              "cTag": "p",
+              "cContent": [
+                "Long tap on the app logo and tap ",
+                {
+                  "cTag": "strong",
+                  "cContent": "App info"
+                },
+                "."
+              ]
+            },
+            {
+              "cTag": "img",
+              "cSrc": "manual/chrome-2.png",
+              "cProps": {
+                "alt": "Long tap on the app logo and tap App info.",
+                "class": "manual-image"
+              }
+            }
+          ]
+        },
+        {
+          "components": [
+            {
+              "cTag": "h2",
+              "cProps": {
+                "class": "title is-5"
+              },
+              "cContent": "Step 3"
+            },
+            {
+              "cTag": "p",
+              "cContent": [
+                "Tap ",
+                {
+                  "cTag": "strong",
+                  "cContent": "Storage"
+                },
+                "."
+              ]
+            },
+            {
+              "cTag": "img",
+              "cSrc": "manual/chrome-3.png",
+              "cProps": {
+                "alt": "Tap Storage.",
+                "class": "manual-image"
+              }
+            }
+          ]
+        },
+        {
+          "components": [
+            {
+              "cTag": "h2",
+              "cProps": {
+                "class": "title is-5"
+              },
+              "cContent": "Step 4"
+            },
+            {
+              "cTag": "p",
+              "cContent": [
+                "Tap ",
+                {
+                  "cTag": "strong",
+                  "cContent": "Clear data"
+                },
+                "."
+              ]
+            },
+            {
+              "cTag": "img",
+              "cSrc": "manual/chrome-4.png",
+              "cProps": {
+                "alt": "Tap Clear data.",
+                "class": "manual-image"
+              }
+            }
+          ]
+        },
+        {
+          "components": [
+            {
+              "cTag": "h2",
+              "cProps": {
+                "class": "title is-5"
+              },
+              "cContent": "Step 5"
+            },
+            {
+              "cTag": "p",
+              "cContent": [
+                "Confirm by tapping ",
+                {
+                  "cTag": "strong",
+                  "cContent": "OK"
+                },
+                "."
+              ]
+            },
+            {
+              "cTag": "img",
+              "cSrc": "manual/chrome-4.png",
+              "cProps": {
+                "alt": "Confirm by tapping OK.",
+                "class": "manual-image"
+              }
+            }
+          ]
+        },
+        {
+          "components": [
+            {
+              "cTag": "h2",
+              "cProps": {
+                "class": "title is-5"
+              },
+              "cContent": "Step 6"
+            },
+            {
+              "cTag": "p",
+              "cContent": [
+                "Go back to your home screen and relaunch the app."
+              ]
+            },
+            {
+              "cTag": "p",
+              "cContent": [
+                "Don’t forget to allow access to camera and GPS location to continue"
+              ]
+            },
+            {
+              "cTag": "img",
+              "cSrc": "manual/chrome-4.png",
+              "cProps": {
+                "alt": "Go back to your home screen and relaunch the app.",
+                "class": "manual-image"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

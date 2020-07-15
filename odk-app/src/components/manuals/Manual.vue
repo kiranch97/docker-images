@@ -1,14 +1,33 @@
 <template>
-  <div :class="[$style['manual'], 'container']">
+  <odk-container
+    direction="column"
+    bg-color="white"
+    :fullheight="false"
+    :fullwidth="true"
+    :class="$style['manual']"
+  >
     <header :class="$style['manual-header']">
-      <router-link to="/">
-        <img :class="$style['manual-header-logo']" src="../../assets/manual/logo.svg">
-      </router-link>
+      <img
+        :class="$style['manual-header-logo']"
+        src="../../assets/manual/logo.svg"
+        @click="goBack"
+      >
     </header>
 
     <main :class="$style['manual-body']">
       <div class="content">
-        <h1 class="title is-4">{{ content.title }}</h1>
+        <h1 class="title is-4" :class="$style['page-title']">
+          <router-link to="/">
+            <img
+              svg-inline
+              svg-sprite
+              src="@/assets/ui/chevron-left.svg"
+              alt="Ga terug"
+              :class="$style['back-button']"
+            >
+          </router-link>
+          {{ content.title }}
+        </h1>
 
         <p>{{ content.subtext }}</p>
       </div>
@@ -31,20 +50,18 @@
             :data-sys-name="manual.sysName"
             class="card-header-title is-size-6 has-text-weight-medium"
           >
-            {{ manual.browserName }}
+            {{ manual.cardTitle }}
           </p>
           <a class="card-header-icon is-size-3 no-anim">
             <div
-              v-if="props.open"
               :class="$style['icon-collapse']"
             >
-              −
-            </div>
-            <div
-              v-else
-              :class="$style['icon-collapse']"
-            >
-              +
+              <template v-if="props.open">
+                −
+              </template>
+              <template v-else>
+                +
+              </template>
             </div>
           </a>
         </div>
@@ -55,14 +72,13 @@
               :key="sI"
               :class="$style['manual-step']"
             >
-              <h2 class="title is-5">{{ step.step }}</h2>
-              <p>{{ step.instruction }}</p>
-
-              <img
-                :src="require(`../../assets/${step.stepImage}`)"
-                :alt="step.instruction"
-                :class="$style['manual-image']"
+              <component-includer
+                v-for="(component, cIndex) in step.components"
+                :key="cIndex"
+                :component-data="component"
               >
+                {{ component.cContent }}
+              </component-includer>
             </section>
           </div>
 
@@ -78,33 +94,42 @@
     <footer :class="$style['manual-footer']">
       {{ content.copyright }}
     </footer>
-  </div>
+  </odk-container>
 </template>
 
 <script>
-import content from "./content.json";
-
 export default {
-  name: "InstallManual",
+  name: "Manual",
+
+  components: {
+    ComponentIncluder: () => import("@/components/util/ComponentIncluder.vue"),
+  },
+
+  props: {
+    content: {
+      type: Object,
+      default: () => {},
+    },
+    openCard: {
+      type: String,
+      default: null,
+    },
+    scrollToCard: {
+      type: Boolean,
+      default: false,
+    },
+  },
 
   data () {
     return {
-      content,
-
       accordion: {
         isOpen: 0,
       },
     };
   },
 
-  computed: {
-    activeVendor () {
-      return this.$route.params.activeVendor;
-    },
-  },
-
   mounted () {
-    if (this.activeVendor) {
+    if (this.openCard) {
       const scrollOptions = {
         easing: "ease-in",
         offset: -50,
@@ -112,35 +137,23 @@ export default {
         cancelable: true,
       };
 
-      this.accordion.isOpen = this.content.manuals.findIndex(manual => manual.sysName === this.activeVendor);
+      this.accordion.isOpen = this.content.manuals.findIndex(manual => manual.sysName === this.openCard);
 
-      this.$scrollTo(this.$el.querySelector(`[data-sys-name="${[this.content.manuals[this.accordion.isOpen].sysName]}"]`), 250, scrollOptions);
+      if (this.scrollToCard) {
+        this.$scrollTo(this.$el.querySelector(`[data-sys-name="${[this.content.manuals[this.accordion.isOpen].sysName]}"]`), 250, scrollOptions);
+      }
     }
+  },
+
+  methods: {
+    goBack () {
+      this.router.back();
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.container {
-  display: flex;
-  flex-direction: column;
-  background: white;
-  width: 100%;
-  max-width: 414px;
-  overflow-y: auto;
-  text-align: left;
-
-  @media (max-width: 1024px) and (orientation: portrait) {
-    top: 0;
-  }
-
-  @media (max-width: 1024px) and (orientation: landscape) {
-    top: 0;
-    max-width: none;
-    max-height: none;
-  }
-}
-
 .card {
   margin: 0.75rem auto;
   border-radius: 6px;
@@ -163,17 +176,25 @@ export default {
     }
   }
 }
+
+.manual-image {
+  border-radius: 12px;
+  width: 100%;
+  object-fit: contain;
+}
 </style>
 
 <style lang="scss" module>
 .manual {
+  text-align: left;
+
   &-header {
     display: flex;
     flex: 0 1 auto;
     align-items: center;
     background: var(--color-purple);
     width: 100%;
-    height: 5rem;
+    min-height: 4rem;
 
     &-logo {
       margin-left: 1.5rem;
@@ -183,7 +204,10 @@ export default {
 
   &-body {
     flex: 1 1 100%;
+    align-self: center;
     padding: 2.375rem 1rem;
+    width: 100%;
+    max-width: 414px;
   }
 
   &-step {
@@ -194,12 +218,6 @@ export default {
     }
   }
 
-  &-image {
-    border-radius: 12px;
-    width: 100%;
-    object-fit: contain;
-  }
-
   &-footer {
     display: flex;
     flex: 0 1 auto;
@@ -207,8 +225,18 @@ export default {
     justify-content: center;
     background: var(--color-purple);
     width: 100%;
-    height: 4rem;
+    min-height: 4rem;
     color: white;
+  }
+}
+
+.page-title {
+  display: flex;
+
+  .back-button {
+    margin-right: 1rem;
+    width: 1.675rem;
+    height: 1.675rem;
   }
 }
 

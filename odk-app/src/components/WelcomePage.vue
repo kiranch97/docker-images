@@ -1,16 +1,16 @@
 <template>
-  <div class="container">
+  <odk-container>
     <div class="image-section">
-      <img class="intro-img" src="../assets/pwa/intro.png" alt>
+      <img src="../assets/pwa/intro.png" alt>
     </div>
 
     <div class="text-section">
-      <div class="header-section">
+      <div class="text-section-header">
         <h1>Object Detection Kit</h1>
         <p>Houd de straten schoon door te scannen tijdens het rijden</p>
       </div>
 
-      <div class="buttons-section">
+      <div class="text-section-buttons">
         <router-link
           to="/recommendation"
           tag="b-button"
@@ -20,7 +20,7 @@
         </router-link>
       </div>
     </div>
-  </div>
+  </odk-container>
 </template>
 
 <script>
@@ -66,58 +66,59 @@ export default {
 };
 </script>
 
-<style scoped>
-.container {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  max-width: 896px;
-  max-height: 414px;
-  margin: 0 auto;
-  padding: 0 2rem 0 1rem;
-  background: var(--color-white-bis);
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-}
-
+<style lang="scss" scoped>
 .image-section {
-  width: 50%;
-  height: 100%;
   display: flex;
-  justify-content: center;
   align-items: center;
-}
+  justify-content: center;
+  height: 50%;
 
-.intro-img {
-  object-fit: cover;
-  transform: translateX(-15%);
+  img {
+    object-fit: cover;
+    transform: translateX(-15%);
+  }
 }
 
 .text-section {
-  width: 50%;
-  height: 100%;
-  max-width: 20rem;
-  padding: 2.5rem 0 2.5rem 3rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-self: center;
+  padding: 2.5rem 0 2.5rem 3rem;
+  max-width: 20rem;
+  height: 50%;
+
+  &-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin-top: 2rem;
+    width: 100%;
+    text-align: left;
+  }
+
+  &-buttons {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    .button {
+      width: 100%;
+    }
+  }
 }
 
-.header-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  text-align: left;
-  width: 100%;
-  margin-top: 2rem;
-}
+@media (orientation: landscape) {
+  .image-section {
+    width: 45%;
+    height: auto;
+  }
 
-.buttons-section {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
+  .text-section {
+    width: 55%;
+    height: 100%;
+    max-height: 414px;
+  }
 }
 </style>

@@ -1,10 +1,18 @@
 <template>
   <div id="stream-results">
-    <div id="stream-total">
+    <div
+      id="stream-total"
+      :class="{ bounce }"
+    >
       <p class="total-counts">{{ totalCount }}</p>
     </div>
 
-    <swiper id="swiper" :options="swiperOption" style="overflow: visible;">
+    <swiper
+      v-show="false"
+      id="swiper"
+      :options="swiperOption"
+      style="overflow: visible;"
+    >
       <swiper-slide
         v-for="item in orderSwiperItems"
         :key="item.id"
@@ -45,6 +53,7 @@ export default {
         spaceBetween: 15,
         freeMode: true,
       },
+      bounce: false,
       // ----
       //Detectable objects counts
       binCount: 0,
@@ -112,6 +121,17 @@ export default {
           this.fetchAnalysedResults,
           this.SETTINGS.REQUEST_COUNTS_EVERY_MS
         );
+      }
+    },
+
+    totalCount (newCount, oldCount) {
+      if (newCount > oldCount) {
+        clearTimeout(this.bounceAnimEnd);
+        this.bounce = true;
+
+        this.bounceAnimEnd = setTimeout(() => {
+          this.bounce = false;
+        }, 250);
       }
     },
   },
@@ -184,7 +204,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 .count-box-one {
   margin-right: 2rem;
   display: flex;
@@ -201,15 +221,20 @@ export default {
 }
 
 #stream-total {
-  width: 50px;
-  height: 50px;
+  width: 4.5rem;
+  height: 5.5rem;
   background: var(--color-purple);
-  border-bottom-right-radius: 50%;
-  border-bottom-left-radius: 50%;
+  border-bottom-right-radius: 2.25rem;
+  border-bottom-left-radius: 2.25rem;
   z-index: 2;
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: transform 250ms ease-in-out;
+
+  &.bounce {
+    transform: scale(1.2);
+  }
 }
 
 .total-counts {

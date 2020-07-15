@@ -21,8 +21,6 @@
 </template>
 
 <script>
-import _ from "lodash";
-
 export default {
   name: "StreamCount",
 
@@ -96,7 +94,7 @@ export default {
         },
       ];
 
-      return _.orderBy(swiperItems, "count", "desc");
+      return this._.orderBy(swiperItems, "count", "desc");
     },
   },
 

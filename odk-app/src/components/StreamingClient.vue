@@ -82,6 +82,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import StreamTime from "./StreamTime";
 import StreamCount from "./StreamCount";
@@ -487,15 +488,18 @@ export default {
 
 <style lang="scss" scoped>
 .container {
+  display: flex;
   position: relative;
+  align-items: center;
+  margin: 0 auto;
   width: 100vw;
   height: 100vh;
-  max-width: 896px;
-  max-height: 414px;
-  margin: 0 auto;
   overflow: hidden;
-  display: flex;
-  align-items: center;
+
+  @media (orientation: landscape) {
+    max-width: 896px;
+    max-height: 414px;
+  }
 }
 
 .stream {

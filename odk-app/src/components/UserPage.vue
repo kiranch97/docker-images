@@ -1,11 +1,11 @@
 <template>
-  <div class="container">
+  <odk-container>
     <div class="qr-section">
       <login-page />
     </div>
 
     <div class="text-section">
-      <div class="header-section">
+      <div class="text-section-header">
         <p class="caption-1">Laatste stap</p>
         <h1>Scan je QR-Code</h1>
         <p style="margin-top: .5em;">
@@ -13,7 +13,7 @@
         </p>
       </div>
 
-      <div class="buttons-section">
+      <div class="text-section-buttons">
         <p style="margin-bottom: .5em;">
           <span class="link" @click="saveId('demo')">Ik ben geen gemeente chauffeur</span>
         </p>
@@ -24,32 +24,30 @@
         </p>
       </div>
     </div>
-  </div>
+  </odk-container>
 </template>
 
 <script>
-import LoginPage from "./LoginPage";
-
 export default {
   name: "UserPage",
 
   components: {
-    "login-page": LoginPage,
+    LoginPage: () => import("./LoginPage"),
   },
+
   data () {
     return {
       buttonDisabled: true,
     };
   },
+
   mounted () {
-    // Init
-    //IF USER IN BROWSER AND development mode is off redirect them to BrowserStartPage
+    // If user in browser and development mode is off redirect them to BrowserStartPage.
     this.checkAppMode();
-    //IF USER HAS LOGGED IN BEFORE use that info but GENERATE NEW streamId for new session
+
+    // If user has logged in before use that info but generate new streamid for a new session.
     this.checkCredentials();
   },
-
-  // ----
 
   methods: {
     checkAppMode () {
@@ -64,8 +62,6 @@ export default {
         //   : this.$router.push({ path: "/" });
       }
     },
-
-    // ----
 
     checkCredentials () {
       if (localStorage.streamId) {
@@ -84,8 +80,6 @@ export default {
       return uniqueId;
     },
 
-    // ----
-
     saveId (user) {
       if (user == "worker") {
         localStorage.userType = "waste_department";
@@ -103,50 +97,73 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.container {
-  display: flex;
-  position: relative;
-  margin: 0 auto;
-  background: var(--color-white-bis);
-  width: 100vw;
-  max-width: 896px;
-  height: 100vh;
-  max-height: 414px;
-}
-
 .qr-section {
   z-index: 0;
-  width: 50%;
-  height: 100%;
+  height: 50%;
 }
 
 .text-section {
   display: flex;
   flex-direction: column;
+  align-self: center;
   justify-content: space-between;
   z-index: 1;
-  padding: 2.5rem 4rem 2.5rem 3rem;
-  width: 50%;
-  height: 100%;
+  padding: 2rem;
+  height: 50%;
+
+  &-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+    text-align: left;
+
+    &-buttons {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      text-align: left;
+    }
+
+    .caption-1 {
+      margin: 0;
+    }
+  }
 }
 
-.header-section {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  width: 100%;
-  text-align: left;
+@media (orientation: landscape) {
+  .qr-section {
+    align-self: center;
+    width: 45%;
+    height: 100%;
+    max-height: 414px;
+  }
+
+  .text-section {
+    padding: 1rem 1.5rem;
+    width: 55%;
+    height: 100%;
+    max-height: 414px;
+
+    .caption-1:first-of-type {
+      display: none;
+    }
+  }
 }
 
-.caption-1 {
-  margin: 0;
-}
+@media (orientation: landscape) and (min-width: 680px) {
+  .qr-section {
+    width: 50%;
+  }
 
-.buttons-section {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  text-align: left;
+  .text-section {
+    padding: 2.5rem 4rem 2.5rem 3rem;
+    width: 50%;
+
+    .caption-1:first-of-type {
+      display: initial;
+    }
+  }
 }
 </style>

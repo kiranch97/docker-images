@@ -1,7 +1,7 @@
 <template>
-  <div class="container">
+  <odk-container>
     <div class="image-section">
-      <div class="image-section-one">
+      <div class="image-section-left">
         <img
           class="recommendation-img"
           :class="{ 'is-opaque': step === 0 }"
@@ -16,7 +16,7 @@
         >
       </div>
 
-      <div class="image-section-two">
+      <div class="image-section-right">
         <img
           class="recommendation-img"
           :class="{ 'is-opaque': step === 2 }"
@@ -27,7 +27,7 @@
     </div>
 
     <div class="text-section">
-      <div class="header-section">
+      <div class="text-section-header">
         <p class="caption-1">
           {{ content.caption }}
         </p>
@@ -42,7 +42,7 @@
       <transition-group
         name="fadeout"
         tag="div"
-        class="buttons-section"
+        class="text-section-buttons"
       >
         <b-button
           ref="buttonNext"
@@ -66,7 +66,7 @@
         </router-link>
       </transition-group>
     </div>
-  </div>
+  </odk-container>
 </template>
 
 <script>
@@ -138,97 +138,77 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.container {
-  display: flex;
-  position: relative;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
-  background: var(--color-grey-light);
-  padding: 0 2rem 0 1rem;
-  width: 100vw;
-  max-width: 896px;
-  height: 100vh;
-  max-height: 414px;
-}
-
 .image-section {
-  width: 50%;
-  height: 100%;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  height: 50%;
 
-  &-one {
+  &-left {
     display: flex;
     flex-direction: column;
     justify-content: center;
   }
 
-  &-two {
+  &-right {
     display: flex;
   }
-}
 
-.rmdimageone {
-  max-height: 150px;
-  object-fit: contain;
-  margin: 1rem;
-}
+  .recommendation-img {
+    max-height: 150px;
+    object-fit: contain;
+    opacity: 0.5;
+    margin: 1rem;
 
-.recommendation-img {
-  max-height: 150px;
-  object-fit: contain;
-  opacity: 0.5;
-  margin: 1rem;
-}
-
-.is-opaque {
-  opacity: 1;
-  transition: opacity 350ms ease;
+    &.is-opaque {
+      opacity: 1;
+      transition: opacity 350ms ease;
+    }
+  }
 }
 
 .text-section {
-  width: 50%;
-  height: 100%;
-  max-width: 20rem;
-  padding: 2.5rem 0 2.5rem 3rem;
   display: flex;
   flex-direction: column;
+  align-self: center;
   justify-content: space-between;
-}
+  padding: 0 2rem 2.5rem;
+  height: 50%;
 
-.header-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  text-align: left;
-  width: 100%;
-}
+  &-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+    text-align: left;
+  }
 
-.caption-1 {
-  margin-bottom: .5em;
-}
+  &-buttons {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    width: 100%;
 
-.title {
-  margin-bottom: 0;
-}
+    .button {
+      &:last-of-type {
+        margin-top: 1rem;
+      }
+    }
+  }
 
-.buttons-section {
-  display: flex;
-  position: relative;
-  flex-direction: column;
-  width: 100%;
-}
+  .caption-1 {
+    margin: 0;
+    margin-bottom: 0.5em;
+  }
 
-.button {
-  &:last-of-type {
-    margin-top: 1rem;
+  .title {
+    margin: 0;
+    margin-bottom: 0;
   }
 }
 
+// Transition classes
 .fadeout-item {
   transition: all 500ms ease-out;
 }
@@ -241,5 +221,19 @@ export default {
 .fadeout-leave-active {
   position: absolute;
   width: 100%;
+}
+
+@media (orientation: landscape) {
+  .image-section {
+    width: 45%;
+    height: auto;
+  }
+
+  .text-section {
+    padding: 2.5rem;
+    width: 55%;
+    height: 100%;
+    max-height: 414px;
+  }
 }
 </style>

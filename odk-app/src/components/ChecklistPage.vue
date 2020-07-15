@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <odk-container>
     <div
       class="image-section"
       aria-hidden="true"
@@ -8,11 +8,11 @@
     </div>
 
     <div class="text-section">
-      <div class="header-section">
+      <div class="text-section-header">
         <h1>Voordat u begint</h1>
       </div>
 
-      <div class="buttons-section">
+      <div class="text-section-buttons">
         <b-button
           expanded
           outlined
@@ -134,11 +134,12 @@
       </div>
       <p class="tip">Als u deze stappen niet volgt, zal u ODK niet kunnen gebruiken</p>
     </div>
-  </div>
+  </odk-container>
 </template>
 
 <script>
 import OnboardingAnimation from "./OnboardingAnimation.vue";
+
 export default {
   name: "ChecklistPage",
 
@@ -152,9 +153,9 @@ export default {
       landscapeOrientation: false,
       locationPermission: false,
       camPermission: false,
+      blockProgress: false,
 
       // Geolocation coordinates.
-      geoLocUnchecked: true,
       positionLa: null,
       positionLo: null,
       currentCameraOption: null,
@@ -170,7 +171,9 @@ export default {
   mounted () {
     // Check if locationPermission, camPermission en landscape orientation are active.
     this.checkAppMode();
+
     this.checkAppOrientation();
+    window.addEventListener("resize", this._.debounce(this.checkAppOrientation, 250));
 
     // Use data of previous login, but generate a new streamId for the session.
     this.checkCredentials();
@@ -208,11 +211,25 @@ export default {
       return uniqueId;
     },
 
+    checkAppOrientation () {
+      if (window.innerWidth > window.innerHeight) {
+        console.log("orientation = landscape");
+        this.landscapeOrientation = !this.landscapeOrientation;
+      } else {
+        console.log("orientation = portrait");
+        this.landscapeOrientation = false;
+      }
+
+      this.checkAllPermission();
+    },
+
     askLocPermission () {
+      if (this.blockProgress) return;
+
       if ("geolocation" in navigator) {
         navigator.geolocation.watchPosition(
           this.updatePosition,
-          this.accessDenied,
+          this.locationAccessDenied,
         );
 
         this.locationPermission = !this.locationPermission;
@@ -223,12 +240,12 @@ export default {
       this.checkAllPermission();
     },
 
-    accessDenied (error) {
+    locationAccessDenied (error) {
       if (error.code == error.PERMISSION_DENIED) {
         this.locationPermission = false;
+        console.log("Geolocation permission was denied.");
+        this.goToNextView("/clear-storage");
       }
-
-      console.log("Geolocation permission was denied.");
     },
 
     updatePosition: function (position) {
@@ -237,6 +254,8 @@ export default {
     },
 
     askCamPermission () {
+      if (this.blockProgress) return;
+
       const curScope = this;
 
       this.currentConstraints = {
@@ -262,22 +281,12 @@ export default {
         .then(() => {
           curScope.checkAllPermission();
         })
-        .catch(function (err) {
-          console.log("==> Error occured in 'showStream':/ Permission dennied");
+        .catch((err) => {
+          console.log("==> Error occured in 'showStream':/ Permission denied");
           console.error(err);
-        });
-    },
-
-    checkAppOrientation () {
-      if (window.innerWidth > window.innerHeight) {
-        console.log("orientation = landscape");
-        this.landscapeOrientation = !this.landscapeOrientation;
-      } else {
-        console.log("orientation = portrait");
-        this.landscapeOrientation = false;
-      }
-
-      this.checkAllPermission();
+          this.goToNextView("/clear-storage");
+        })
+      ;
     },
 
     checkAllPermission () {
@@ -286,67 +295,58 @@ export default {
         this.camPermission &&
         this.landscapeOrientation
       ) {
-        setTimeout(() => {
-          this.$router.push("/user");
-        }, 1000);
+        this.goToNextView("/user");
       }
+    },
+
+    goToNextView (route) {
+      this.blockProgress = true;
+
+      setTimeout(() => {
+        this.blockProgress = false;
+        this.$router.push(route);
+      }, 1000);
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.container {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  margin: 0 auto;
-  padding: 0 2rem 0 1rem;
-  background: var(--color-white-bis);
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-}
-
 .image-section {
-  width: 50%;
-  height: 100%;
   display: flex;
-  justify-content: center;
   align-items: center;
-}
-
-.intro-img {
-  object-fit: cover;
+  justify-content: center;
+  height: 50%;
 }
 
 .text-section {
-  width: 50%;
-  height: 100%;
-  max-width: 20rem;
-  padding: 2.5rem 0 2.5rem 3rem;
   display: flex;
   flex-direction: column;
+  align-self: center;
   justify-content: space-between;
-}
+  padding-bottom: 2.5rem;
+  max-width: 20rem;
+  height: 50%;
 
-.header-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  text-align: left;
-  width: 100%;
-}
-
-.button {
-  margin-bottom: .75rem;
-
-  div:first-of-type {
+  &-header {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
     width: 100%;
+    text-align: left;
+  }
+
+  &-buttons {
+    .button {
+      margin-bottom: .75rem;
+
+      div:first-of-type {
+        display: flex;
+        align-items: center;
+        width: 100%;
+      }
+    }
   }
 }
 
@@ -362,26 +362,16 @@ export default {
   text-align: left;
 }
 
-@media (orientation: portrait) {
-  .container {
-    flex-direction: column;
+@media (orientation: landscape) {
+  .image-section {
+    width: 45%;
+    height: auto;
   }
 
-  .image-section,
   .text-section {
-    width: 100%;
-  }
-}
-
-@media (orientation: landscape) and (min-width: 900px) {
-  .container {
-    max-width: 896px;
-  }
-}
-
-
-@media (orientation: landscape) and (min-height: 500px) {
-  .container {
+    padding: 2.5rem 0 2.5rem 3rem;
+    width: 55%;
+    height: 100%;
     max-height: 414px;
   }
 }

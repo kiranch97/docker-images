@@ -1,0 +1,23 @@
+{
+    "taken_at": "2020-08-03 15:52:23",
+    "lat_lng": { "lat": 52.367867, "lng": 4.90106},
+    "stream_id": "foobar",
+    "detected_objects": {},
+    "object_count": {
+        "matras": 0,
+        "graffiti": 0,
+        "cardboard": 1,
+        "garbage_bag": 2,
+        "christmas_tree": 0,
+        "amsterdammertje": 0,
+        "container_small": 0,
+        "construction_shed": 0,
+        "construction_toilet": 0,
+        "face_privacy_filter": 0,
+        "construction_container": 0,
+        "license_plate_privacy_filter": 0
+    },
+    "stream_meta": {},
+    "img_meta": {},
+    "analyser_meta": {}
+}

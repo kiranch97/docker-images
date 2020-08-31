@@ -1,0 +1,14 @@
+{
+  "name": "send_raw_frames",
+  "version": "0.1.0",
+  "description": "Tool for sending raw frames to ODK API",
+  "main": "index.js",
+  "scripts": {
+    "send": "node index.js garbage_images"
+  },
+  "author": "SFJ Guldemond",
+  "license": "ISC",
+  "dependencies": {
+    "ws": "^7.3.0"
+  }
+}

@@ -1,19 +1,13 @@
-# python
+# venv
 venv/
+
+# ide
+.vscode/
+
+# cache
 __pycache__/
-**/__pycache__/
+.mypy_cache/
 .pytest_cache/
-**/.pytest_cache/
 
-# environment variables
-env*/
-.env*/
-env*
-.env*
-
-# IDE
-**/.idea
-.idea
-
-# Test script
-test_dash.py
+# env vars
+.env

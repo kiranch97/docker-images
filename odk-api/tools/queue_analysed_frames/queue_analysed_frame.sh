@@ -13,7 +13,8 @@
 # Docs: https://www.rabbitmq.com/management-cli.html
 
 # 1) Setup environment variables to connect to RabbitMQ
-source ../../.env
+RABBITMQ_DEFAULT_USER=rmq_user
+RABBITMQ_DEFAULT_PASS=rmq_password
 
 folder='./dummy_analysed_frames'
 

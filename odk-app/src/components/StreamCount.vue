@@ -164,12 +164,12 @@ export default {
         .then(results => {
           if (results.length == 0) return;
 
-          this.binCount = results.detected_objects_by_type.container_small || 0;
-          this.trashCount = results.detected_objects_by_type.garbage_bag || 0;
-          this.cardboardCount = results.detected_objects_by_type.cardboard || 0;
-          this.matrasCount = results.detected_objects_by_type.matras || 0;
-          // this.christmasTreeCount = results.detected_objects_by_type.christmas_tree || 0;
-          // this.constructionBinCount = results.detected_objects_by_type.construction_container || 0;
+          this.binCount = results.container_small || 0;
+          this.trashCount = results.garbage_bag || 0;
+          this.cardboardCount = results.cardboard || 0;
+          this.matrasCount = results.matras || 0;
+          // this.christmasTreeCount = results.christmas_tree || 0;
+          // this.constructionBinCount = results.construction_container || 0;
 
           this.totalCount =
             this.binCount +

@@ -29,30 +29,16 @@ services:
       - postgres-db
       - rabbitmq
     environment:
-      - DATABASE_CONNECTION_STRING
-      - RMQ_USER
-      - RMQ_PASSWORD
-      - RMQ_URL
-      - QR_LOGIN_PASSWORD
+      - DATABASE_URL
+      - BROKER_URL
+      - QR_LOGIN_STRING
     expose:
       - "80"
-  
-  rabbitmq:
-    container_name: odk-rmq
-    image: rabbitmq:3-management
-    environment:
-      - RABBITMQ_DEFAULT_USER
-      - RABBITMQ_DEFAULT_PASS
-    ports:
-      - "5672:5672"
-      - "15672:15672"
 
   postgres-db:
     container_name: odk-db
-    image: mdillon/postgis:10-alpine
+    build: ./postgres_dockerfiles
     environment:
-      - POSTGRES_NAME
-      - POSTGRES_HOST
       - POSTGRES_USER
       - POSTGRES_PASSWORD
       - PGDATA=/pgdata
@@ -63,3 +49,13 @@ services:
     logging:
        options:
          max-size: 50m
+
+  rabbitmq:
+    container_name: odk-rmq
+    image: rabbitmq:3-management
+    environment:
+      - RABBITMQ_DEFAULT_USER
+      - RABBITMQ_DEFAULT_PASS
+    ports:
+      - "5672:5672"
+      - "15672:15672"

@@ -36,7 +36,7 @@ class AnalysedFrame(Base):
         This model is used to store the collection of this data in a database.
     """
 
-    __tablename__ = "analysed_frames"
+    __tablename__ = "analysed_frames_v1"
 
     id = Column(
         UUID(as_uuid=True),

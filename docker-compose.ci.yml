@@ -28,6 +28,8 @@ services:
     depends_on:
       - postgres-db
       - rabbitmq
+    env_file:
+      - .ci.env
     environment:
       - DATABASE_URL
       - BROKER_URL

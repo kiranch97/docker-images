@@ -89,19 +89,22 @@ def check_credentials(credential_string: str) -> JSONResponse:
 
 
 @router.get("/detected_objects")
-async def detected_objects(stream_id: str, db: Session = Depends(get_db)) -> Dict:
-    now = datetime.now()
-    one_day_ago = now - timedelta(days=1)
-
+async def detected_objects(stream_id: str, day: str, db: Session = Depends(get_db)) -> Dict:
     try:
-        detected_objects = get_detected_objects(
-            db=db, stream_id=stream_id, _from=one_day_ago, _till=now
-        )
-        logger.debug("Returning detected objects")
+        start_date = datetime.strptime(day, "%Y-%m-%d")
+        end_date = start_date + timedelta(days=1)
 
-    except:
+        detected_objects = get_detected_objects(
+            db=db, stream_id=stream_id, _from=start_date, _till=end_date
+        )
+        logger.debug("Returning detected objects from '{}' till '{}' of stream_id '{}'".format(
+            start_date, end_date, stream_id
+        ))
+        return detected_objects
+
+    except Exception as e:
+        logger.error(e)
         raise HTTPException(
             status_code=500, detail="Detected objects count could not be retrieved"
         )
 
-    return detected_objects

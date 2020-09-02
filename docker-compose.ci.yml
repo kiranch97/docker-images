@@ -29,7 +29,7 @@ services:
       - postgres-db
       - rabbitmq
     env_file:
-      - .ci.env
+      - ./odk-api/.ci.env
     environment:
       - DATABASE_URL
       - BROKER_URL

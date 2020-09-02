@@ -11,7 +11,7 @@ start_nginx:
     script:
         - docker-compose -f docker-compose.ci.yml up -d nginx-proxy
     rules:
-        - if: '$CI_COMMIT_BRANCH == "master"'
+        - if: '$CI_COMMIT_BRANCH == "new-api"'
     
 
 reload_nginx:
@@ -19,7 +19,7 @@ reload_nginx:
     script:
         - docker restart odk-proxy
     rules:
-        - if: '$CI_COMMIT_BRANCH == "master"'
+        - if: '$CI_COMMIT_BRANCH == "new-api"'
           changes:
             - nginx.conf
 
@@ -30,7 +30,7 @@ start_database:
     script:
         - docker-compose -f docker-compose.ci.yml up -d postgres-db
     rules:
-        - if: '$CI_COMMIT_BRANCH == "master"'
+        - if: '$CI_COMMIT_BRANCH == "new-api"'
     
 # RABBITMQ MESSAGE BROKER
 
@@ -39,7 +39,7 @@ start_rabbitmq:
     script:
         - docker-compose -f docker-compose.ci.yml up -d rabbitmq
     rules:
-        - if: '$CI_COMMIT_BRANCH == "master"'
+        - if: '$CI_COMMIT_BRANCH == "new-api"'
     
 # FASTAPI SERVER
 
@@ -49,7 +49,7 @@ build_server:
         - docker-compose -f docker-compose.ci.yml stop fastapi-server
         - docker-compose -f docker-compose.ci.yml build fastapi-server
     rules:
-        - if: '$CI_COMMIT_BRANCH == "master"'
+        - if: '$CI_COMMIT_BRANCH == "new-api"'
           changes:
             - docker-compose.ci.yml
             - odk-api/**/*
@@ -59,7 +59,7 @@ integration_test_server:
     script:
         - docker-compose -f docker-compose.ci.yml run --rm fastapi-server bash run_db_connection_test.sh
     rules:
-        - if: '$CI_COMMIT_BRANCH == "master"'
+        - if: '$CI_COMMIT_BRANCH == "new-api"'
           changes:
             - docker-compose.ci.yml
             - odk-api/**/*
@@ -70,7 +70,7 @@ deploy_server:
     script:
         - docker-compose -f docker-compose.ci.yml up -d --no-deps fastapi-server
     rules:
-        - if: '$CI_COMMIT_BRANCH == "master"'
+        - if: '$CI_COMMIT_BRANCH == "new-api"'
           changes:
             - docker-compose.ci.yml
             - odk-api/**/*
@@ -83,7 +83,7 @@ build_app:
         - docker-compose -f docker-compose.ci.yml stop vue-pwa
         - docker-compose -f docker-compose.ci.yml build vue-pwa
     rules:
-        - if: '$CI_COMMIT_BRANCH == "master"'
+        - if: '$CI_COMMIT_BRANCH == "new-api"'
           changes:
             - docker-compose.ci.yml
             - odk-app/**/*
@@ -93,7 +93,7 @@ test_app:
     script:
         - echo "NOT YET IMPLEMENTED"
     rules:
-        - if: '$CI_COMMIT_BRANCH == "master"'
+        - if: '$CI_COMMIT_BRANCH == "new-api"'
           changes:
             - docker-compose.ci.yml
             - odk-app/**/*
@@ -104,7 +104,7 @@ deploy_app:
     script:
         - docker-compose -f docker-compose.ci.yml up -d --no-deps vue-pwa
     rules:
-        - if: '$CI_COMMIT_BRANCH == "master"'
+        - if: '$CI_COMMIT_BRANCH == "new-api"'
           changes:
             - docker-compose.ci.yml
             - odk-app/**/*

@@ -54,15 +54,15 @@ build_server:
             - docker-compose.ci.yml
             - odk-api/**/*
 
-integration_test_server:
-    stage: test
-    script:
-        - docker-compose -f docker-compose.ci.yml run --rm fastapi-server bash run_db_connection_test.sh
-    rules:
-        - if: '$CI_COMMIT_BRANCH == "new-api"'
-          changes:
-            - docker-compose.ci.yml
-            - odk-api/**/*
+# integration_test_server:
+#     stage: test
+#     script:
+#         - docker-compose -f docker-compose.ci.yml run --rm fastapi-server bash run_db_connection_test.sh
+#     rules:
+#         - if: '$CI_COMMIT_BRANCH == "new-api"'
+#           changes:
+#             - docker-compose.ci.yml
+#             - odk-api/**/*
 
 
 deploy_server:

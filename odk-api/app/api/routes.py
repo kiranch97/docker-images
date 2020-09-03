@@ -1,3 +1,4 @@
+import json
 from typing import Dict
 from datetime import datetime, timedelta
 from json.decoder import JSONDecodeError
@@ -37,7 +38,7 @@ async def stream(websocket: WebSocket) -> None:
                 stream_meta={
                     "user_type": stream_data.get("user_type") or "",
                     "vehicle_type": stream_data.get("vehicle_type") or "",
-                    "driver_phone_number": stream_data.get("driver_phone_number") or "",
+                    "user_id": stream_data.get("user_id") or "",
                 },
             )
 
@@ -66,14 +67,15 @@ def check_credentials(credential_string: str) -> JSONResponse:
     status_code: int = 500
     content: dict = {}
     try:
-        credentials = credential_string.split("/")
-        print(credentials)
+        # credentials = credential_string.split("/")
 
-        if credentials[0] == QR_LOGIN_STRING:
+        credentials = json.loads(credential_string)
+
+        if credentials['s'] == QR_LOGIN_STRING:
             content = {
                 "success": "Login successful",
-                "vehicle_type": credentials[1],
-                "driver_phone_number": credentials[2],
+                "vehicle_type": credentials['v'],
+                "user_id": credentials['u'],
             }
             status_code = 200
         else:

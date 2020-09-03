@@ -88,7 +88,7 @@ export default {
           if (results.success) {
             this.isValid = true;
             localStorage.vehicleType = results.vehicle_type;
-            localStorage.driverPhoneNumber = results.driver_phone_number;
+            localStorage.userId = results.user_id;
 
             const uniqueId = this.generateId();
             localStorage.userType = "worker";

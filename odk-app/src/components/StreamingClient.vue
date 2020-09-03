@@ -171,7 +171,7 @@ export default {
       streamId: null,
       userType: null,
       vehicleType: null,
-      driverPhoneNumber: null,
+      userId: null,
       streamTime: "00:00:00",
     };
   },
@@ -193,11 +193,11 @@ export default {
     //IF USER DOENST HAVE ID REDIRECT THEM TO PWA START PAGE
     this.checkIdNull();
 
-    //Retrieve localstorage streamId, userType, vehicleType and driverPhoneNumber
+    //Retrieve localstorage streamId, userType, vehicleType and userId
     this.streamId = localStorage.streamId;
     this.userType = localStorage.userType;
     this.vehicleType = localStorage.vehicleType;
-    this.driverPhoneNumber = localStorage.driverPhoneNumber;
+    this.userId = localStorage.userId;
   },
 
   mounted () {
@@ -282,7 +282,7 @@ export default {
         stream_id: this.streamId,
         user_type: this.userType,
         vehicle_type: this.vehicleType,
-        driver_phone_number: this.driverPhoneNumber,
+        user_id: this.userId,
         lng: this.positionLo,
         lat: this.positionLa,
         timestamp: this.timeFormat,

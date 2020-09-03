@@ -50,7 +50,7 @@ function createFrame(imagePath, fileName) {
         stream_id: 'foobar',
         user_type: 'foobar',
         vehicle_type: 'foobar',
-        driver_phone_number: 'foobar',
+        user_id: '9999',
         lng: 4.901060,
         lat: 52.367867,
         timestamp: formattedDate,

@@ -78,7 +78,7 @@ export default {
       this.turnCameraOff();
       await this.timeout(1000);
 
-      fetch(this.apiHttpUrl + "/authorized_login?credential_string=" + content, {
+      fetch(this.apiHttpUrl + "/authorized_login?credential_string=" + encodeURIComponent(content), {
         method: "GET",
       })
         .then(response => {

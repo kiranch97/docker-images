@@ -72,6 +72,17 @@ Visit [localhost:8000]() to open the ODK App.
 
 Visit [localhost:8001]() for the ODK Dashboard.
 
+## In depth
+
+### QR code
+
+Format
+```
+{"s":"xyz123","v":"garbage_truck","u":"9102"}
+```
+
+QR code generator: https://www.the-qrcode-generator.com/
+
 ## Tools
 
 

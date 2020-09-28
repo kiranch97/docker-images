@@ -1,5 +1,6 @@
 import logging
 from typing import List
+import secrets
 
 from starlette.config import Config
 from loguru import logger
@@ -18,6 +19,10 @@ ADMIN_PASSWORD:str = config("ADMIN_PASSWORD", default="amsterdam")
 VERSION: str = config("VERSION")
 PROJECT_NAME: str = config("PROJECT_NAME", default="ODK API")
 DEBUG: bool = config("DEBUG", cast=bool, default=False)
+
+# 60 minutes * 24 hours * 8 days = 8 days
+ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
+SECRET_KEY: str = secrets.token_urlsafe(32)
 
 ALLOWED_HOSTS: List[str] = config(
     "ALLOWED_HOSTS", cast=CommaSeparatedStrings, default="",

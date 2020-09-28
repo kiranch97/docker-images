@@ -1,21 +1,26 @@
 import json
-from typing import Dict
+from typing import Any, Dict
 from datetime import datetime, timedelta
 from json.decoder import JSONDecodeError
 
 from loguru import logger
 from fastapi import APIRouter, WebSocket, Depends
 from fastapi.exceptions import HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 from starlette.websockets import WebSocketDisconnect
 from starlette.responses import JSONResponse
 from sqlalchemy.orm import Session
 
-from app.core.config import QR_LOGIN_STRING
+from app.core.config import ACCESS_TOKEN_EXPIRE_MINUTES, QR_LOGIN_STRING
+from app.core.security import create_access_token
 from app.models.frame import RawFrame
 from app.log.messages import JSON_DECODE_ERROR, KEY_ERROR
 from app.broker.outgoing import queue_raw_frame
 from app.db.session import get_db
 from app.logic.services import get_detected_objects
+
+from app import schemas
+from app import crud
 
 router = APIRouter()
 
@@ -110,3 +115,24 @@ async def detected_objects(stream_id: str, day: str, db: Session = Depends(get_d
             status_code=500, detail="Detected objects count could not be retrieved"
         )
 
+
+@router.post("/login", response_model=schemas.Token)
+def login(
+    db: Session = Depends(get_db),
+    form_data: OAuth2PasswordRequestForm = Depends()
+) -> Any:
+    user = crud.user.authentication(
+        db, email=form_data.username, password=form_data.password
+    )
+    if not user:
+        raise HTTPException(status_code=400, detail="Incorrect email or password")
+    elif not crud.user.is_active(user):
+        raise HTTPException(status_code=400, detail="Inactive user")
+
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    return {
+        "access_token": create_access_token(
+            user.id, expires_delta=access_token_expires
+        ),
+        "token_type": "bearer",
+    }

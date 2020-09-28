@@ -1,7 +1,8 @@
+import re
 from typing import Optional
 from sqlalchemy.orm import Session
 
-from app.core.security import get_password_hash
+from app.core.security import get_password_hash, verify_password
 
 from app.models import User
 from app.schemas import UserCreate
@@ -24,5 +25,20 @@ class CRUDUser():
         db.commit()
         db.refresh(db_obj)
         return db_obj
+
+    def authentication(self, db: Session, email: str, password: str) -> Optional[User]:
+        user = self.get_by_email(db, email=email)
+        if not user:
+            return None
+        if not verify_password(password, user.hashed_password):
+            return None
+        return user
+
+    def is_active(self, user: User) -> bool:
+        return user.is_active
+
+    def is_superuser(self, user: User) -> bool:
+        return user.is_superuser
+
 
 user = CRUDUser()

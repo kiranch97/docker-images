@@ -11,18 +11,18 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(
-        UUID(as_uuid=True),
+        UUID(as_uuid=False),
         primary_key=True,
         default=uuid.uuid4,
         unique=True,
         nullable=False,
     )
 
-    full_name = Column(String, index=True, nullable=False)
-    email = Column(String, unique=True, index=True, nullable=True)
-    department = Column(String, index=True)
-    vehicle_type = Column(String, index=True)
+    full_name = Column(String(), index=True, nullable=False)
+    email = Column(String(), unique=True, index=True, nullable=True)
+    department = Column(String(), index=True)
+    vehicle_type = Column(String(), index=True)
     
-    hashed_password = Column(String, nullable=False)
-    is_active = Column(Boolean, default=True)
-    is_superuser = Column(Boolean, default=False)
+    hashed_password = Column(String(), nullable=False)
+    is_active = Column(Boolean(), default=True)
+    is_superuser = Column(Boolean(), default=False)

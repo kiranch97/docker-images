@@ -14,7 +14,8 @@ config = Config(".env")
 QR_LOGIN_STRING: str = config("QR_LOGIN_STRING")
 
 ADMIN_EMAIL:str = config("ADMIN_EMAIL")
-ADMIN_PASSWORD:str = config("ADMIN_PASSWORD", default="amsterdam")
+ADMIN_PASSWORD:str = config("ADMIN_PASSWORD", default="admin")
+ADMIN_USERNAME: str = config("ADMIN_USERNAME", default="Administrator")
 
 VERSION: str = config("VERSION")
 PROJECT_NAME: str = config("PROJECT_NAME", default="ODK API")
@@ -22,7 +23,7 @@ DEBUG: bool = config("DEBUG", cast=bool, default=False)
 
 # 60 minutes * 24 hours * 8 days = 8 days
 ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
-SECRET_KEY: str = secrets.token_urlsafe(32)
+SECRET_KEY: str = config("SECRET_KEY", default=secrets.token_urlsafe(32))
 
 ALLOWED_HOSTS: List[str] = config(
     "ALLOWED_HOSTS", cast=CommaSeparatedStrings, default="",

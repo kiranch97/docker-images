@@ -1,4 +1,3 @@
-from app.models.user import User
 from typing import Optional
 
 from pydantic import BaseModel
@@ -25,6 +24,9 @@ class UserUpdate(UserBase):
 
 class UserInDBBase(UserBase):
     id: Optional[str] = None
+
+    class Config:
+        orm_mode = True
 
 
 class User(UserInDBBase):

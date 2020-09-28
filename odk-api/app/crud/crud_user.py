@@ -8,6 +8,9 @@ from app.models import User
 from app.schemas import UserCreate
 
 class CRUDUser():
+    def get_by_id(self, db: Session, id: str) -> Optional[User]:
+        return db.query(User).filter(User.id == id).first()
+
     def get_by_email(self, db: Session, email: str) -> Optional[User]:
         return db.query(User).filter(User.email == email).first()
 

@@ -1,3 +1,4 @@
+from app import models
 import json
 from typing import Any, Dict
 from datetime import datetime, timedelta
@@ -21,6 +22,7 @@ from app.logic.services import get_detected_objects
 
 from app import schemas
 from app import crud
+from app.logic.users import get_current_active_user
 
 router = APIRouter()
 
@@ -136,3 +138,10 @@ def login(
         ),
         "token_type": "bearer",
     }
+
+
+@router.get("/users/me", response_model=schemas.User)
+def get_current_user(
+    current_user: models.User = Depends(get_current_active_user),
+) -> Any:
+    return current_user

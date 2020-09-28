@@ -8,7 +8,7 @@ from app.db.events import ping as ping_db
 from app.db.events import init as init_db
 from app.broker.exchanges import setup_queues
 
-from app.core.config import ADMIN_EMAIL, ADMIN_PASSWORD
+from app.core.config import ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_USERNAME
 from app.models import User
 from app.crud import user
 from app.db.session import get_session
@@ -26,7 +26,7 @@ async def create_base_user() -> User:
             email=ADMIN_EMAIL,
             password=ADMIN_PASSWORD,
             is_superuser=True,
-            full_name="Administrator"
+            full_name=ADMIN_USERNAME
         )
 
         db_user = user.create(

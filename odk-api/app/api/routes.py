@@ -22,7 +22,7 @@ from app.logic.services import get_detected_objects
 
 from app import schemas
 from app import crud
-from app.logic.users import get_current_active_user
+from app.logic.users import get_current_active_user, get_current_active_superuser
 
 router = APIRouter()
 
@@ -138,6 +138,23 @@ def login(
         ),
         "token_type": "bearer",
     }
+
+
+@router.post("/users", response_model=schemas.User)
+def create_user(
+    *,
+    db: Session = Depends(get_db),
+    user_in: schemas.UserCreate,
+    current_user: models.User = Depends(get_current_active_superuser),
+) -> Any:
+    user = crud.user.get_by_email(db, email=user_in.email)
+    if user:
+        raise HTTPException(
+            status_code=400,
+            detail="The user with this username already exists in the system.",
+        )
+    user = crud.user.create(db, obj_in=user_in)
+    return user
 
 
 @router.get("/users/me", response_model=schemas.User)

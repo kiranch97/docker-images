@@ -13,6 +13,7 @@ class UserBase(BaseModel):
     is_superuser: Optional[bool] = False
 
 
+
 class UserCreate(UserBase):
     email: str
     password: str
@@ -22,16 +23,17 @@ class UserUpdate(UserBase):
     password: Optional[str] = None
 
 
-class UserInDBBase(UserBase):
-    id: Optional[str] = None
+# class UserInDBBase(UserBase):
+#     id: Optional[str] = None
 
+#     class Config:
+#         orm_mode = True
+
+
+class User(UserBase):
     class Config:
         orm_mode = True
 
 
-class User(UserInDBBase):
-    pass
-
-
-class UserInDB(UserInDBBase):
+class UserInDB(UserBase):
     hashed_password: str

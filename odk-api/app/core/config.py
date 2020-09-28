@@ -12,6 +12,8 @@ config = Config(".env")
 # TODO: remove when JWT authentication is introduced
 QR_LOGIN_STRING: str = config("QR_LOGIN_STRING")
 
+ADMIN_EMAIL:str = config("ADMIN_EMAIL")
+ADMIN_PASSWORD:str = config("ADMIN_PASSWORD", default="amsterdam")
 
 VERSION: str = config("VERSION")
 PROJECT_NAME: str = config("PROJECT_NAME", default="ODK API")

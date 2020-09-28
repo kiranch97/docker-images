@@ -3,7 +3,9 @@ aiormq==3.2.3
 appdirs==1.4.4
 astroid==2.4.2
 attrs==19.3.0
+bcrypt==3.2.0
 black==19.10b0
+cffi==1.14.3
 cfgv==3.2.0
 click==7.1.2
 databases==0.3.2
@@ -26,6 +28,7 @@ mypy-extensions==0.4.3
 nodeenv==1.4.0
 packaging==20.4
 pamqp==2.3.0
+passlib==1.7.2
 pathspec==0.8.0
 pip-review==1.1.0
 pipupgrade==1.7.4
@@ -34,6 +37,7 @@ pre-commit==2.6.0
 psycopg2-binary==2.8.5
 py==1.9.0
 pycodestyle==2.6.0
+pycparser==2.20
 pydantic==1.6.1
 pylint==2.5.3
 pyparsing==2.4.7

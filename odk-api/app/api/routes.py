@@ -1,6 +1,6 @@
 from app import models
 import json
-from typing import Any, Dict
+from typing import Any, Dict, List
 from datetime import datetime, timedelta
 from json.decoder import JSONDecodeError
 
@@ -165,6 +165,37 @@ def create_user(
         )
     user = crud.user.create(db, obj_in=user_in)
     return user
+
+
+@router.get("/users/{user_id}", response_model=schemas.User)
+def read_user_by_id(
+    user_id: str,
+    current_user: models.User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+) -> Any:
+    """
+    Get a specific user by id.
+    """
+    user = crud.user.get_by_id(db, id=user_id)
+    if user == current_user:
+        return user
+    if not crud.user.is_superuser(current_user):
+        raise HTTPException(
+            status_code=400, detail="The user doesn't have enough privileges"
+        )
+    return user
+
+
+@router.get("/users", response_model=List[schemas.User])
+def read_users(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_active_superuser),
+) -> Any:
+    """
+    Retrieve users.
+    """
+    users = crud.user.get_all(db)
+    return users
 
 
 @router.put("/users/{user_id}", response_model=schemas.User)

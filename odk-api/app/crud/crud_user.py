@@ -1,4 +1,4 @@
-from typing import Optional, Union, Dict, Any
+from typing import List, Optional, Union, Dict, Any
 
 from sqlalchemy.orm import Session
 
@@ -12,6 +12,9 @@ class CRUDUser():
 
     def get_by_email(self, db: Session, email: str) -> Optional[User]:
         return db.query(User).filter(User.email == email).first()
+    
+    def get_all(self, db: Session) -> List[User]:
+        return db.query(User).all()
 
     def create(self, db: Session, obj_in: UserCreate) -> User:
         db_obj = User(

@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
 from app.core.config import PROJECT_NAME, DEBUG, VERSION, ALLOWED_HOSTS
-from app.api.routes import router
+from app.api import api_router
 from app.core.events import create_start_app_handler
 
 # First things first, set timezone!
@@ -25,4 +25,4 @@ app.add_middleware(
 app.add_event_handler("startup", create_start_app_handler())
 
 
-app.include_router(router)
+app.include_router(api_router)

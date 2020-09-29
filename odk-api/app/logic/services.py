@@ -6,13 +6,10 @@ from sqlalchemy.exc import DataError, OperationalError
 from sqlalchemy.orm import Session
 
 from app.models.frame import AnalysedFrame
-from app.db.session import get_session
 
 
-def persist_analysed_frame(analysed_frame: AnalysedFrame) -> AnalysedFrame:
+def persist_analysed_frame(db: Session, analysed_frame: AnalysedFrame) -> AnalysedFrame:
     try:
-        db = get_session()
-
         db.add(analysed_frame)
         db.commit()
         db.refresh(analysed_frame)
@@ -30,6 +27,7 @@ def persist_analysed_frame(analysed_frame: AnalysedFrame) -> AnalysedFrame:
         raise e
 
     finally:
+        db.close()
         return AnalysedFrame()
 
 

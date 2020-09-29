@@ -7,6 +7,7 @@ from aio_pika import IncomingMessage
 from app.models.frame import AnalysedFrame
 from app.logic.services import persist_analysed_frame
 from app.log.messages import JSON_DECODE_ERROR, KEY_ERROR
+from app.db.session import get_session
 
 
 async def handle_analysed_frame(message: IncomingMessage) -> None:
@@ -26,7 +27,7 @@ async def handle_analysed_frame(message: IncomingMessage) -> None:
             analyser_meta=analysed_frame_dict["analyser_meta"],
         )
 
-        persist_analysed_frame(analysed_frame)
+        persist_analysed_frame(get_session(), analysed_frame)
 
     except JSONDecodeError:
         logger.error(JSON_DECODE_ERROR)

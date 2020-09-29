@@ -12,7 +12,6 @@ from app.core.config import ACCESS_TOKEN_EXPIRE_MINUTES, QR_LOGIN_STRING
 from app.core.security import create_access_token
 from app.db.session import get_db
 
-from app import models
 from app import schemas
 from app import crud
 
@@ -46,8 +45,6 @@ def check_credentials(credential_string: str) -> JSONResponse:
     status_code: int = 500
     content: dict = {}
     try:
-        # credentials = credential_string.split("/")
-
         credentials = json.loads(credential_string)
 
         if credentials['s'] == QR_LOGIN_STRING:

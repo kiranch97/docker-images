@@ -1,15 +1,13 @@
 import json
 
 from loguru import logger
-from fastapi import APIRouter, WebSocket, Depends
+from fastapi import APIRouter, WebSocket
 from starlette.websockets import WebSocketDisconnect
 
 from app.log.messages import JSON_DECODE_ERROR, KEY_ERROR
 from app.broker.outgoing import queue_raw_frame
 
-from app import models
 from app import schemas
-from app import crud
 
 router = APIRouter()
 
@@ -24,7 +22,7 @@ async def stream(websocket: WebSocket) -> None:
             stream_data = await websocket.receive_json()
 
             # 2) Build RawFrame object
-            raw_frame = models.RawFrame(
+            raw_frame = schemas.RawFrame(
                 img=stream_data["img"],
                 taken_at=stream_data["timestamp"],
                 lat_lng={"lat": stream_data["lat"], "lng": stream_data["lng"]},
@@ -42,14 +40,20 @@ async def stream(websocket: WebSocket) -> None:
             await queue_raw_frame(raw_frame)
 
     except WebSocketDisconnect:
-        logger.info("Websocket connection disconnected")
+        message = "Websocket connection disconnected"
+        logger.info(message)
 
     except json.JSONDecodeError:
+        message = JSON_DECODE_ERROR
+        await websocket.send_text(message)
         logger.error(JSON_DECODE_ERROR)
 
     except KeyError as e:
-        logger.error(KEY_ERROR.format(e))
+        message = KEY_ERROR.format(e)
+        await websocket.send_text(message)
+        logger.error(message)
 
     except Exception as e:
+        await websocket.send_text(e)
         logger.error(e)
         raise e

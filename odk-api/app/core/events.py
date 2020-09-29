@@ -18,7 +18,6 @@ async def create_base_user() -> User:
     db_session = get_session()
 
     try:
-
         if base_user := user.get_by_email(db=db_session, email=ADMIN_EMAIL):
             return base_user
         

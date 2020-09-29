@@ -2,12 +2,12 @@ from aio_pika import Message
 from aio_pika.exchange import Exchange
 from loguru import logger
 
-from app.models.frame import RawFrame
 from app.broker.exchanges import exchanges
 from app.core.config import EXCHANGE_RAW_FRAMES, SINGLE_ROUTING_KEY
 
+from app import schemas
 
-async def queue_raw_frame(raw_frame: RawFrame) -> None:
+async def queue_raw_frame(raw_frame: schemas.RawFrame) -> None:
     """
     Queuing a RawFrame object.
 

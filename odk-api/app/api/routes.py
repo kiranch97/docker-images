@@ -140,6 +140,13 @@ def login(
     }
 
 
+@router.get("/users/me", response_model=schemas.User)
+def get_current_user(
+    current_user: models.User = Depends(get_current_active_user),
+) -> Any:
+    return current_user
+
+
 @router.post("/users", response_model=schemas.User)
 def create_user(
     *,
@@ -147,6 +154,9 @@ def create_user(
     user_in: schemas.UserCreate,
     current_user: models.User = Depends(get_current_active_superuser),
 ) -> Any:
+    """
+    Create new user.
+    """
     user = crud.user.get_by_email(db, email=user_in.email)
     if user:
         raise HTTPException(
@@ -157,8 +167,22 @@ def create_user(
     return user
 
 
-@router.get("/users/me", response_model=schemas.User)
-def get_current_user(
-    current_user: models.User = Depends(get_current_active_user),
+@router.put("/users/{user_id}", response_model=schemas.User)
+def update_user(
+    *,
+    db: Session = Depends(get_db),
+    user_id: str,
+    user_in: schemas.UserUpdate,
+    current_user: models.User = Depends(get_current_active_superuser),
 ) -> Any:
-    return current_user
+    """
+    Update a user.
+    """
+    user = crud.user.get_by_id(db, id=user_id)
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="The user with this username does not exist in the system",
+        )
+    user = crud.user.update(db, db_obj=user, obj_in=user_in)
+    return user

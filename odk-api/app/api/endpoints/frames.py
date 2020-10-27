@@ -1,11 +1,13 @@
 import json
 
 from loguru import logger
-from fastapi import APIRouter, WebSocket
+from fastapi import APIRouter, WebSocket, Depends
+from starlette.responses import JSONResponse
 from starlette.websockets import WebSocketDisconnect
 
 from app.log.messages import JSON_DECODE_ERROR, KEY_ERROR
 from app.broker.outgoing import queue_raw_frame
+from app.logic.users import get_current_active_user
 
 from app import schemas
 
@@ -55,5 +57,50 @@ async def stream(websocket: WebSocket) -> None:
 
     except Exception as e:
         await websocket.send_text(e)
+        logger.error(e)
+        raise e
+
+
+@router.post("/raw_frame")
+async def receive_raw_frame(
+    frame_dict: dict,
+    current_user = Depends(get_current_active_user),
+) -> JSONResponse:
+    response_status_code: int = 500
+    response_content: dict = {}
+
+    try:
+        raw_frame = schemas.RawFrame(
+            img=frame_dict["img"],
+            taken_at=frame_dict["timestamp"],
+            lat_lng={"lat": frame_dict["lat"], "lng": frame_dict["lng"]},
+            stream_id=frame_dict["stream_id"],
+            stream_meta={
+                "user_type": frame_dict.get("user_type") or "",
+                "vehicle_type": frame_dict.get("vehicle_type") or "",
+                "user_id": frame_dict.get("user_id") or "",
+            },
+        )
+
+        logger.debug("Received frame taken at: {}".format(raw_frame.taken_at))
+
+        await queue_raw_frame(raw_frame)
+
+        response_status_code = 200
+        response_content = {"success": "Raw frame successfully posted"}
+
+        return JSONResponse(content=response_content, status_code=response_status_code)
+
+    except json.JSONDecodeError:
+        logger.error(JSON_DECODE_ERROR)
+        response_status_code = 400
+        response_content = {"error": JSON_DECODE_ERROR}
+
+    except KeyError as e:
+        logger.error(KEY_ERROR.format(e))
+        response_status_code = 400
+        response_content = {"error": JSON_DECODE_ERROR}
+
+    except Exception as e:
         logger.error(e)
         raise e

@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+
+  app:
+    container_name: odk-app
+    build: ./odk-app
+    ports:
+      - "8090:80"
+
+  api:
+    container_name: odk-api
+    build: ./odk-api
+    env_file:
+      - ./odk-api/.env
+      - ./odk-api/.docker.env
+    ports:
+      - "8000:80"
+
+  db:
+    container_name: odk-db
+    build: ./postgres_dockerfiles
+    environment:
+      - PGDATA=/pgdata
+      - POSTGRES_USER=odk
+      - POSTGRES_PASSWORD=staging
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pgdata:/pgdata
+
+  rmq:
+    container_name: odk-rmq
+    image: rabbitmq:3-management
+    environment:
+      - RABBITMQ_DEFAULT_USER=odk
+      - RABBITMQ_DEFAULT_PASS=staging
+    ports:
+       - "8091:8080"
+       - "5672:5672"
+       - "15672:15672"

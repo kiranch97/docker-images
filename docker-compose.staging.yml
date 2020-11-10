@@ -37,5 +37,5 @@ services:
       - RABBITMQ_DEFAULT_PASS=staging
     ports:
        - "8091:8080"
-       - "5672:5672"
+       - "3389:5672"
        - "15672:15672"

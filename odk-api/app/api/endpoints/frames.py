@@ -19,7 +19,7 @@ router = APIRouter()
 def _create_raw_frame(data_incoming: Dict) -> schemas.RawFrame:
     raw_frame = schemas.RawFrame(
         img=data_incoming["img"],
-        taken_at=correct_date_string(data_incoming["timestamp"]),
+        taken_at=data_incoming["timestamp"],
         lat_lng={"lat": data_incoming["lat"], "lng": data_incoming["lng"]},
         stream_id=data_incoming["stream_id"],
         stream_meta={

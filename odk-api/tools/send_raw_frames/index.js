@@ -18,7 +18,7 @@ const fs = require('fs');
 const args = process.argv.slice(2);
 const imageFolder = args[0];
 const host = args[1] || 'localhost';
-const port = args[2] || '8000';
+const port = args[2] || '8090';
 
 const wsUrl = "ws://" + host + ":" + port + "/stream";
 const ws = new WebSocket(wsUrl);

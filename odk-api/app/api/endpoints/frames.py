@@ -1,17 +1,34 @@
+from typing import Dict
+from app.logic.utils import correct_date_string
 import json
 
 from loguru import logger
-from fastapi import APIRouter, WebSocket, Depends
+from fastapi import APIRouter, WebSocket, Depends, HTTPException
 from starlette.responses import JSONResponse
 from starlette.websockets import WebSocketDisconnect
 
 from app.log.messages import JSON_DECODE_ERROR, KEY_ERROR
-from app.broker.outgoing import queue_raw_frame
+from app.broker.producer import queue_raw_frame
 from app.logic.users import get_current_active_user
 
 from app import schemas
 
 router = APIRouter()
+
+
+def _create_raw_frame(data_incoming: Dict) -> schemas.RawFrame:
+    raw_frame = schemas.RawFrame(
+        img=data_incoming["img"],
+        taken_at=correct_date_string(data_incoming["timestamp"]),
+        lat_lng={"lat": data_incoming["lat"], "lng": data_incoming["lng"]},
+        stream_id=data_incoming["stream_id"],
+        stream_meta={
+            "user_type": data_incoming.get("user_type") or "",
+            "vehicle_type": data_incoming.get("vehicle_type") or "",
+            "user_id": data_incoming.get("user_id") or "",
+        },
+    )
+    return raw_frame
 
 
 @router.websocket("/stream")
@@ -24,18 +41,7 @@ async def stream(websocket: WebSocket) -> None:
             stream_data = await websocket.receive_json()
 
             # 2) Build RawFrame object
-            raw_frame = schemas.RawFrame(
-                img=stream_data["img"],
-                taken_at=stream_data["timestamp"],
-                lat_lng={"lat": stream_data["lat"], "lng": stream_data["lng"]},
-                stream_id=stream_data["stream_id"],
-                stream_meta={
-                    "user_type": stream_data.get("user_type") or "",
-                    "vehicle_type": stream_data.get("vehicle_type") or "",
-                    "user_id": stream_data.get("user_id") or "",
-                },
-            )
-
+            raw_frame = _create_raw_frame(stream_data)
             logger.debug("Received frame taken at: {}".format(raw_frame.taken_at))
 
             # 3) Queue RawFrame to be analysed
@@ -70,18 +76,7 @@ async def receive_raw_frame(
     response_content: dict = {}
 
     try:
-        raw_frame = schemas.RawFrame(
-            img=frame_dict["img"],
-            taken_at=frame_dict["timestamp"],
-            lat_lng={"lat": frame_dict["lat"], "lng": frame_dict["lng"]},
-            stream_id=frame_dict["stream_id"],
-            stream_meta={
-                "user_type": frame_dict.get("user_type") or "",
-                "vehicle_type": frame_dict.get("vehicle_type") or "",
-                "user_id": frame_dict.get("user_id") or "",
-            },
-        )
-
+        raw_frame = _create_raw_frame(frame_dict)
         logger.debug("Received frame taken at: {}".format(raw_frame.taken_at))
 
         await queue_raw_frame(raw_frame)
@@ -92,15 +87,19 @@ async def receive_raw_frame(
         return JSONResponse(content=response_content, status_code=response_status_code)
 
     except json.JSONDecodeError:
-        logger.error(JSON_DECODE_ERROR)
-        response_status_code = 400
-        response_content = {"error": JSON_DECODE_ERROR}
+        message = JSON_DECODE_ERROR
+        logger.error(message)
+        raise HTTPException(status_code=400, detail=message)
 
     except KeyError as e:
-        logger.error(KEY_ERROR.format(e))
-        response_status_code = 400
-        response_content = {"error": JSON_DECODE_ERROR}
+        message = KEY_ERROR.format(e)
+        logger.error(message)
+        raise HTTPException(status_code=400, detail=message)
+
+    except ValueError as e:
+        logger.error(e)
+        raise HTTPException(status_code=400, detail=str(e))
 
     except Exception as e:
         logger.error(e)
-        raise e
+        raise HTTPException(status_code=500, detail=str(e))

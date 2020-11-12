@@ -8,7 +8,7 @@ from app.core.config import EXCHANGE_RAW_FRAMES, QUEUE_RAW_FRAMES
 from app.core.config import EXCHANGE_ANALYSED_FRAMES, QUEUE_ANALYSED_FRAMES
 
 from app.broker.connection import get_connection
-from app.broker.incoming import handle_analysed_frame
+from app.broker.consumer import handle_analysed_frame
 
 exchanges: Dict = {}
 

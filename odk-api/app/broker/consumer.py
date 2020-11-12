@@ -12,6 +12,7 @@ from app.db.session import get_session
 
 async def handle_analysed_frame(message: IncomingMessage) -> None:
     try:
+        message.ack()
         analysed_frame_dict = json.loads(message.body.decode("utf-8"))
 
         logger.debug("Receiving analysed frame")
@@ -31,9 +32,6 @@ async def handle_analysed_frame(message: IncomingMessage) -> None:
 
     except JSONDecodeError:
         logger.error(JSON_DECODE_ERROR)
-
-    # except TypeError as e:
-    #     logger.error(e)
 
     except KeyError as e:
         logger.error(KEY_ERROR.format(e))

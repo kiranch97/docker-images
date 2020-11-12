@@ -1,4 +1,5 @@
 from typing import Optional
+from uuid import UUID
 
 from pydantic import BaseModel
 
@@ -31,6 +32,8 @@ class UserUpdate(UserBase):
 
 
 class User(UserBase):
+    id: UUID
+
     class Config:
         orm_mode = True
 

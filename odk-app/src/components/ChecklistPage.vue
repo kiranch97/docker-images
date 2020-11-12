@@ -9,7 +9,7 @@
 
     <div class="text-section">
       <div class="text-section-header">
-        <h1>Voordat u begint</h1>
+        <h1 class="odk-title">Voordat u begint</h1>
       </div>
 
       <div class="text-section-buttons">
@@ -295,7 +295,7 @@ export default {
         this.camPermission &&
         this.landscapeOrientation
       ) {
-        this.goToNextView("/user");
+        this.goToNextView("/client");
       }
     },
 
@@ -324,8 +324,7 @@ export default {
   flex-direction: column;
   align-self: center;
   justify-content: space-between;
-  padding-bottom: 2.5rem;
-  max-width: 20rem;
+  padding: 2.5rem;
   height: 50%;
 
   &-header {
@@ -335,6 +334,10 @@ export default {
     justify-content: flex-start;
     width: 100%;
     text-align: left;
+
+    .odk-title {
+      margin-bottom: 1rem;
+    }
   }
 
   &-buttons {
@@ -359,7 +362,9 @@ export default {
 }
 
 .tip {
+  margin-top: 0.5rem;
   text-align: left;
+  font-size: 0.875rem;
 }
 
 @media (orientation: landscape) {
@@ -369,7 +374,6 @@ export default {
   }
 
   .text-section {
-    padding: 2.5rem 0 2.5rem 3rem;
     width: 55%;
     height: 100%;
     max-height: 414px;

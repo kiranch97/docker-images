@@ -6,7 +6,7 @@ import { routes } from "./routes";
 import VueLodash from "vue-lodash";
 import lodash from "lodash";
 import moment from "vue-moment";
-import { Button, Collapse, Switch } from "buefy";
+import { Button, Collapse, Switch, Field, Select } from "buefy";
 import Vuelidate from "vuelidate";
 import VueAwesomeSwiper from "vue-awesome-swiper";
 import "swiper/dist/css/swiper.css";
@@ -33,6 +33,8 @@ Vue.use(moment);
 Vue.use(Button);
 Vue.use(Collapse);
 Vue.use(Switch);
+Vue.use(Field);
+Vue.use(Select);
 
 // Vue third-party components and directives.
 Vue.use(Vuelidate);

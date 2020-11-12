@@ -1,29 +1,29 @@
 <template>
   <odk-container>
     <div class="image-section">
-      <div class="image-section-left">
-        <img
-          class="recommendation-img"
-          :class="{ 'is-opaque': step === 0 }"
-          src="../assets/pwa/recommendation1.png"
-          alt
-        >
-        <img
-          class="recommendation-img"
-          :class="{ 'is-opaque': step === 1 }"
-          src="../assets/pwa/recommendation3.png"
-          alt
-        >
-      </div>
+      <!-- <div class="image-section-left"> -->
+      <img
+        class="recommendation-img"
+        :class="{ 'is-opaque': step === 0 }"
+        src="../assets/pwa/recommendation1-2.png"
+        alt
+      >
+      <img
+        class="recommendation-img"
+        :class="{ 'is-opaque': step === 1 }"
+        src="../assets/pwa/recommendation2-2.png"
+        alt
+      >
+      <!-- </div> -->
 
-      <div class="image-section-right">
+      <!-- <div class="image-section-right">
         <img
           class="recommendation-img"
           :class="{ 'is-opaque': step === 2 }"
           src="../assets/pwa/recommendation2.png"
           alt
         >
-      </div>
+      </div> -->
     </div>
 
     <div class="text-section">
@@ -31,10 +31,10 @@
         <p class="caption-1">
           {{ content.caption }}
         </p>
-        <h1 class="title">
+        <h1 class="odk-title">
           {{ content.steps[step].title }}
         </h1>
-        <p class="body">
+        <p class="caption-1">
           {{ content.steps[step].body }}
         </p>
       </div>
@@ -56,7 +56,7 @@
         </b-button>
 
         <router-link
-          v-if="step < 2"
+          v-if="step < 1"
           key="buttonSkip"
           to="/checklist"
           tag="b-button"
@@ -81,16 +81,16 @@ export default {
         steps: [
           {
             title: "Uw telefoon op te laden",
-            body: "tijdens het rijden. Het streamen verbruikt veel batterij",
+            body: "Het streamen verbruikt veel batterij.",
           },
           {
             title: "Uw dataverbruik te controleren",
-            body: "Het streamen kost veel data. Een ongelimiteerd abonnement wordt geadviseerd",
+            body: "Het streamen kost veel data. Een ongelimiteerd abonnement wordt geadviseerd.",
           },
-          {
-            title: "Uw eigen modus te kiezen",
-            body: "Met handmatige modus kunt u er zelf voor kiezen wanneer u wilt streamen. De automatische modus zal de stream kunnen starten en stoppen op basis van uw rijsnelheid",
-          },
+          // {
+          //   title: "Uw eigen modus te kiezen",
+          //   body: "Met handmatige modus kunt u er zelf voor kiezen wanneer u wilt streamen. De automatische modus zal de stream kunnen starten en stoppen op basis van uw rijsnelheid.",
+          // },
         ],
       },
     };
@@ -121,7 +121,7 @@ export default {
     },
 
     switchRmd () {
-      this.step >= 2 ? this.$router.push("/checklist") : this.step++;
+      this.step >= 1 ? this.$router.push("/checklist") : this.step++;
 
       this.$refs.buttonNext.$el.focus();
 
@@ -139,30 +139,43 @@ export default {
 
 <style lang="scss" scoped>
 .image-section {
+  position: relative;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
-  height: 50%;
 
-  &-left {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
+  // &-left {
+  //   display: flex;
+  //   flex-direction: column;
+  //   justify-content: center;
+  // }
 
-  &-right {
-    display: flex;
-  }
+  // &-right {
+  //   display: flex;
+  // }
 
   .recommendation-img {
-    max-height: 150px;
+    position: absolute;
+    max-height: 175px;
     object-fit: contain;
     opacity: 0.5;
     margin: 1rem;
+    display: flex;
 
     &.is-opaque {
       opacity: 1;
       transition: opacity 350ms ease;
+    }
+
+    &:nth-child(1) {
+      top: 1rem;
+      align-self: flex-start;
+    }
+
+    &:nth-child(2) {
+      bottom: 1rem;
+      align-self: flex-end;
+      transform: translateX(1rem);
     }
   }
 }
@@ -172,7 +185,7 @@ export default {
   flex-direction: column;
   align-self: center;
   justify-content: space-between;
-  padding: 0 2rem 2.5rem;
+  padding: 2.5rem;
   height: 50%;
 
   &-header {
@@ -195,16 +208,6 @@ export default {
         margin-top: 1rem;
       }
     }
-  }
-
-  .caption-1 {
-    margin: 0;
-    margin-bottom: 0.5em;
-  }
-
-  .title {
-    margin: 0;
-    margin-bottom: 0;
   }
 }
 

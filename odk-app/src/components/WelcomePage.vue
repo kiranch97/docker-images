@@ -6,18 +6,27 @@
 
     <div class="text-section">
       <div class="text-section-header">
-        <h1>Object Detection Kit</h1>
-        <p>Houd de straten schoon door te scannen tijdens het rijden</p>
+        <h1 class="odk-title">Object Detection Kit</h1>
+        <p class="caption-1">Houd de straten schoon door te scannen tijdens het rijden</p>
       </div>
 
       <div class="text-section-buttons">
+        <!-- Login -->
         <router-link
-          to="/recommendation"
+          to="/user"
           tag="b-button"
           class="is-secondary is-rounded is-expanded"
         >
-          Beginnen
+          Inloggen
         </router-link>
+
+        <!-- Start trial / Demo user -->
+        <b-button
+          class="is-primary is-outlined is-rounded is-expanded"
+          @click="saveDemo()"
+        >
+          Nu uitproberen
+        </b-button>
       </div>
     </div>
   </odk-container>
@@ -32,9 +41,7 @@ export default {
   mixins: [ startupCheck ],
 
   data () {
-    return {
-      buttonDisabled: true,
-    };
+    return {};
   },
 
   mounted () {
@@ -46,21 +53,34 @@ export default {
   },
 
   methods: {
+    generateId () {
+      return Math.random().toString(32).substring(3);
+    },
+
+    // --
+
     checkCredentials () {
       if (localStorage.streamId) {
-        localStorage.streamId = this.generateId();
-        this.$router.push({
-          name: "streaming-client",
-          params: { uniqueId: localStorage.streamId },
-        });
+        const uniqueId = this.generateId();
+        localStorage.streamId = uniqueId;
+        this.sendToClient(uniqueId);
       }
     },
 
-    generateId () {
-      const uniqueId = Math.random()
-        .toString(32)
-        .substring(3);
-      return uniqueId;
+    // --
+
+    saveDemo () {
+      localStorage.userType = "demo";
+      this.$router.push("/trial");
+    },
+
+    // --
+
+    sendToClient (id) {
+      this.$router.push({
+        name: "streaming-client",
+        params: { uniqueId: id },
+      });
     },
   },
 };
@@ -71,7 +91,6 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 50%;
 
   img {
     object-fit: cover;
@@ -84,8 +103,7 @@ export default {
   flex-direction: column;
   justify-content: space-between;
   align-self: center;
-  padding: 2.5rem 0 2.5rem 3rem;
-  max-width: 20rem;
+  padding: 2.5rem;
   height: 50%;
 
   &-header {
@@ -93,7 +111,7 @@ export default {
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    margin-top: 2rem;
+    margin-top: 1rem;
     width: 100%;
     text-align: left;
   }
@@ -105,6 +123,10 @@ export default {
 
     .button {
       width: 100%;
+
+      &:nth-child(1) {
+        margin-bottom: 1rem;
+      }
     }
   }
 }

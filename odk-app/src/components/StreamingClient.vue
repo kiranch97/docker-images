@@ -33,21 +33,18 @@
       </div>
 
       <div class="hud-streamcontrols">
-        <!-- CAMERA FLIP BUTTON-->
-        <div id="stream-camera-flip">
-          <svg
-            v-if="cameraIconActive"
-            class="stream-flip"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            @click="flipCamera()"
+        <!-- TOGGLE MENU BUTTON -->
+        <div id="toggle-sidebar">
+          <img 
+            svg-inline
+            src="@/assets/ui/burger-menu.svg"
+            alt="Backspace"
+            @click="showSidebar()"
           >
-            <path fill="#fff" fill-rule="evenodfd" d="M14.571 5.33c.71 0 1.286.576 1.286 1.286v.047h3.214c1.066 0 1.929.864 1.929 1.929v8.143a1.928 1.928 0 01-1.929 1.928H4.93A1.928 1.928 0 013 16.735V8.592c0-1.065.863-1.929 1.929-1.929h3.213v-.047c0-.71.576-1.286 1.287-1.286h5.142zm-4.315 3.899a4.004 4.004 0 00-1.857 5.342l.002.003c.014.028.03.054.045.083l-.06 2.107a.413.413 0 00.401.426H8.8a.414.414 0 00.413-.402l.03-1.064a3.988 3.988 0 004.499.704 3.969 3.969 0 002.035-2.287 3.963 3.963 0 00-.042-2.735l.158-2.116a.414.414 0 00-.826-.062l-.071.957a4.005 4.005 0 00-4.74-.956zm4.318 1.753l-1.42-.106a.415.415 0 00-.061.826l1.918.143c.216.656.215 1.36-.016 2.025-.278.8-.85 1.444-1.613 1.813-.763.37-1.623.42-2.424.141a3.146 3.146 0 01-1.255-.808l1.346.038c.227.017.419-.173.426-.401a.414.414 0 00-.402-.426l-1.945-.056a3.174 3.174 0 011.489-4.197 3.174 3.174 0 013.957 1.008z" />
-          </svg>
         </div>
 
+        <!-- PLAY/PAUSE BUTTON -->
         <div id="stream-start-settings">
-          <!-- PLAY/PAUSE BUTTON -->
           <div v-if="!isAuto">
             <button
               v-if="!disconnectState && recordToggle"
@@ -66,8 +63,21 @@
           </div>
         </div>
 
-        <div id="switch-container">
-          <!-- MODE SWITCH BUTTON -->
+        <!-- CAMERA FLIP BUTTON-->
+        <div id="stream-camera-flip">
+          <svg
+            v-if="cameraIconActive"
+            class="stream-flip"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            @click="flipCamera()"
+          >
+            <path fill="#fff" fill-rule="evenodfd" d="M14.571 5.33c.71 0 1.286.576 1.286 1.286v.047h3.214c1.066 0 1.929.864 1.929 1.929v8.143a1.928 1.928 0 01-1.929 1.928H4.93A1.928 1.928 0 013 16.735V8.592c0-1.065.863-1.929 1.929-1.929h3.213v-.047c0-.71.576-1.286 1.287-1.286h5.142zm-4.315 3.899a4.004 4.004 0 00-1.857 5.342l.002.003c.014.028.03.054.045.083l-.06 2.107a.413.413 0 00.401.426H8.8a.414.414 0 00.413-.402l.03-1.064a3.988 3.988 0 004.499.704 3.969 3.969 0 002.035-2.287 3.963 3.963 0 00-.042-2.735l.158-2.116a.414.414 0 00-.826-.062l-.071.957a4.005 4.005 0 00-4.74-.956zm4.318 1.753l-1.42-.106a.415.415 0 00-.061.826l1.918.143c.216.656.215 1.36-.016 2.025-.278.8-.85 1.444-1.613 1.813-.763.37-1.623.42-2.424.141a3.146 3.146 0 01-1.255-.808l1.346.038c.227.017.419-.173.426-.401a.414.414 0 00-.402-.426l-1.945-.056a3.174 3.174 0 011.489-4.197 3.174 3.174 0 013.957 1.008z" />
+          </svg>
+        </div>
+
+        <!-- MODE SWITCH BUTTON -->
+        <!-- <div id="switch-container">
           <b-switch
             v-if="switchIconActive"
             v-model="isAuto"
@@ -77,6 +87,62 @@
             <p id="auto-mode">A</p>
             <p id="manual-mode">M</p>
           </b-switch>
+        </div> -->
+      </div>
+
+      <div id="stream-sidebar">
+        <div id="stream-sidebar-header">
+          <img 
+            svg-inline
+            src="@/assets/ui/chevron-left.svg"
+            alt="Menu sluiten"
+            @click="hideSidebar()"
+          >
+          <p>Terug</p>
+        </div>
+
+        <!-- Default options -->
+        <div v-if="!showManualOptions" class="stream-sidebar-option" @click="showManual()">
+          <img 
+            svg-inline
+            src="@/assets/ui/manual.svg"
+            alt="Handleiding"
+          >
+          <p>Handleiding</p>
+          <img 
+            svg-inline
+            src="@/assets/ui/chevron-right-grey.svg"
+            alt="Naar handleiding"
+            class="stream-sidebar-option-arrow"
+          >
+        </div>
+
+        <div v-if="!showManualOptions" class="stream-sidebar-option" @click="logout()">
+          <img 
+            svg-inline
+            src="@/assets/ui/logout.svg"
+            alt="Uitloggen"
+          >
+          <p>Uitloggen</p>
+        </div>
+
+        <!-- Manual options -->
+        <div v-if="showManualOptions" class="stream-sidebar-option" @click="toManual('reset-manual')">
+          <img 
+            svg-inline
+            src="@/assets/ui/manual.svg"
+            alt="Verwijder gegevens"
+          >
+          <p>Verwijder gegevens</p>
+        </div>
+
+        <div v-if="showManualOptions" class="stream-sidebar-option" @click="toManual('installation-manual')">
+          <img 
+            svg-inline
+            src="@/assets/ui/manual.svg"
+            alt="Installeer PWA"
+          >
+          <p>Installeer PWA</p>
         </div>
       </div>
     </div>
@@ -88,6 +154,7 @@ import StreamTime from "./StreamTime";
 import StreamCount from "./StreamCount";
 import { DefaultLoader } from "vue-spinners-css";
 import * as NoSleep from "nosleep.js";
+import { v4 as uuidv4 } from "uuid";
 
 export default {
   //// example from: https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Taking_still_photos
@@ -123,6 +190,8 @@ export default {
       //FLIP CAMERA
       cameraIconActive: true,
       switchIconActive: false,
+      //MANUAL SIDEAR
+      showManualOptions: false,
 
 
       // ---- settings ----
@@ -168,10 +237,6 @@ export default {
       deviceSpeed: null,
       timeFormat: null,
       todayDate: null,
-      streamId: null,
-      userType: null,
-      vehicleType: null,
-      userId: null,
       streamTime: "00:00:00",
     };
   },
@@ -190,14 +255,8 @@ export default {
   },
 
   beforeMount () {
-    //IF USER DOENST HAVE ID REDIRECT THEM TO PWA START PAGE
-    this.checkIdNull();
-
-    //Retrieve localstorage streamId, userType, vehicleType and userId
-    this.streamId = localStorage.streamId;
-    this.userType = localStorage.userType;
-    this.vehicleType = localStorage.vehicleType;
-    this.userId = localStorage.userId;
+    //IF USER DOENST HAVE userType REDIRECT THEM TO PWA START PAGE
+    this.checkUserType();
   },
 
   mounted () {
@@ -273,16 +332,14 @@ export default {
 
     sendImage: function (base64Img) {
       this.timeFormat = this.$moment().format("YYYY-MM-DD HH:mm:ss.SSS");
-      this.streamId = localStorage.streamId;
-      this.userType = localStorage.userType;
 
       //Send data to websocket API
       const data = {
         img: base64Img,
-        stream_id: this.streamId,
-        user_type: this.userType,
-        vehicle_type: this.vehicleType,
-        user_id: this.userId,
+        stream_id: localStorage.streamId,
+        user_type: localStorage.userType,
+        user_id: localStorage.userId || "demo",
+        vehicle_type: localStorage.vehicleType || "demo",
         lng: this.positionLo,
         lat: this.positionLa,
         timestamp: this.timeFormat,
@@ -443,28 +500,6 @@ export default {
       }
     },
 
-    generateId () {
-      const uniqueId = Math.random()
-        .toString(32)
-        .substring(3);
-      return uniqueId;
-    },
-
-    checkIdNull () {
-      // if user comes from user / login page (set streamId)
-      if (this.uniqueId != undefined) {
-        localStorage.streamId = this.uniqueId;
-      }
-      // if user has streamId (change streamId for new session)
-      else if (localStorage.streamId) {
-        localStorage.streamId = this.generateId();
-      }
-      // if user has no localStorage.streamId (send to (first) welcome page)
-      else {
-        this.$router.push("/welcome");
-      }
-    },
-
     stopMediaTracks: function (stream) {
       stream.getTracks().forEach(track => {
         track.stop();
@@ -481,6 +516,41 @@ export default {
 
       this.stopMediaTracks(this.currentStream);
       this.showStream();
+    },
+
+    showSidebar () {
+      const sidebar = document.getElementById("stream-sidebar");
+      sidebar.style = "left: calc((100% / 3) * 2);";
+    },
+
+    hideSidebar () {
+      const sidebar = document.getElementById("stream-sidebar");
+      sidebar.style = "left: 100%;";
+      this.showManualOptions = false;
+    },
+
+    showManual () {
+      this.showManualOptions = true;
+    },
+
+    toManual (page) {
+      this.$router.push(`/${page}`);
+    },
+
+    checkUserType () {
+      // if localStorage.UserType exists (change streamId for new session)
+      if (localStorage.userType) {
+        localStorage.streamId = uuidv4();
+      }
+      // if user has no localStorage.userType (send to (first) welcome page)
+      else {
+        this.$router.push("/welcome");
+      }
+    },
+
+    logout () {
+      localStorage.clear();
+      this.$router.push("/welcome");
     },
   },
 };
@@ -606,11 +676,15 @@ export default {
   }
 }
 
-#stream-camera-flip {
+#toggle-sidebar {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 30%;
+
+  svg {
+    outline: none;
+  }
 }
 
 #stream-start-settings {
@@ -620,47 +694,54 @@ export default {
   height: 40%;
 }
 
-#switch-container {
+#stream-camera-flip {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 30%;
 }
 
-.stream-switch {
-  margin-right: 0;
-  transition: all 500ms;
-  transform: rotate(90deg);
-}
+// #switch-container {
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   height: 30%;
+// }
 
-#manual-mode {
-  position: absolute;
-  bottom: 7px;
-  left: 10.5px;
-  transform: rotate(-90deg);
-  color: var(--color-purple);
-  font-size: 1rem;
-  font-weight: 600;
-}
+// .stream-switch {
+//   margin-right: 0;
+//   transition: all 500ms;
+//   transform: rotate(90deg);
+// }
 
-#auto-mode {
-  position: absolute;
-  right: 0.6rem;
-  bottom: 7px;
-  left: 24px;
-  transform: rotate(-90deg);
-  color: var(--main-purple-color);
-  font-size: 1rem;
-  font-weight: 600;
-}
+// #manual-mode {
+//   position: absolute;
+//   bottom: 7px;
+//   left: 10.5px;
+//   transform: rotate(-90deg);
+//   color: var(--color-purple);
+//   font-size: 1rem;
+//   font-weight: 600;
+// }
 
-.switch input[type="checkbox"]:checked + .check {
-  background: rgba(255, 255, 255, 0.6) !important;
-}
+// #auto-mode {
+//   position: absolute;
+//   right: 0.6rem;
+//   bottom: 7px;
+//   left: 24px;
+//   transform: rotate(-90deg);
+//   color: var(--main-purple-color);
+//   font-size: 1rem;
+//   font-weight: 600;
+// }
 
-.switch input[type="checkbox"]:focus:checked + .check {
-  box-shadow: none;
-}
+// .switch input[type="checkbox"]:checked + .check {
+//   background: rgba(255, 255, 255, 0.6) !important;
+// }
+
+// .switch input[type="checkbox"]:focus:checked + .check {
+//   box-shadow: none;
+// }
 
 #loader {
   position: absolute;
@@ -716,7 +797,6 @@ export default {
   justify-content: center;
   align-items: center;
   transition: all 0.5s;
-  z-index: 2;
 }
 
 .blink-icon {
@@ -733,7 +813,7 @@ export default {
 
 .streamtimer {
   color: var(--color-white);
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
   text-shadow: 0 2px 3px rgba(0, 0, 0, 0.6);
 }
@@ -751,6 +831,67 @@ export default {
 video {
   max-width: none !important;
 }
+
+// Sidebar
+#stream-sidebar {
+  position: absolute;
+  left: 100%;
+  width: calc(100% / 3);
+  height: 100%;
+  background: var(--color-white);
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  transition: 0.5s;
+  z-index: 10;
+
+  &-header {
+    height: 2rem;
+    margin: 1.25rem 0;
+    display: flex;
+    align-items: center;
+
+    svg {
+      width: 1.25rem;
+      margin: 0 0.75rem 0 1rem;
+      outline: none;
+    }
+
+    p {
+      margin: 0;
+      font-weight: 600;
+    }
+  }
+
+  .stream-sidebar-option {
+    position: relative;
+    height: 2.75rem;
+    display: flex;
+    align-items: center;
+
+    &:active {
+      background: rgb(226, 222, 233);
+    }
+
+    svg:first-of-type {
+      width: 1.25rem;
+      margin: 0 0.75rem 0 1rem;
+      outline: none;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    &-arrow {
+      position: absolute;
+      right: 1rem;
+      outline: none;
+    }
+  }
+}
+//
 
 @-webkit-keyframes blink {
   0%,

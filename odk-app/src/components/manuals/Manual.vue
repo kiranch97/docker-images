@@ -237,6 +237,7 @@ export default {
     margin-right: 1rem;
     width: 1.675rem;
     height: 1.675rem;
+    outline: none;
   }
 }
 

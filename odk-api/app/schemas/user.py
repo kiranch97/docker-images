@@ -38,5 +38,13 @@ class User(UserBase):
         orm_mode = True
 
 
+class UserMinimal(BaseModel):
+    full_name: str
+    email: str
+
+    class Config:
+        orm_mode = True
+
+
 class UserInDB(UserBase):
     hashed_password: str

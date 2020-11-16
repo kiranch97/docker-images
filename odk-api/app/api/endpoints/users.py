@@ -73,6 +73,17 @@ def read_users(
     return users
 
 
+@router.get("/users-unauth", response_model=List[schemas.UserMinimal])
+def read_users_unauthorized(
+    db: Session = Depends(get_db),
+) -> Any:
+    """
+    Retrieve users.
+    """
+    users = crud.user.get_all(db)
+    return users
+
+
 @router.put("/users/{user_id}", response_model=schemas.User)
 def update_user(
     *,

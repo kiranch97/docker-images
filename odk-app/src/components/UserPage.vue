@@ -23,9 +23,9 @@
 
       <div class="text-section-dropdown">
         <b-field label="Scan-chauffeur">
-          <b-select v-model="chosenDriver" class="select" placeholder="Selecteer uw ID">
+          <b-select v-model="chosenUser" class="select" placeholder="Selecteer uw ID">
             <option
-              v-for="option in drivers"
+              v-for="option in users"
               :key="option.id"
               :value="option.name"
             >
@@ -41,43 +41,82 @@
 </template>
 
 <script>
+import { fetchEndpoint } from "../fetchEndpoint";
+
 export default {
   name: "UserPage",
 
   data () {
     return {
-      chosenDriver: null,
-      drivers: [
-        {
-          name: "AG001",
-        },
-        {
-          name: "AG002",
-        },
-        {
-          name: "AG003",
-        },
-      ],
+      apiHttpUrl: process.env.VUE_APP_API_HTTP_URL,
+      chosenUser: null,
+      users: [],
     };
   },
 
   watch: {
-    chosenDriver (value) {
-      console.log(value);
+    chosenUser (value) {
       if (value != null) {
+        // Create values
+        const user_name = value;
+        let user_email = "";
+
+        // Retreive email where chosen user == user from array
+        for (let u = 0; u < this.users.length; u++) {
+          const user = this.users[u];
+          
+          if (user.name == value) {
+            user_email = user.email;
+            break;
+          }
+        }
+
+        // Set temporary localStorage values
+        localStorage.username = user_name;
+        localStorage.email = user_email;
+
+        // Send user to code page, with props
         setTimeout(() => {
           this.$router.push({
             name: "code-page",
-            params: { username: value },
+            params: { username: user_name, email: user_email },
           });
         }, 200);
       }
     },
   },
 
-  mounted () {},
+  mounted () {
+    // Clear localStorage,
+    // if for example chose wrong user,
+    // clear its temporary values
+    localStorage.clear();
 
-  methods: {},
+    // Get list of users
+    this.getUsers();
+  },
+
+  methods: {
+    async getUsers () {
+      // Fetch data
+      const data = await fetchEndpoint("/users-unauth", "GET", false, false);
+
+      // Check for potential fetch error
+      if (data.status && data.status == "error") {
+        return;
+      }
+
+      // Set data
+      data.forEach(user => {
+        if (user.full_name != "admin") {
+          this.users.push({
+            name: user.full_name,
+            email: user.email,
+          });
+        }
+      });
+    },
+  },
 };
 </script>
 

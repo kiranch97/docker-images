@@ -339,7 +339,6 @@ export default {
         stream_id: localStorage.streamId,
         user_type: localStorage.userType,
         user_id: localStorage.userId || "demo",
-        vehicle_type: localStorage.vehicleType || "demo",
         lng: this.positionLo,
         lat: this.positionLa,
         timestamp: this.timeFormat,

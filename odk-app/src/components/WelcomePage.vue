@@ -45,30 +45,11 @@ export default {
   },
 
   mounted () {
-    // Init
-    //IF USER IN BROWSER AND development mode is off redirect them to BrowserStartPage
-    this.checkAppMode();
-    //IF USER HAS LOGGED IN BEFORE use that info but GENERATE NEW streamId for new session
-    this.checkCredentials();
+    // Always clear localStorage on this page
+    localStorage.clear();
   },
 
   methods: {
-    generateId () {
-      return Math.random().toString(32).substring(3);
-    },
-
-    // --
-
-    checkCredentials () {
-      if (localStorage.streamId) {
-        const uniqueId = this.generateId();
-        localStorage.streamId = uniqueId;
-        this.sendToClient(uniqueId);
-      }
-    },
-
-    // --
-
     saveDemo () {
       localStorage.userType = "demo";
       this.$router.push("/trial");

@@ -86,18 +86,25 @@
 </template>
 
 <script>
+import { fetchEndpoint } from "../fetchEndpoint";
+
 export default {
   name: "CodePage",
 
   props: {
     username: {
       type: String,
-      default: "chauffeur",
+      default: localStorage.username,
+    },
+    email: {
+      type: String,
+      default: localStorage.email,
     },
   },
 
   data () {
     return {
+      apiHttpUrl: process.env.VUE_APP_API_HTTP_URL,
       formData: [
         {
           nr: "",
@@ -115,7 +122,6 @@ export default {
           nr: "",
         },
       ],
-      passwordList: [],
       numpadNumbers: [
         {
           nr: "1",
@@ -148,6 +154,7 @@ export default {
           nr: "0",
         },
       ],
+      passwordList: [],
       solidBackspace: false,
     };
   },
@@ -218,26 +225,107 @@ export default {
 
     // --
 
-    sendCode () {
-      let code = "";
-      this.passwordList.forEach((el) => {
-        code += el.toString();
-      });
-      console.log(code);
-      localStorage.userType = "worker";
-      localStorage.userId = code;
-      localStorage.vehicleType = this.username;
-      this.$router.push("/recommendation");
-    },
-
-    // --
-
     showNumpad () {
       const imageSection = document.getElementsByClassName("image-section")[0];
       const numpadSection = document.getElementsByClassName("numpad-section")[0];
 
       imageSection.style = "margin-left: -45%;";
       numpadSection.style = "left: 55%;";
+    },
+
+    // --
+
+    wrongCode () {
+      // Get all input fields
+      const fields = document.getElementsByClassName("field-filled");
+
+      // Add 'wrong-code' styling
+      for (let f = 0; f < fields.length; f++) {
+        const field = fields[f];
+        field.classList.add("wrong");
+      }
+
+      // Remove 'wrong-code' styling (after animation + 0.5s)
+      setTimeout(() => {
+        for (let f = 0; f < fields.length; f++) {
+          const field = fields[f];
+          field.classList.remove("wrong");
+        }
+      }, 1500);
+    },
+
+    // --
+
+    async sendCode () {
+      // Retreive code
+      let code = "";
+      this.passwordList.forEach((el) => {
+        code += el.toString();
+      });
+
+      // Login
+      const loggedIn = await this.login(this.email, code);
+      if (!loggedIn) {
+        this.wrongCode();
+        return;
+      }
+
+      // Delete username and email from localStorage
+      localStorage.removeItem("username");
+      localStorage.removeItem("email");
+
+      // Set new localStorage value
+      localStorage.userType = "worker";
+
+      // Send user to next screen
+      this.$router.push("/recommendation");
+    },
+
+    // --
+
+    async login (email, code) {
+      // Set FormData
+      const bodyData = new FormData();
+      bodyData.set("username", email);
+      bodyData.set("password", code);
+
+      // Fetch data
+      const data = await fetchEndpoint("/login", "POST", false, bodyData);
+
+      // Check for potential fetch error
+      if (data.status && data.status == "error") {
+        return false;
+      }
+
+      // Set data
+      if (data.hasOwnProperty("access_token")) {
+        localStorage.accessToken = data.access_token;
+
+        // Get data of user
+        const userData = await this.getUserData();
+        if (userData) {
+          localStorage.userId = userData.id;
+
+          // Return successful login
+          return true;
+        }
+      }
+
+      return false;
+    },
+
+    // --
+
+    async getUserData () {
+      // Fetch data
+      const data = await fetchEndpoint("/users/me", "GET", true, false);
+
+      // Check for potential fetch error
+      if (data.status && data.status == "error") {
+        return false;
+      }
+
+      return data;
     },
   },
 };
@@ -328,6 +416,12 @@ a::after {
           font-weight: $weight-normal;
           font-size: $size-5;
         }
+
+        .wrong {
+          border-color: $danger;
+          animation-name: wrong-code;
+          animation-duration: 1s;
+        }
       }
     }
   }
@@ -410,5 +504,13 @@ a::after {
     width: 45%;
     height: 100%;
   }
+}
+
+@keyframes wrong-code {
+  0%   {transform: translateX(0);}
+  30%  {transform: translateX(-6px);}
+  50%  {transform: translateX(6px);}
+  70%  {transform: translateX(-6px);}
+  100% {transform: translateX(0);}
 }
 </style>

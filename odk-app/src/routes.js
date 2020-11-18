@@ -9,7 +9,6 @@ import StreamingClient from "./components/StreamingClient";
 import NotifyClearStorage from "./components/NotifyClearStorage";
 import ManualInstall from "./components/manuals/ManualInstall";
 import ManualReset from "./components/manuals/ManualReset";
-// import LoginPage from "./components/LoginPage";
 
 export const routes = [
   {
@@ -73,10 +72,4 @@ export const routes = [
     component: ManualReset,
     props: true,
   },
-  // {
-  //   path: "/login",
-  //   name: "login-page",
-  //   component: LoginPage,
-  //   props: true,
-  // },
 ];

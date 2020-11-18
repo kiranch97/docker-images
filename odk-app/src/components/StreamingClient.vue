@@ -177,21 +177,17 @@ export default {
 
   data: function () {
     return {
+      // ---- API PROPERTIES ----
       apiWebsocketUrl: process.env.VUE_APP_API_WS_URL,
 
       // ---- UI PROPERTIES ----
-      //PLAY/PAUSE BUTTON
-      recordButtonToggled: false,
-      //STREAM STATUS STATES
-      connectionIssue: false,
+      recordButtonToggled: false,  // PLAY/PAUSE BUTTON
+      connectionIssue: false, // STREAM STATUS STATES
       spinnersize: 25,
-      //AUTO/MANUAL MODE SWITCH
-      isAuto: null,
-      //FLIP CAMERA
+      isAuto: null, // AUTO/MANUAL MODE SWITCH
       cameraIconActive: true,
       switchIconActive: false,
-      //MANUAL SIDEAR
-      showManualOptions: false,
+      showManualOptions: false, //MANUAL SIDEAR
 
       // ---- CAPTURE PROPERTIES ----
       minImageWidth: 608,
@@ -229,15 +225,14 @@ export default {
       deviceSpeed: null,
       timeFormat: null,
 
+      // ---- MISC PROPERTIES ----
       noSleep: null,
     };
   },
 
-  // ----
-
   computed: {
     combined () {
-      //Cache geolocation with computed properties
+      // Cache geolocation with computed properties
       const currentLocation = {
         lo: this.positionLo,
         la: this.positionLa,
@@ -256,11 +251,11 @@ export default {
 
   methods: {
     checkUserType () {
-      // if localStorage.UserType exists (change streamId for new session)
+      // If localStorage.UserType exists (change streamId for new session)
       if (localStorage.userType) {
         localStorage.streamId = uuidv4();
       }
-      // if user has no localStorage.userType (send to (first) welcome page)
+      // If user has no localStorage.userType (send to (first) welcome page)
       else {
         this.$router.push("/welcome");
       }
@@ -276,7 +271,7 @@ export default {
     setupMisc: function () {
       // TODO: Implement auto mode
       this.isAuto = false;
-      //Initialize noSleep object constructor
+      // Initialize noSleep object constructor
       this.noSleep = new NoSleep();
     },
 
@@ -308,6 +303,16 @@ export default {
       video.addEventListener("canplay", this.setVideoSize, false);
     },
 
+    setVideoSize: function () {
+      this.height = this.minImageHeight;
+      this.width = (this.video.videoWidth / this.video.videoHeight) * this.height;
+
+      this.video.setAttribute("width", this.width);
+      this.video.setAttribute("height", this.height);
+      this.canvas.setAttribute("width", this.width);
+      this.canvas.setAttribute("height", this.height);
+    },
+
     locationPermission: function () {
       // Asks user for location permission
       if (navigator.geolocation) {
@@ -319,18 +324,13 @@ export default {
       }
     },
 
-    setVideoSize: function () {
-      this.height = this.minImageHeight;
-      this.width = (this.video.videoWidth / this.video.videoHeight) * this.height;
-
-      this.video.setAttribute("width", this.width);
-      this.video.setAttribute("height", this.height);
-      this.canvas.setAttribute("width", this.width);
-      this.canvas.setAttribute("height", this.height);
+    updatePosition: function (position) {
+      this.positionLa = position.coords.latitude;
+      this.positionLo = position.coords.longitude;
+      this.deviceSpeed = position.coords.speed;
     },
 
     startStream: function () {
-
       // Add screenlock activation while streaming.
       this.noSleep.enable();
 
@@ -342,37 +342,6 @@ export default {
 
       // Hide camera flip so user can't switch orientation while streaming.
       this.cameraIconActive = false;
-    },
-
-    takePicture: function () {
-      const context = this.canvas.getContext("2d");
-      if (this.width && this.height) {
-        this.canvas.width = this.width;
-        this.canvas.height = this.height;
-        context.drawImage(this.video, 0, 0, this.width, this.height);
-
-        const img = this.canvas.toDataURL("image/jpeg");
-        this.sendImage(img);
-      } else {
-        this.clearPhoto();
-      }
-    },
-
-    sendImage: function (base64Img) {
-      this.timeFormat = this.$moment().format("YYYY-MM-DD HH:mm:ss.SSS");
-
-      //Send data to websocket API
-      const data = {
-        img: base64Img,
-        stream_id: localStorage.streamId,
-        user_type: localStorage.userType,
-        user_id: localStorage.userId || "demo",
-        lng: this.positionLo,
-        lat: this.positionLa,
-        timestamp: this.timeFormat,
-      };
-
-      this.websocketConnection.send(JSON.stringify(data));
     },
 
     pauseStream: function () {
@@ -401,12 +370,6 @@ export default {
       } else {
         console.info("No open Websocket connection");
       }
-    },
-
-    updatePosition: function (position) {
-      this.positionLa = position.coords.latitude;
-      this.positionLo = position.coords.longitude;
-      this.deviceSpeed = position.coords.speed;
     },
 
     clearPhoto: function () {
@@ -450,7 +413,37 @@ export default {
         this.takePicture,
         this.imageCaptureInterval
       );
+    },
 
+    takePicture: function () {
+      const context = this.canvas.getContext("2d");
+      if (this.width && this.height) {
+        this.canvas.width = this.width;
+        this.canvas.height = this.height;
+        context.drawImage(this.video, 0, 0, this.width, this.height);
+
+        const img = this.canvas.toDataURL("image/jpeg");
+        this.sendImage(img);
+      } else {
+        this.clearPhoto();
+      }
+    },
+
+    sendImage: function (base64Img) {
+      this.timeFormat = this.$moment().format("YYYY-MM-DD HH:mm:ss.SSS");
+
+      // Send data to websocket API
+      const data = {
+        img: base64Img,
+        stream_id: localStorage.streamId,
+        user_type: localStorage.userType,
+        user_id: localStorage.userId || "demo",
+        lng: this.positionLo,
+        lat: this.positionLa,
+        timestamp: this.timeFormat,
+      };
+
+      this.websocketConnection.send(JSON.stringify(data));
     },
 
     receiveWebSocketsMsgOnClose: function () {

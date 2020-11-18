@@ -27,7 +27,7 @@
         </div>
         <transition name="fade">
           <div v-if="disconnectState" id="error-prompt">
-            <p>Geen internet verbinding</p>
+            <p>Problemen met verbinding</p>
           </div>
         </transition>
       </div>
@@ -406,11 +406,12 @@ export default {
       this.websocketConnection.onmessage = this.receiveWebSocketsMsg;
       this.websocketConnection.onopen = this.receiveWebSocketsMsgOnOpen;
       this.websocketConnection.onclose = this.receiveWebSocketsMsgOnClose;
+      this.websocketConnection.onerror = this.webSocketOnError;
     },
 
-    receiveWebSocketsMsg: function (e) {
+    receiveWebSocketsMsg: function (event) {
       //Websocket event when Message sent by the server
-        console.log(e.data);
+        console.error("WebSocket message observed:", event);
     },
 
     receiveWebSocketsMsgOnOpen: function () {
@@ -437,9 +438,10 @@ export default {
       if (this.websocketStreamState === this.streamState.OFF) {
         this.disconnectState = false;
       } else {
-        this.websocketConnection = null;
+        // this.websocketConnection = null;
         this.disconnectState = true;
-        setTimeout(this.setupWebSockets, 5000);
+        clearInterval(this.intervalHandlerPicture);
+        setTimeout(this.startStream, 5000);
       }
     },
 
@@ -463,6 +465,11 @@ export default {
       else {
         this.$router.push("/welcome");
       }
+    
+    },
+    
+    webSocketOnError: function (event) {
+        console.error("WebSocket error observed:", event);
     },
 
     stopMediaTracks: function (stream) {

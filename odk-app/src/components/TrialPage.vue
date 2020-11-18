@@ -26,13 +26,12 @@
 
       <div class="text-section-buttons">
         <!-- Login -->
-        <router-link
-          to="/recommendation"
-          tag="b-button"
+        <b-button
           class="is-secondary is-rounded is-expanded"
+          @click="toRecommendation()"
         >
           Nu uitproberen
-        </router-link>
+        </b-button>
       </div>
     </div>
   </odk-container>
@@ -46,9 +45,12 @@ export default {
     return {};
   },
 
-  mounted () {},
-
-  methods: {},
+  methods: {
+    toRecommendation () {
+      localStorage.userType = "demo";
+      this.$router.push("/recommendation");
+    },
+  },
 };
 </script>
 

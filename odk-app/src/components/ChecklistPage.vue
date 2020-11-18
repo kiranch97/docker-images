@@ -234,7 +234,7 @@ export default {
 
         this.locationPermission = !this.locationPermission;
       } else {
-        console.log("Geolocation wordt niet ondersteund door deze browser");
+        console.log("Geolocation is not supported by this browser.");
       }
 
       this.checkAllPermission();
@@ -275,7 +275,6 @@ export default {
           tracks[0].stop();
         })
         .then(() => {
-          console.log("Permission accepted");
           curScope.camPermission = !curScope.camPermission;
         })
         .then(() => {

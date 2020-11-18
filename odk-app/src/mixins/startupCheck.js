@@ -7,7 +7,7 @@ export const startupCheck = {
         console.log("This is running as standalone.");
 
         // If user installed the PWA he does not have to see this page.
-        this.$router.push("/recommendation");
+        this.$router.push("/welcome");
       } else {
         console.log("This is running in the browser");
       }

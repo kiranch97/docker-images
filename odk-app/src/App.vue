@@ -7,6 +7,8 @@
 </template>
 
 <script>
+import { pwaDiscardDetection } from "./pwaFeatures";
+
 export default {
   name: "App",
 
@@ -14,6 +16,10 @@ export default {
     this.setViewportHeight();
 
     window.addEventListener("resize", this._.debounce(this.setViewportHeight, 250));
+  },
+
+  mounted () {
+    pwaDiscardDetection();
   },
 
   methods: {

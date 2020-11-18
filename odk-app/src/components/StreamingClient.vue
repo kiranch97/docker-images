@@ -254,12 +254,10 @@ export default {
     },
   },
 
-  beforeMount () {
+  mounted () {
     //IF USER DOENST HAVE userType REDIRECT THEM TO PWA START PAGE
     this.checkUserType();
-  },
-
-  mounted () {
+    
     this.setup();
     this.showStream();
 

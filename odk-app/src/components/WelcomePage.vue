@@ -45,23 +45,33 @@ export default {
   },
 
   mounted () {
-    // Always clear localStorage on this page
-    localStorage.clear();
+    this.checkUserType();
   },
 
   methods: {
     saveDemo () {
-      localStorage.userType = "demo";
       this.$router.push("/trial");
     },
 
     // --
 
-    sendToClient (id) {
-      this.$router.push({
-        name: "streaming-client",
-        params: { uniqueId: id },
-      });
+    sendToClient () {
+      this.$router.push("/client");
+    },
+
+    // --
+
+    checkUserType () {
+      // If user has type
+      if (localStorage.userType) {
+        // send to client
+        this.sendToClient();
+      } 
+      // If user has no type
+      else {
+        // clear remaining localStorage
+        localStorage.clear();
+      }
     },
   },
 };

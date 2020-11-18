@@ -96,30 +96,9 @@ export default {
     };
   },
 
-  mounted () {
-    // Use data of previous login, but generate a new streamId for the session.
-    this.checkCredentials();
-  },
+  mounted () {},
 
   methods: {
-    checkCredentials () {
-      if (localStorage.streamId) {
-        localStorage.streamId = this.generateId();
-        this.$router.push({
-          name: "streaming-client",
-          params: { uniqueId: localStorage.streamId },
-        });
-      }
-    },
-
-    generateId () {
-      const uniqueId = Math.random()
-        .toString(32)
-        .substring(3);
-
-      return uniqueId;
-    },
-
     switchRmd () {
       this.step >= 1 ? this.$router.push("/checklist") : this.step++;
 
@@ -128,10 +107,6 @@ export default {
       setTimeout(() => {
         this.$refs.buttonNext.$el.blur();
       }, 250);
-    },
-
-    skipRmd () {
-      this.$router.push("/checklist");
     },
   },
 };

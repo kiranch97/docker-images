@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { pwaDiscardDetection } from "./pwaFeatures";
+import { pwaDiscardDetection } from "./utils/pwaFeatures";
 
 export default {
   name: "App",

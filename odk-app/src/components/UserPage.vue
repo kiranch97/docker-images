@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { fetchEndpoint } from "../fetchEndpoint";
+import { fetchEndpoint } from "../utils/fetchEndpoint";
 
 export default {
   name: "UserPage",

@@ -170,53 +170,20 @@ export default {
 
   mounted () {
     // Check if locationPermission, camPermission en landscape orientation are active.
-    this.checkAppMode();
-
     this.checkAppOrientation();
-    window.addEventListener("resize", this._.debounce(this.checkAppOrientation, 250));
 
-    // Use data of previous login, but generate a new streamId for the session.
-    this.checkCredentials();
+    window.addEventListener("resize", this._.debounce(this.checkAppOrientation, 250));
 
     // @todo If `this.checkAppOrientation = true` go to /client immedietly
   },
 
   methods: {
-    checkAppMode () {
-      const checkMedia = window.matchMedia("(display-mode: standalone)").matches;
-      if (checkMedia) {
-        console.log("This is running as standalone.");
-      } else {
-        console.log("This is running on the browser");
-        // process.env.VUE_APP_APP_MODE
-        //   ? console.log("development mode")
-        //   : this.$router.push({ path: "/" });
-      }
-    },
-
-    checkCredentials () {
-      if (localStorage.streamId) {
-        localStorage.streamId = this.generateId();
-        this.$router.push({
-          name: "streaming-client",
-          params: { uniqueId: localStorage.streamId },
-        });
-      }
-    },
-
-    generateId () {
-      const uniqueId = Math.random()
-        .toString(32)
-        .substring(3);
-      return uniqueId;
-    },
-
     checkAppOrientation () {
       if (window.innerWidth > window.innerHeight) {
-        console.log("orientation = landscape");
+        // console.log("orientation = landscape");
         this.landscapeOrientation = !this.landscapeOrientation;
       } else {
-        console.log("orientation = portrait");
+        // console.log("orientation = portrait");
         this.landscapeOrientation = false;
       }
 

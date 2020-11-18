@@ -86,6 +86,12 @@ export default {
     };
   },
 
+  beforeMount () {
+    // Check if the user is already logged in,
+    // if so, go to streaming client
+    this.checkUserType();
+  },
+
   mounted () {
     // Without the PWA installed the user cannot access the video stream.
     this.checkAppMode();
@@ -114,6 +120,13 @@ export default {
 
         this.deferredPrompt = null;
       });
+    },
+
+    checkUserType () {
+      // if localStorage.UserType exists (change streamId for new session)
+      if (localStorage.userType) {
+        this.$router.push("/client");
+      }
     },
 
     checkBrowserType () {

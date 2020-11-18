@@ -1,114 +1,147 @@
 <template>
   <odk-container>
-    <div class="qr-section">
-      <login-page />
+    <div class="image-section">
+      <img src="../assets/pwa/intro.png" alt>
     </div>
 
     <div class="text-section">
       <div class="text-section-header">
-        <p class="caption-1">Laatste stap</p>
-        <h1>Scan je QR-Code</h1>
-        <p style="margin-top: .5em;">
-          Als chauffeur van de Gemeente Amsterdam heb je een QR-Code ontvangen om je account mee te gebruiken. Houd deze voor de camera om verder te gaan.
-        </p>
+        <h1 class="odk-title is-4 page-title">
+          <router-link to="/welcome">
+            <img
+              svg-inline
+              svg-sprite
+              src="@/assets/ui/chevron-left.svg"
+              alt="Ga terug"
+              class="back-button"
+            >
+          </router-link>
+          Inloggen
+        </h1>
+        <p class="caption-1">Deze login is voor medewerkers van Gemeente Amsterdam.</p>
       </div>
 
-      <div class="text-section-buttons">
-        <p style="margin-bottom: .5em;">
-          <span class="link" @click="saveId('demo')">Ik ben geen gemeente chauffeur</span>
-        </p>
-        <p
-          class="caption-1"
-        >
-          Als je voor deze optie kiest zal de gescande data niet worden opgeslagen.
-        </p>
+      <div class="text-section-dropdown">
+        <b-field label="Scan-chauffeur">
+          <b-select v-model="chosenUser" class="select" placeholder="Selecteer uw ID">
+            <option
+              v-for="option in users"
+              :key="option.id"
+              :value="option.name"
+            >
+              {{ option.name }}
+            </option>
+          </b-select>
+        </b-field>
+
+        <img src="../assets/pwa/gemeente-logo.png" alt>
       </div>
     </div>
   </odk-container>
 </template>
 
 <script>
+import { fetchEndpoint } from "../utils/fetchEndpoint";
+
 export default {
   name: "UserPage",
 
-  components: {
-    LoginPage: () => import("./LoginPage"),
-  },
-
   data () {
     return {
-      buttonDisabled: true,
+      apiHttpUrl: process.env.VUE_APP_API_HTTP_URL,
+      chosenUser: null,
+      users: [],
     };
   },
 
-  mounted () {
-    // If user in browser and development mode is off redirect them to BrowserStartPage.
-    this.checkAppMode();
+  watch: {
+    chosenUser (value) {
+      if (value != null) {
+        // Create values
+        const user_name = value;
+        let user_email = "";
 
-    // If user has logged in before use that info but generate new streamid for a new session.
-    this.checkCredentials();
+        // Retreive email where chosen user == user from array
+        for (let u = 0; u < this.users.length; u++) {
+          const user = this.users[u];
+          
+          if (user.name == value) {
+            user_email = user.email;
+            break;
+          }
+        }
+
+        // Set temporary localStorage values
+        localStorage.username = user_name;
+        localStorage.email = user_email;
+
+        // Send user to code page, with props
+        setTimeout(() => {
+          this.$router.push({
+            name: "code-page",
+            params: { username: user_name, email: user_email },
+          });
+        }, 200);
+      }
+    },
+  },
+
+  mounted () {
+    // Clear localStorage,
+    // if for example chose wrong user,
+    // clear its temporary values
+    localStorage.clear();
+
+    // Get list of users
+    this.getUsers();
   },
 
   methods: {
-    checkAppMode () {
-      const checkMedia = window.matchMedia("(display-mode: standalone)").matches;
+    async getUsers () {
+      // Fetch data
+      const data = await fetchEndpoint("/users-unauth", "GET", false, false);
 
-      if (checkMedia) {
-        console.log("This is running as standalone.");
-      } else {
-        console.log("This is running on the browser");
-        // process.env.VUE_APP_APP_MODE
-        //   ? console.log("development mode")
-        //   : this.$router.push({ path: "/" });
+      // Check for potential fetch error
+      if (data.status && data.status == "error") {
+        return;
       }
-    },
 
-    checkCredentials () {
-      if (localStorage.streamId) {
-        localStorage.streamId = this.generateId();
-        this.$router.push({
-          name: "streaming-client",
-          params: { uniqueId: localStorage.streamId },
-        });
-      }
-    },
-
-    generateId () {
-      const uniqueId = Math.random()
-        .toString(32)
-        .substring(3);
-      return uniqueId;
-    },
-
-    saveId (user) {
-      if (user == "worker") {
-        localStorage.userType = "waste_department";
-      } else {
-        const uniqueId = this.generateId();
-        localStorage.userType = "demo";
-        this.$router.push({
-          name: "streaming-client",
-          params: { uniqueId: uniqueId },
-        });
-      }
+      // Set data
+      data.forEach(user => {
+        if (user.full_name != "admin") {
+          this.users.push({
+            name: user.full_name,
+            email: user.email,
+          });
+        }
+      });
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.qr-section {
-  z-index: 0;
-  height: 50%;
+a::after {
+  display: none;
+}
+
+.image-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    object-fit: cover;
+    transform: translateX(-15%);
+  }
 }
 
 .text-section {
   display: flex;
   flex-direction: column;
-  align-self: center;
   justify-content: space-between;
-  z-index: 1;
-  padding: 2rem;
+  align-self: center;
+  padding: 2.5rem;
   height: 50%;
 
   &-header {
@@ -116,54 +149,82 @@ export default {
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
+    margin-top: 1rem;
     width: 100%;
     text-align: left;
 
-    &-buttons {
+    .page-title {
+      line-height: 1.2rem;
       display: flex;
-      flex-direction: column;
+
+      .back-button {
+        margin-right: 0.8rem;
+        width: 1.25rem;
+        height: 1.25rem;
+        outline: none;
+      }
+    }
+  }
+
+  &-dropdown {
+    width: 100%;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .field {
       width: 100%;
       text-align: left;
+
+      ::v-deep .label {
+        font-weight: 600;
+      }
+
+      .control {
+        width: 100%;
+
+        &::after {
+          display: none;
+        }
+
+        ::v-deep span {
+          width: 100%;
+
+          &::after {
+            border-color: var(--color-black);
+          }
+
+          select {
+            width: 100%;
+            border: 1px solid rgb(152, 145, 164);
+
+            &:active,
+            &:focus {
+              box-shadow: none;
+            }
+          }
+        }
+      }
     }
 
-    .caption-1 {
-      margin: 0;
+    img {
+      width: 30%;
+      margin-top: 1rem;
     }
   }
 }
 
 @media (orientation: landscape) {
-  .qr-section {
-    align-self: center;
+  .image-section {
     width: 45%;
-    height: 100%;
-    max-height: 414px;
+    height: auto;
   }
 
   .text-section {
-    padding: 1rem 1.5rem;
     width: 55%;
     height: 100%;
     max-height: 414px;
-
-    .caption-1:first-of-type {
-      display: none;
-    }
-  }
-}
-
-@media (orientation: landscape) and (min-width: 680px) {
-  .qr-section {
-    width: 50%;
-  }
-
-  .text-section {
-    padding: 2.5rem 4rem 2.5rem 3rem;
-    width: 50%;
-
-    .caption-1:first-of-type {
-      display: initial;
-    }
   }
 }
 </style>

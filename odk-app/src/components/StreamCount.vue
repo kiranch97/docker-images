@@ -221,8 +221,8 @@ export default {
 }
 
 #stream-total {
-  width: 4.5rem;
-  height: 5.5rem;
+  width: 2.875rem;
+  height: 3.9375rem;
   background: var(--color-purple);
   border-bottom-right-radius: 2.25rem;
   border-bottom-left-radius: 2.25rem;
@@ -235,11 +235,11 @@ export default {
   &.bounce {
     transform: scale(1.2);
   }
-}
 
-.total-counts {
-  font-size: 1.5rem;
-  color: var(--color-white);
+  .total-counts {
+    margin: 0;
+    color: var(--color-white);
+  }
 }
 
 .icons {
@@ -273,8 +273,8 @@ export default {
 }
 
 .swiper-item {
-  width: 50px !important;
-  height: 50px !important;
+  width: 2.875rem !important;
+  height: 2.875rem !important;
   border-radius: 50%;
   background: var(--color-white);
   display: flex;

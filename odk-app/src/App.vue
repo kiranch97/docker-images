@@ -7,6 +7,8 @@
 </template>
 
 <script>
+import { pwaDiscardDetection } from "./utils/pwaFeatures";
+
 export default {
   name: "App",
 
@@ -14,6 +16,10 @@ export default {
     this.setViewportHeight();
 
     window.addEventListener("resize", this._.debounce(this.setViewportHeight, 250));
+  },
+
+  mounted () {
+    pwaDiscardDetection();
   },
 
   methods: {
@@ -30,6 +36,7 @@ export default {
 @import "./styles/elements";
 
 #app {
+  -webkit-tap-highlight-color: transparent;
   display: flex;
   align-items: flex-start;
   background: var(--color-grey-light);
@@ -38,7 +45,8 @@ export default {
   text-align: center;
   line-height: 1.5;
   color: var(--color-blue-dark);
-  font-size: 1rem;
+  font-family: $family-sans-serif;
+  font-size: $size-6;
   font-weight: 400;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
@@ -46,10 +54,10 @@ export default {
 
 h1,
 .odk-title {
-  line-height: 2;
+  line-height: 1.5;
   color: var(--color-blue-dark);
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: $size-5;
+  font-weight: $weight-bold;
 }
 
 h2,
@@ -57,13 +65,12 @@ h2,
   line-height: 2;
   color: var(--color-blue-dark);
   font-size: 1.125rem;
-  font-weight: 700;
+  font-weight: $weight-bold;
 }
 
 p,
 .body-1 {
-  margin-block-start: 1em;
-  margin-block-end: 1em;
+  margin-top: 0.75rem;
 }
 
 .body-2 {

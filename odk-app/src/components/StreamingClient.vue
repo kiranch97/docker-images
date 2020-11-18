@@ -12,11 +12,11 @@
       />
 
       <div class="hud-streamstatus">
-        <div id="status-box" :class="{ 'is-recording': !recordToggle }">
-          <div v-if="!recordToggle" class="blink-icon" />
+        <div id="status-box" :class="{ 'is-recording': recordButtonToggled }">
+          <div v-if="recordButtonToggled" class="blink-icon" />
           <DefaultLoader
             id="loader"
-            :loading="disconnectState"
+            :loading="connectionIssue"
             :size="spinnersize"
             color="white"
           />
@@ -26,7 +26,7 @@
           />
         </div>
         <transition name="fade">
-          <div v-if="disconnectState" id="error-prompt">
+          <div v-if="connectionIssue" id="error-prompt">
             <p>Problemen met verbinding</p>
           </div>
         </transition>
@@ -47,7 +47,7 @@
         <div id="stream-start-settings">
           <div v-if="!isAuto">
             <button
-              v-if="!disconnectState && recordToggle"
+              v-if="!recordButtonToggled"
               class="play-pause-circle"
               @click="startStream"
             >
@@ -178,12 +178,12 @@ export default {
   data: function () {
     return {
       apiWebsocketUrl: process.env.VUE_APP_API_WS_URL,
-      debug: false,
-      //------UI properties
+
+      // ---- UI PROPERTIES ----
       //PLAY/PAUSE BUTTON
-      recordToggle: true,
+      recordButtonToggled: false,
       //STREAM STATUS STATES
-      disconnectState: false,
+      connectionIssue: false,
       spinnersize: 25,
       //AUTO/MANUAL MODE SWITCH
       isAuto: null,
@@ -193,18 +193,12 @@ export default {
       //MANUAL SIDEAR
       showManualOptions: false,
 
-
-      // ---- settings ----
-      SETTINGS: {
-        minImageWidth: 608,
-        minImageHeight: 608,
-        TAKE_PICTURE_EVERY_MS: process.env.VUE_APP_CAPTURE_INTERVAL,
-      },
-      // ---- end settings ----
+      // ---- CAPTURE PROPERTIES ----
+      minImageWidth: 608,
+      minImageHeight: 608,
+      imageCaptureInterval: process.env.VUE_APP_CAPTURE_INTERVAL,
 
       // ---- STREAM PROPERTIES ----
-      noSleep: null,
-      streaming: false,
       width: null,
       height: null,
       video: null,
@@ -215,13 +209,11 @@ export default {
         ON: "on",
         OFF: "off",
       },
-      hasInternetConnection: null,
-      connectionRetrieved: false,
       websocketConnection: null,
       intervalHandlerPicture: null,
-      intervalHandlerCountRequest: null,
       countResult: null,
-      // ---- CAMERA CONSTRAITS ----
+
+      // ---- CAMERA PROPERTIES ----
       prefCameraOption: process.env.VUE_APP_DEFAULT_CAMERA_OPTION, // 'environment' or 'user'
       currentCameraOption: null,
       rearCamResolution: {
@@ -231,13 +223,13 @@ export default {
       currentConstraints: null,
       currentStream: null,
 
-      // ---- image files properties
+      // ---- IMAGE PROPERTIES ----
       positionLa: null,
       positionLo: null,
       deviceSpeed: null,
       timeFormat: null,
-      todayDate: null,
-      streamTime: "00:00:00",
+
+      noSleep: null,
     };
   },
 
@@ -255,99 +247,41 @@ export default {
   },
 
   mounted () {
-    //IF USER DOENST HAVE userType REDIRECT THEM TO PWA START PAGE
     this.checkUserType();
-    
-    this.setup();
+    this.locationPermission();
+    this.setupCamera();
+    this.setupMisc();
     this.showStream();
-
-    //Set interval when connection is offline
-    //Change stream state to OFF and close websocket connection
-    //When user has access to internet again. and iniates a new websocket stream, Clear the interval
-    //Check the user stream state. If user was streaming, restart stream. If not dont do anything.
-
-    // this.websocketStreamState = this.streamState.OFF;
-    // setInterval(this.checkInternetState, 3000);
   },
 
   methods: {
-    setup: function () {
-      //Check User_Type . If "waste_department" -> Automode, if testuser -> Manual mode
-      // @todo Fix confusing issue with automatically switching mode depending on user type. (-RJS)
-      // localStorage.userType === "waste_department"
-      //   ? (this.isAuto = true)
-      //   : (this.isAuto = false);
-      this.isAuto = false;
+    checkUserType () {
+      // if localStorage.UserType exists (change streamId for new session)
+      if (localStorage.userType) {
+        localStorage.streamId = uuidv4();
+      }
+      // if user has no localStorage.userType (send to (first) welcome page)
+      else {
+        this.$router.push("/welcome");
+      }
+    },
 
-      //Initialize noSleep object constructor
-      this.noSleep = new NoSleep();
-
-      // set current camera orientation
+    setupCamera: function () {
       this.currentCameraOption = this.prefCameraOption;
       this.video = document.getElementById("video");
       this.canvas = document.getElementById("canvas");
       this.photo = document.getElementById("photo");
     },
 
-    startStream: function () {
-      // Add screenlock activation while streaming.
-      this.noSleep.enable();
-
-      // Setup connection with Websocket server
-      this.setupWebSockets();
-
-      // Change circle to pause button when stream starts
-      this.recordToggle = false;
-
-      // Hide camera flip so user can't switch orientation while streaming.
-      this.cameraIconActive = false;
-      this.$refs.streamtimer.start();
-      this.startTimeTrigger();
-    },
-
-    startTimeTrigger: function () {
-      //Interval function to take screenshots of Video stream canvas
-      this.intervalHandlerPicture = setInterval(
-        this.takePicture,
-        this.SETTINGS.TAKE_PICTURE_EVERY_MS
-      );
-    },
-
-    takePicture: function () {
-      const context = this.canvas.getContext("2d");
-      if (this.width && this.height) {
-        this.canvas.width = this.width;
-        this.canvas.height = this.height;
-        context.drawImage(this.video, 0, 0, this.width, this.height);
-
-        const img = this.canvas.toDataURL("image/jpeg");
-
-        this.sendImage(img);
-      } else {
-        this.clearPhoto();
-      }
-    },
-
-    sendImage: function (base64Img) {
-      this.timeFormat = this.$moment().format("YYYY-MM-DD HH:mm:ss.SSS");
-
-      //Send data to websocket API
-      const data = {
-        img: base64Img,
-        stream_id: localStorage.streamId,
-        user_type: localStorage.userType,
-        user_id: localStorage.userId || "demo",
-        lng: this.positionLo,
-        lat: this.positionLa,
-        timestamp: this.timeFormat,
-      };
-
-      this.websocketConnection.send(JSON.stringify(data));
+    setupMisc: function () {
+      // TODO: Implement auto mode
+      this.isAuto = false;
+      //Initialize noSleep object constructor
+      this.noSleep = new NoSleep();
     },
 
     showStream () {
       const video = this.video;
-
       this.currentConstraints = {
         video: {
           facingMode: this.currentCameraOption,
@@ -371,9 +305,11 @@ export default {
           console.error(err);
         });
 
-      video.addEventListener("canplay", this.onStartedStream, false);
+      video.addEventListener("canplay", this.setVideoSize, false);
+    },
 
-      //Asks User for location permission
+    locationPermission: function () {
+      // Asks user for location permission
       if (navigator.geolocation) {
         navigator.geolocation.watchPosition(this.updatePosition);
       } else {
@@ -383,36 +319,87 @@ export default {
       }
     },
 
-    pauseStream: function () {
-      this.websocketStreamState = this.streamState.OFF;
+    setVideoSize: function () {
+      this.height = this.minImageHeight;
+      this.width = (this.video.videoWidth / this.video.videoHeight) * this.height;
 
-      //Set websocket stream state to "off"
-      //Check if websocket connection is established with server
-      if (
-        this.websocketConnection.readyState === this.websocketConnection.OPEN
-      ) {
-        //Disable screenlock when stream stops
-        this.noSleep.disable();
-        //Close websocket connection
-        this.websocketConnection.close();
-        //Clear snapshot interval
-        clearInterval(this.intervalHandlerPicture);
-        clearInterval(this.intervalHandlerCountRequest);
-        //Change pause to circle button when stream stops
-        this.recordToggle = true;
-        //Show camera flip icon to user when video stream is paused
-        this.cameraIconActive = true;
-        this.$refs.streamtimer.reset();
+      this.video.setAttribute("width", this.width);
+      this.video.setAttribute("height", this.height);
+      this.canvas.setAttribute("width", this.width);
+      this.canvas.setAttribute("height", this.height);
+    },
+
+    startStream: function () {
+
+      // Add screenlock activation while streaming.
+      this.noSleep.enable();
+
+      // Setup connection with Websocket server
+      this.setupWebSockets();
+
+      // Change circle to pause button when stream starts
+      this.recordButtonToggled = true;
+
+      // Hide camera flip so user can't switch orientation while streaming.
+      this.cameraIconActive = false;
+    },
+
+    takePicture: function () {
+      const context = this.canvas.getContext("2d");
+      if (this.width && this.height) {
+        this.canvas.width = this.width;
+        this.canvas.height = this.height;
+        context.drawImage(this.video, 0, 0, this.width, this.height);
+
+        const img = this.canvas.toDataURL("image/jpeg");
+        this.sendImage(img);
+      } else {
+        this.clearPhoto();
       }
     },
 
-    holdStream () {
-      if (
-        this.websocketConnection.readyState === this.websocketConnection.OPEN
-      ) {
+    sendImage: function (base64Img) {
+      this.timeFormat = this.$moment().format("YYYY-MM-DD HH:mm:ss.SSS");
+
+      //Send data to websocket API
+      const data = {
+        img: base64Img,
+        stream_id: localStorage.streamId,
+        user_type: localStorage.userType,
+        user_id: localStorage.userId || "demo",
+        lng: this.positionLo,
+        lat: this.positionLa,
+        timestamp: this.timeFormat,
+      };
+
+      this.websocketConnection.send(JSON.stringify(data));
+    },
+
+    pauseStream: function () {
+      // Set websocket stream state to "off"
+      this.websocketStreamState = this.streamState.OFF;
+
+      // Check if websocket connection is established with server
+      if (this.websocketConnection.readyState === this.websocketConnection.OPEN) {
+        // Disable screenlock when stream stops
+        this.noSleep.disable();
+
+        // Clear snapshot interval
         clearInterval(this.intervalHandlerPicture);
-        clearInterval(this.intervalHandlerCountRequest);
-        this.$refs.streamtimer.stop();
+
+        // Close websocket connection
+        this.websocketConnection.close();
+
+        // Change pause to circle button when stream stops
+        this.recordButtonToggled = false;
+
+        // Show camera flip icon to user when video stream is paused
+        this.cameraIconActive = true;
+
+        // Stop timer
+        this.$refs.streamtimer.reset();
+      } else {
+        console.info("No open Websocket connection");
       }
     },
 
@@ -420,25 +407,6 @@ export default {
       this.positionLa = position.coords.latitude;
       this.positionLo = position.coords.longitude;
       this.deviceSpeed = position.coords.speed;
-    },
-
-    onStartedStream: function () {
-      // resize video
-      if (!this.streaming) {
-        // this.width = this.SETTINGS.minImageWidth;
-        // this.height = this.video.videoHeight / (this.video.videoWidth / this.width);
-
-        this.height = this.SETTINGS.minImageHeight;
-        this.width =
-          (this.video.videoWidth / this.video.videoHeight) * this.height;
-
-        this.video.setAttribute("width", this.width);
-        this.video.setAttribute("height", this.height);
-        this.canvas.setAttribute("width", this.width);
-        this.canvas.setAttribute("height", this.height);
-
-        this.streaming = true;
-      }
     },
 
     clearPhoto: function () {
@@ -451,12 +419,14 @@ export default {
     },
 
     setupWebSockets: function () {
-      //Setup connection with Websocket server URL:PORT/ENDPOINT
+      // Setup connection with Websocket server URL:PORT/ENDPOINT
       const websocketUrl = this.apiWebsocketUrl + "/stream";
       this.websocketConnection = new WebSocket(websocketUrl);
-      // //Set websocket stream state to "on"
+      
+      // Set websocket stream state to "on"
       this.websocketStreamState = this.streamState.ON;
-      //Websocket events
+      
+      // Websocket events
       this.websocketConnection.onmessage = this.receiveWebSocketsMsg;
       this.websocketConnection.onopen = this.receiveWebSocketsMsgOnOpen;
       this.websocketConnection.onclose = this.receiveWebSocketsMsgOnClose;
@@ -464,49 +434,47 @@ export default {
     },
 
     receiveWebSocketsMsg: function (event) {
-      //Websocket event when Message sent by the server
-        console.error("WebSocket message observed:", event);
+      console.error("==> Websocket message observed:", event);
     },
 
     receiveWebSocketsMsgOnOpen: function () {
-      //Websocket even when websocket connection between client and server is established
-      console.log("Websocket connection Connected");
+      console.log("==> Websocket connection established");
+      this.connectionIssue = false;
+      this.recordButtonToggled = true;
 
-      // Play/pause stream button toggle
-      // After Websocket connection is disconnected and then reconnects, restart the UI State to streaming
-      if (this.websocketStreamState === this.streamState.ON) {
-        //Set Play/Pause button to streaming
-        this.recordToggle = false;
-        //Start timer function
-        this.$refs.streamtimer.start();
+      // Start timer
+      this.$refs.streamtimer.start();
 
-        this.disconnectState = false;
-      }
+      //Interval function to take screenshots of video stream canvas
+      this.intervalHandlerPicture = setInterval(
+        this.takePicture,
+        this.imageCaptureInterval
+      );
+
     },
 
     receiveWebSocketsMsgOnClose: function () {
-      //Set Play/Pause button to inital state
-      this.recordToggle = true;
+      this.recordButtonToggled = false;
+
+      // Stop timer
       this.$refs.streamtimer.reset();
-      //Retry to make setup Websocket connection every 5 seconds
+
+      // Retry to make setup Websocket connection every 5 seconds
       if (this.websocketStreamState === this.streamState.OFF) {
-        this.disconnectState = false;
+        this.connectionIssue = false;
       } else {
-        // this.websocketConnection = null;
-        this.disconnectState = true;
+        this.connectionIssue = true;
+
         clearInterval(this.intervalHandlerPicture);
         setTimeout(this.startStream, 5000);
       }
     },
     
     webSocketOnError: function (event) {
-        console.error("WebSocket error observed:", event);
-    },
+        this.connectionIssue = true;
+        this.recordButtonToggled = false;
 
-    stopMediaTracks: function (stream) {
-      stream.getTracks().forEach(track => {
-        track.stop();
-      });
+        console.error("WebSocket error observed:", event);
     },
 
     flipCamera: function () {
@@ -519,6 +487,12 @@ export default {
 
       this.stopMediaTracks(this.currentStream);
       this.showStream();
+    },
+
+    stopMediaTracks: function (stream) {
+      stream.getTracks().forEach(track => {
+        track.stop();
+      });
     },
 
     showSidebar () {
@@ -538,17 +512,6 @@ export default {
 
     toManual (page) {
       this.$router.push(`/${page}`);
-    },
-
-    checkUserType () {
-      // if localStorage.UserType exists (change streamId for new session)
-      if (localStorage.userType) {
-        localStorage.streamId = uuidv4();
-      }
-      // if user has no localStorage.userType (send to (first) welcome page)
-      else {
-        this.$router.push("/welcome");
-      }
     },
 
     logout () {

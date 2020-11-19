@@ -80,7 +80,7 @@ def read_users_unauthorized(
     """
     Retrieve users.
     """
-    users = crud.user.get_all(db)
+    users = crud.user.get_all_non_admin(db)
     return users
 
 

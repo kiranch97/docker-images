@@ -16,6 +16,9 @@ class CRUDUser():
     def get_all(self, db: Session) -> List[User]:
         return db.query(User).all()
 
+    def get_all_non_admin(self, db: Session) -> List[User]:
+        return db.query(User).filter(User.is_superuser == False).all()
+
     def create(self, db: Session, obj_in: UserCreate) -> User:
         db_obj = User(
             email=obj_in.email,

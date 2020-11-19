@@ -2,7 +2,7 @@ version: '3'
 
 services:
   
-  nginx-proxy:
+  proxy:
     container_name: odk-proxy
     image: nginx:stable-alpine
     volumes:
@@ -14,31 +14,33 @@ services:
       - "80:80"
       - "443:443"
   
-  vue-pwa:
+  app:
     container_name: odk-app
     build: ./odk-app
     depends_on:
-      - fastapi-server
+      - api
     expose:
       - "80"
 
-  fastapi-server:
+  api:
     container_name: odk-api
     build: ./odk-api
     depends_on:
-      - postgres-db
-      - rabbitmq
+      - db
+      - rmq
     env_file:
       - ./odk-api/.global.env
       - ./odk-api/.production.env
     environment:
       - DATABASE_URL
       - BROKER_URL
-      - QR_LOGIN_STRING
+      - ADMIN_EMAIL
+      - ADMIN_PASSWORD
+      - SECRET_KEY
     expose:
       - "80"
 
-  postgres-db:
+  db:
     container_name: odk-db
     build: ./postgres_dockerfiles
     environment:
@@ -53,7 +55,7 @@ services:
        options:
          max-size: 50m
 
-  rabbitmq:
+  rmq:
     container_name: odk-rmq
     image: rabbitmq:3-management
     environment:

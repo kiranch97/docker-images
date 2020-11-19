@@ -13,7 +13,8 @@ services:
     build: ./odk-api
     env_file:
       - ./odk-api/.env
-      - ./odk-api/.docker.env
+      - ./odk-api/.global.env
+      - ./odk-api/.staging.env
     ports:
       - "8000:80"
 

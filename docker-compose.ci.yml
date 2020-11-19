@@ -29,7 +29,6 @@ services:
       - postgres-db
       - rabbitmq
     env_file:
-      - ./odk-api/.env
       - ./odk-api/.global.env
       - ./odk-api/.production.env
     environment:

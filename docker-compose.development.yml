@@ -4,7 +4,10 @@ services:
 
   app:
     container_name: odk-app
-    build: ./odk-app
+    build:
+      context: ./odk-app
+      args:
+        - APP_NAME=ODK dev
     ports:
       - "8000:80"
 
@@ -12,8 +15,8 @@ services:
     container_name: odk-api
     build: ./odk-api
     env_file:
-      - ./odk-api/.env
-      - ./odk-api/.docker.env
+      - ./odk-api/.global.env
+      - ./odk-api/.development.env
     ports:
       - "8080:80"
 

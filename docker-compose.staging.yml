@@ -4,7 +4,10 @@ services:
 
   app:
     container_name: odk-app
-    build: ./odk-app
+    build:
+      context: ./odk-app
+      args:
+        - APP_NAME=ODK stage
     ports:
       - "8090:80"
 

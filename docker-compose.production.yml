@@ -15,7 +15,10 @@ services:
   
   app:
     container_name: odk-app
-    build: ./odk-app
+    build:
+      context: ./odk-app
+      args:
+        - APP_NAME=ODK
     depends_on:
       - api
     expose:

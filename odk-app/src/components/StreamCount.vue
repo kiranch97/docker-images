@@ -41,12 +41,12 @@ export default {
 
   data () {
     return {
-      // ---- settings ----
-      SETTINGS: {
-        REQUEST_COUNTS_EVERY_MS: process.env.VUE_APP_RESULT_INTERVAL,
-      },
-      // ---- end settings ----
-      // ----
+      getResultInterval: process.env.VUE_APP_RESULT_INTERVAL,
+      // eslint-disable-next-line no-undef
+      apiHttpUrl: process.env.VUE_APP_API_HTTP_URL,
+      fetchResults: null,
+
+      // SWIPER SETTINGS
       swiperOption: {
         direction: "vertical",
         slidesPerView: 5,
@@ -54,8 +54,8 @@ export default {
         freeMode: true,
       },
       bounce: false,
-      // ----
-      //Detectable objects counts
+
+      // DETECTABLE OBJECTS
       binCount: 0,
       trashCount: 0,
       cardboardCount: 0,
@@ -63,14 +63,6 @@ export default {
       constructionBinCount: 0,
       matrasCount: 0,
       totalCount: 0,
-      requestHeaders: {
-        "Content-Type": "application/json",
-        Authorization: "No Auth",
-      },
-      // eslint-disable-next-line no-undef
-      apiHttpUrl: process.env.VUE_APP_API_HTTP_URL,
-      countFetchRate: 1000,
-      fetchResults: null,
     };
   },
 
@@ -89,6 +81,10 @@ export default {
           itemPicture: "Garbage-bins",
           count: this.binCount,
         },
+        {
+          itemPicture: "Matresses",
+          count: this.matrasCount,
+        },
         // {
         //   itemPicture: "Christmas-tree",
         //   count: this.christmasTreeCount
@@ -97,10 +93,6 @@ export default {
         //   itemPicture: "Construction-container",
         //   count: this.constructionBinCount,
         // },
-        {
-          itemPicture: "Matresses",
-          count: this.matrasCount,
-        },
       ];
 
       return this._.orderBy(swiperItems, "count", "desc");
@@ -119,7 +111,7 @@ export default {
       } else if (this.websocketStreamState == "on") {
         this.fetchResults = setInterval(
           this.fetchAnalysedResults,
-          this.SETTINGS.REQUEST_COUNTS_EVERY_MS
+          this.getResultInterval
         );
       }
     },
@@ -138,6 +130,7 @@ export default {
 
   mounted () {
     // Retrieve streamId and userType
+    console.log("==> Stream id retrieved from local storage on StreamCount");
     this.streamId = localStorage.streamId;
     this.userType = localStorage.userType;
 
@@ -150,13 +143,20 @@ export default {
       const curEndPointBase =
         this.apiHttpUrl + "/detected_objects?stream_id={{STREAM_ID}}&day={{DATE}}";
 
+      const dateFormat = this.$moment().format("YYYY-MM-DD");
+
       const curEndPoint = curEndPointBase
         .replace("{{STREAM_ID}}", this.streamId)
-        .replace("{{DATE}}", this.todayDateFunc(new Date()));
+        .replace("{{DATE}}", dateFormat);
+
+      const requestHeaders = {
+        "Content-Type": "application/json",
+        Authorization: "No Auth",
+      };
 
       fetch(curEndPoint, {
         method: "GET",
-        headers: this.requestHeaders,
+        headers: requestHeaders,
       })
         .then(response => {
           return response.json();
@@ -182,23 +182,6 @@ export default {
         .catch(er => {
           console.log("==> Error occured in 'fetchAnalysedResults':" + er);
         });
-    },
-
-    todayDateFunc (date) {
-      const year = date.getFullYear();
-      const month = this.addZero(date.getMonth() + 1);
-      const day = this.addZero(date.getDate());
-      this.todayDate = year + "-" + month + "-" + day;
-
-      return this.todayDate;
-    },
-
-    addZero (i) {
-      if (i < 10) {
-        i = "0" + i;
-      }
-
-      return i;
     },
   },
 };

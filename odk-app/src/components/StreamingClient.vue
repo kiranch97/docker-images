@@ -2,7 +2,7 @@
   <div class="container">
     <div class="stream">
       <video id="video" class="stream-video" autoplay="true" />
-      <canvas id="canvas" style="display: none;" />
+      <canvas id="canvas" style="display: none" />
     </div>
 
     <div class="hud">
@@ -20,14 +20,11 @@
             :size="spinnersize"
             color="white"
           />
-          <stream-time
-            ref="streamtimer"
-            class="streamtimer"
-          />
+          <stream-time ref="streamtimer" class="streamtimer" />
         </div>
         <transition name="fade">
           <div v-if="connectionIssue" id="error-prompt">
-            <p>Problemen met verbinding</p>
+            <p>{{ errorMessage }}</p>
           </div>
         </transition>
       </div>
@@ -35,12 +32,12 @@
       <div class="hud-streamcontrols">
         <!-- TOGGLE MENU BUTTON -->
         <div id="toggle-sidebar">
-          <img 
+          <img
             svg-inline
             src="@/assets/ui/burger-menu.svg"
             alt="Backspace"
             @click="showSidebar()"
-          >
+          />
         </div>
 
         <!-- PLAY/PAUSE BUTTON -->
@@ -53,11 +50,7 @@
             >
               <div class="inner-circle" />
             </button>
-            <button
-              v-else
-              class="pause-box"
-              @click="pauseStream"
-            >
+            <button v-else class="pause-box" @click="pauseStream">
               <div class="inner-button" />
             </button>
           </div>
@@ -72,7 +65,11 @@
             viewBox="0 0 24 24"
             @click="flipCamera()"
           >
-            <path fill="#fff" fill-rule="evenodfd" d="M14.571 5.33c.71 0 1.286.576 1.286 1.286v.047h3.214c1.066 0 1.929.864 1.929 1.929v8.143a1.928 1.928 0 01-1.929 1.928H4.93A1.928 1.928 0 013 16.735V8.592c0-1.065.863-1.929 1.929-1.929h3.213v-.047c0-.71.576-1.286 1.287-1.286h5.142zm-4.315 3.899a4.004 4.004 0 00-1.857 5.342l.002.003c.014.028.03.054.045.083l-.06 2.107a.413.413 0 00.401.426H8.8a.414.414 0 00.413-.402l.03-1.064a3.988 3.988 0 004.499.704 3.969 3.969 0 002.035-2.287 3.963 3.963 0 00-.042-2.735l.158-2.116a.414.414 0 00-.826-.062l-.071.957a4.005 4.005 0 00-4.74-.956zm4.318 1.753l-1.42-.106a.415.415 0 00-.061.826l1.918.143c.216.656.215 1.36-.016 2.025-.278.8-.85 1.444-1.613 1.813-.763.37-1.623.42-2.424.141a3.146 3.146 0 01-1.255-.808l1.346.038c.227.017.419-.173.426-.401a.414.414 0 00-.402-.426l-1.945-.056a3.174 3.174 0 011.489-4.197 3.174 3.174 0 013.957 1.008z" />
+            <path
+              fill="#fff"
+              fill-rule="evenodfd"
+              d="M14.571 5.33c.71 0 1.286.576 1.286 1.286v.047h3.214c1.066 0 1.929.864 1.929 1.929v8.143a1.928 1.928 0 01-1.929 1.928H4.93A1.928 1.928 0 013 16.735V8.592c0-1.065.863-1.929 1.929-1.929h3.213v-.047c0-.71.576-1.286 1.287-1.286h5.142zm-4.315 3.899a4.004 4.004 0 00-1.857 5.342l.002.003c.014.028.03.054.045.083l-.06 2.107a.413.413 0 00.401.426H8.8a.414.414 0 00.413-.402l.03-1.064a3.988 3.988 0 004.499.704 3.969 3.969 0 002.035-2.287 3.963 3.963 0 00-.042-2.735l.158-2.116a.414.414 0 00-.826-.062l-.071.957a4.005 4.005 0 00-4.74-.956zm4.318 1.753l-1.42-.106a.415.415 0 00-.061.826l1.918.143c.216.656.215 1.36-.016 2.025-.278.8-.85 1.444-1.613 1.813-.763.37-1.623.42-2.424.141a3.146 3.146 0 01-1.255-.808l1.346.038c.227.017.419-.173.426-.401a.414.414 0 00-.402-.426l-1.945-.056a3.174 3.174 0 011.489-4.197 3.174 3.174 0 013.957 1.008z"
+            />
           </svg>
         </div>
 
@@ -91,57 +88,60 @@
       </div>
 
       <div id="stream-sidebar">
-        <div id="stream-sidebar-header">
-          <img 
+        <div id="stream-sidebar-header" @click="hideSidebar()">
+          <img
             svg-inline
             src="@/assets/ui/chevron-left.svg"
             alt="Menu sluiten"
-            @click="hideSidebar()"
-          >
+          />
           <p>Terug</p>
         </div>
 
         <!-- Default options -->
-        <div v-if="!showManualOptions" class="stream-sidebar-option" @click="showManual()">
-          <img 
-            svg-inline
-            src="@/assets/ui/manual.svg"
-            alt="Handleiding"
-          >
+        <div
+          v-if="!showManualOptions"
+          class="stream-sidebar-option"
+          @click="showManual()"
+        >
+          <img svg-inline src="@/assets/ui/manual.svg" alt="Handleiding" />
           <p>Handleiding</p>
-          <img 
+          <img
             svg-inline
             src="@/assets/ui/chevron-right-grey.svg"
             alt="Naar handleiding"
             class="stream-sidebar-option-arrow"
-          >
+          />
         </div>
 
-        <div v-if="!showManualOptions" class="stream-sidebar-option" @click="logout()">
-          <img 
-            svg-inline
-            src="@/assets/ui/logout.svg"
-            alt="Uitloggen"
-          >
+        <div
+          v-if="!showManualOptions"
+          class="stream-sidebar-option"
+          @click="logout()"
+        >
+          <img svg-inline src="@/assets/ui/logout.svg" alt="Uitloggen" />
           <p>Uitloggen</p>
         </div>
 
         <!-- Manual options -->
-        <div v-if="showManualOptions" class="stream-sidebar-option" @click="toManual('reset-manual')">
-          <img 
+        <div
+          v-if="showManualOptions"
+          class="stream-sidebar-option"
+          @click="toManual('reset-manual')"
+        >
+          <img
             svg-inline
             src="@/assets/ui/manual.svg"
             alt="Verwijder gegevens"
-          >
+          />
           <p>Verwijder gegevens</p>
         </div>
 
-        <div v-if="showManualOptions" class="stream-sidebar-option" @click="toManual('installation-manual')">
-          <img 
-            svg-inline
-            src="@/assets/ui/manual.svg"
-            alt="Installeer PWA"
-          >
+        <div
+          v-if="showManualOptions"
+          class="stream-sidebar-option"
+          @click="toManual('installation-manual')"
+        >
+          <img svg-inline src="@/assets/ui/manual.svg" alt="Installeer PWA" />
           <p>Installeer PWA</p>
         </div>
       </div>
@@ -152,6 +152,7 @@
 <script>
 import StreamTime from "./StreamTime";
 import StreamCount from "./StreamCount";
+
 import { DefaultLoader } from "vue-spinners-css";
 import * as NoSleep from "nosleep.js";
 import { v4 as uuidv4 } from "uuid";
@@ -181,8 +182,9 @@ export default {
       apiWebsocketUrl: process.env.VUE_APP_API_WS_URL,
 
       // ---- UI PROPERTIES ----
-      recordButtonToggled: false,  // PLAY/PAUSE BUTTON
+      recordButtonToggled: false, // PLAY/PAUSE BUTTON
       connectionIssue: false, // STREAM STATUS STATES
+      errorMessage: "Problemen met verbinding",
       spinnersize: 25,
       isAuto: null, // AUTO/MANUAL MODE SWITCH
       cameraIconActive: true,
@@ -223,7 +225,6 @@ export default {
       positionLa: null,
       positionLo: null,
       deviceSpeed: null,
-      timeFormat: null,
 
       // ---- MISC PROPERTIES ----
       noSleep: null,
@@ -231,7 +232,7 @@ export default {
   },
 
   computed: {
-    combined () {
+    combined() {
       // Cache geolocation with computed properties
       const currentLocation = {
         lo: this.positionLo,
@@ -241,7 +242,7 @@ export default {
     },
   },
 
-  mounted () {
+  mounted() {
     this.checkUserType();
     this.locationPermission();
     this.setupCamera();
@@ -250,12 +251,13 @@ export default {
   },
 
   methods: {
-    checkUserType () {
+    checkUserType() {
       // If localStorage.UserType exists (change streamId for new session)
       if (localStorage.userType) {
+        console.log("==> Stream id set on local storage in StreamingClient");
         localStorage.streamId = uuidv4();
       }
-      // If user has no localStorage.userType (send to (first) welcome page)
+      // If user has no localStorage.userType (send to welcome page)
       else {
         this.$router.push("/welcome");
       }
@@ -275,7 +277,7 @@ export default {
       this.noSleep = new NoSleep();
     },
 
-    showStream () {
+    showStream() {
       const video = this.video;
       this.currentConstraints = {
         video: {
@@ -305,7 +307,8 @@ export default {
 
     setVideoSize: function () {
       this.height = this.minImageHeight;
-      this.width = (this.video.videoWidth / this.video.videoHeight) * this.height;
+      this.width =
+        (this.video.videoWidth / this.video.videoHeight) * this.height;
 
       this.video.setAttribute("width", this.width);
       this.video.setAttribute("height", this.height);
@@ -331,16 +334,9 @@ export default {
     },
 
     startStream: function () {
-      // Add screenlock activation while streaming.
       this.noSleep.enable();
-
-      // Setup connection with Websocket server
       this.setupWebSockets();
-
-      // Change circle to pause button when stream starts
       this.recordButtonToggled = true;
-
-      // Hide camera flip so user can't switch orientation while streaming.
       this.cameraIconActive = false;
     },
 
@@ -349,26 +345,19 @@ export default {
       this.websocketStreamState = this.streamState.OFF;
 
       // Check if websocket connection is established with server
-      if (this.websocketConnection.readyState === this.websocketConnection.OPEN) {
-        // Disable screenlock when stream stops
+      if (
+        this.websocketConnection.readyState === this.websocketConnection.OPEN
+      ) {
         this.noSleep.disable();
 
-        // Clear snapshot interval
         clearInterval(this.intervalHandlerPicture);
-
-        // Close websocket connection
         this.websocketConnection.close();
 
-        // Change pause to circle button when stream stops
         this.recordButtonToggled = false;
-
-        // Show camera flip icon to user when video stream is paused
         this.cameraIconActive = true;
-
-        // Stop timer
         this.$refs.streamtimer.reset();
       } else {
-        console.info("No open Websocket connection");
+        console.info("No open websocket connection");
       }
     },
 
@@ -382,30 +371,25 @@ export default {
     },
 
     setupWebSockets: function () {
-      // Setup connection with Websocket server URL:PORT/ENDPOINT
       const websocketUrl = this.apiWebsocketUrl + "/stream";
       this.websocketConnection = new WebSocket(websocketUrl);
-      
-      // Set websocket stream state to "on"
+
       this.websocketStreamState = this.streamState.ON;
-      
-      // Websocket events
-      this.websocketConnection.onmessage = this.receiveWebSocketsMsg;
-      this.websocketConnection.onopen = this.receiveWebSocketsMsgOnOpen;
-      this.websocketConnection.onclose = this.receiveWebSocketsMsgOnClose;
+
+      this.websocketConnection.onmessage = this.websocketOnMessage;
+      this.websocketConnection.onopen = this.websocketOnOpen;
+      this.websocketConnection.onclose = this.websocketOnClose;
       this.websocketConnection.onerror = this.webSocketOnError;
     },
 
-    receiveWebSocketsMsg: function (event) {
+    websocketOnMessage: function (event) {
       console.error("==> Websocket message observed:", event);
     },
 
-    receiveWebSocketsMsgOnOpen: function () {
+    websocketOnOpen: function () {
       console.log("==> Websocket connection established");
       this.connectionIssue = false;
       this.recordButtonToggled = true;
-
-      // Start timer
       this.$refs.streamtimer.start();
 
       //Interval function to take screenshots of video stream canvas
@@ -430,7 +414,7 @@ export default {
     },
 
     sendImage: function (base64Img) {
-      this.timeFormat = this.$moment().format("YYYY-MM-DD HH:mm:ss.SSS");
+      const timeFormat = this.$moment().format("YYYY-MM-DD HH:mm:ss.SSS");
 
       // Send data to websocket API
       const data = {
@@ -440,13 +424,13 @@ export default {
         user_id: localStorage.userId || "demo",
         lng: this.positionLo,
         lat: this.positionLa,
-        timestamp: this.timeFormat,
+        timestamp: timeFormat,
       };
 
       this.websocketConnection.send(JSON.stringify(data));
     },
 
-    receiveWebSocketsMsgOnClose: function () {
+    websocketOnClose: function () {
       this.recordButtonToggled = false;
 
       // Stop timer
@@ -462,12 +446,12 @@ export default {
         setTimeout(this.startStream, 5000);
       }
     },
-    
-    webSocketOnError: function (event) {
-        this.connectionIssue = true;
-        this.recordButtonToggled = false;
 
-        console.error("WebSocket error observed:", event);
+    webSocketOnError: function (event) {
+      this.connectionIssue = true;
+      this.recordButtonToggled = false;
+
+      console.error("WebSocket error observed:", event);
     },
 
     flipCamera: function () {
@@ -483,31 +467,31 @@ export default {
     },
 
     stopMediaTracks: function (stream) {
-      stream.getTracks().forEach(track => {
+      stream.getTracks().forEach((track) => {
         track.stop();
       });
     },
 
-    showSidebar () {
+    showSidebar() {
       const sidebar = document.getElementById("stream-sidebar");
       sidebar.style = "left: calc((100% / 3) * 2);";
     },
 
-    hideSidebar () {
+    hideSidebar() {
       const sidebar = document.getElementById("stream-sidebar");
       sidebar.style = "left: 100%;";
       this.showManualOptions = false;
     },
 
-    showManual () {
+    showManual() {
       this.showManualOptions = true;
     },
 
-    toManual (page) {
+    toManual(page) {
       this.$router.push(`/${page}`);
     },
 
-    logout () {
+    logout() {
       localStorage.clear();
       this.$router.push("/welcome");
     },
@@ -606,7 +590,7 @@ export default {
     border-top-left-radius: 6px;
     border-bottom-left-radius: 6px;
     background: var(--color-error);
-    width: .5rem;
+    width: 0.5rem;
     height: 100%;
     content: "";
   }

@@ -6,9 +6,8 @@ services:
     container_name: odk-proxy
     image: nginx:stable-alpine
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-      - /nginx/error.log:/etc/nginx/error_log.log
-      - /nginx/cache/:/etc/nginx/cache
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d
       - /etc/letsencrypt/:/etc/letsencrypt/:ro
     ports:
       - "80:80"

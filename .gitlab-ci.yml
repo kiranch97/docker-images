@@ -10,7 +10,7 @@ staging_start_database:
   tags:
     - staging
   script:
-    - docker-compose -f docker-compose.staging.yml up -d db
+    - docker-compose -f docker-compose.staging.yml up -d --build db
   rules:
     - if: '$CI_COMMIT_BRANCH == "staging"'
 

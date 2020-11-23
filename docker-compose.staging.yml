@@ -27,6 +27,7 @@ services:
     ports:
       - "8000:80"
     networks:
+      internal:
       reversed-proxy:
         ipv4_address: 192.168.100.20
 
@@ -58,6 +59,7 @@ volumes:
   postgres-data:
 
 networks:
+  internal:
   reversed-proxy:
     external: true
     name: reversed-proxy-network

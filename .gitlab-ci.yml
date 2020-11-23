@@ -36,7 +36,7 @@ staging_build_server:
         - docker-compose.staging.yml
         - odk-api/**/*
 
-build_app:
+staging_build_app:
   stage: build
   tags:
     - staging
@@ -61,7 +61,7 @@ staging_deploy_server:
         - docker-compose.staging.yml
         - odk-api/**/*
 
-deploy_app:
+staging_deploy_app:
   stage: deploy
   tags:
     - staging

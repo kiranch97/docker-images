@@ -14,3 +14,6 @@ frames/
 # ide
 .vscode/
 .idea/
+
+# macos
+.DS_Store

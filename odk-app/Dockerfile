@@ -5,13 +5,6 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 ARG APP_NAME=${APP_NAME}
-
-ARG VUE_APP_API_HTTP_URL=${API_HTTP}
-ENV VUE_APP_API_HTTP_URL $VUE_APP_API_HTTP_URL
-
-ARG VUE_APP_API_WS_URL=${API_WS}
-ENV VUE_APP_API_WS_URL $VUE_APP_API_WS_URL
-
 RUN node update-manifest.js
 RUN npm run build
 

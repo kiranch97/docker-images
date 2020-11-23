@@ -1,110 +1,53 @@
 stages:
-    - services
-    - build
-    - test
-    - deploy
+  - services
+  - build
+  - deploy
 
-# NGINX PROXY
+# STAGING
 
-start_nginx:
-    stage: services
-    script:
-        - docker-compose -f docker-compose.production.yml up -d proxy
-    rules:
-        - if: '$CI_COMMIT_BRANCH == "master"'
-    
+staging_start_database:
+  stage: services
+  tags:
+    - staging
+  script:
+    - docker-compose -f docker-compose.staging.yml up -d db
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "staging"'
 
-reload_nginx:
-    stage: services
-    script:
-        - docker restart odk-proxy
-    rules:
-        - if: '$CI_COMMIT_BRANCH == "master"'
-          changes:
-            - ./nginx/nginx.conf
+staging_start_rabbitmq:
+  stage: services
+  tags:
+    - staging
+  script:
+    - docker-compose -f docker-compose.staging.yml up -d rmq
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "staging"'
 
-# POSTGRES DATABASE
+staging_build_server:
+  stage: build
+  tags:
+    - staging
+  script:
+    - docker-compose -f docker-compose.staging.yml stop api
+    - docker-compose -f docker-compose.staging.yml build api
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "staging"'
+      changes:
+        - docker-compose.staging.yml
+        - odk-api/**/*
 
-start_database:
-    stage: services
-    script:
-        - docker-compose -f docker-compose.production.yml up -d db
-    rules:
-        - if: '$CI_COMMIT_BRANCH == "master"'
-    
-# RABBITMQ MESSAGE BROKER
+staging_deploy_server:
+  stage: deploy
+  tags:
+    - staging
+  script:
+    - docker-compose -f docker-compose.staging.yml up -d --no-deps api
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "staging"'
+      changes:
+        - docker-compose.staging.yml
+        - odk-api/**/*
 
-start_rabbitmq:
-    stage: services
-    script:
-        - docker-compose -f docker-compose.production.yml up -d rmq
-    rules:
-        - if: '$CI_COMMIT_BRANCH == "master"'
-    
-# FASTAPI SERVER
+# PRODUCTION
 
-build_server:
-    stage: build
-    script:
-        - docker-compose -f docker-compose.production.yml stop api
-        - docker-compose -f docker-compose.production.yml build api
-    rules:
-        - if: '$CI_COMMIT_BRANCH == "master"'
-          changes:
-            - docker-compose.production.yml
-            - odk-api/**/*
-
-# integration_test_server:
-#     stage: test
-#     script:
-#         - docker-compose -f docker-compose.ci.yml run --rm fastapi-server bash run_db_connection_test.sh
-#     rules:
-#         - if: '$CI_COMMIT_BRANCH == "master"'
-#           changes:
-#             - docker-compose.ci.yml
-#             - odk-api/**/*
-
-
-deploy_server:
-    stage: deploy
-    script:
-        - docker-compose -f docker-compose.production.yml up -d --no-deps api
-    rules:
-        - if: '$CI_COMMIT_BRANCH == "master"'
-          changes:
-            - docker-compose.production.yml
-            - odk-api/**/*
-
-# VUEJS PWA
-
-build_app:
-    stage: build
-    script:
-        - docker-compose -f docker-compose.production.yml stop app
-        - docker-compose -f docker-compose.production.yml build app
-    rules:
-        - if: '$CI_COMMIT_BRANCH == "master"'
-          changes:
-            - docker-compose.production.yml
-            - odk-app/**/*
-
-test_app:
-    stage: test
-    script:
-        - echo "NOT YET IMPLEMENTED"
-    rules:
-        - if: '$CI_COMMIT_BRANCH == "master"'
-          changes:
-            - docker-compose.production.yml
-            - odk-app/**/*
-
-
-deploy_app:
-    stage: deploy
-    script:
-        - docker-compose -f docker-compose.production.yml up -d --no-deps app
-    rules:
-        - if: '$CI_COMMIT_BRANCH == "master"'
-          changes:
-            - docker-compose.production.yml
-            - odk-app/**/*
+## TODO

@@ -2,7 +2,7 @@
 certs/
 domains/
 logs/
-.env*
+.env
 
 # database
 pgdata/

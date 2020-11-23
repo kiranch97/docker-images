@@ -10,7 +10,7 @@ staging_start_database:
   tags:
     - staging
   script:
-    - docker-compose -f docker-compose.staging.yml up -d --build db
+    - docker-compose -f docker-compose.staging.yml up -d db
   rules:
     - if: '$CI_COMMIT_BRANCH == "staging"'
 
@@ -36,6 +36,19 @@ staging_build_server:
         - docker-compose.staging.yml
         - odk-api/**/*
 
+build_app:
+  stage: build
+  tags:
+    - staging
+  script:
+    - docker-compose -f docker-compose.staging.yml stop app
+    - docker-compose -f docker-compose.staging.yml build app
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "staging"'
+      changes:
+        - docker-compose.staging.yml
+        - odk-app/**/*
+
 staging_deploy_server:
   stage: deploy
   tags:
@@ -47,6 +60,18 @@ staging_deploy_server:
       changes:
         - docker-compose.staging.yml
         - odk-api/**/*
+
+deploy_app:
+  stage: deploy
+  tags:
+    - staging
+  script:
+    - docker-compose -f docker-compose.staging.yml up -d --no-deps app
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "staging"'
+      changes:
+        - docker-compose.staging.yml
+        - odk-app/**/*
 
 # PRODUCTION
 

@@ -30,7 +30,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./pgdata:/pgdata
+      - postgres-data:/var/lib/postgresql/data
 
   rmq:
     container_name: odk-rmq
@@ -42,3 +42,6 @@ services:
        - "8091:8080"
        - "3389:5672"
        - "15672:15672"
+
+volumes:
+  postgres-data:

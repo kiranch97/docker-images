@@ -14,6 +14,11 @@ services:
   api:
     container_name: odk-api
     build: ./odk-api
+    environment:
+      - DATABASE_URL=postgresql://odk:staging@db/odk
+      - BROKER_URL=amqp://odk:staging@rmq
+      - SECRET_KEY=g2Izp39wTTdAlbBkfNppLSNQR9yKwtfOsT29tfJMgWs
+      - ADMIN_EMAIL=admin@staging.com
     env_file:
       - ./odk-api/.global.env
       - ./odk-api/.staging.env

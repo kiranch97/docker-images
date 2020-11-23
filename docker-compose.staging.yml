@@ -7,9 +7,8 @@ services:
       context: ./odk-app
       args:
         - APP_NAME=ODK stage
-    environment:
-      - API_HTTP=https://api.odk-stage.cto-tech.amsterdam
-      - API_WS=wss://api.odk-stage.cto-tech.amsterdam
+        - API_HTTP=https://api.odk-stage.cto-tech.amsterdam
+        - API_WS=wss://api.odk-stage.cto-tech.amsterdam
     ports:
       - "8090:80"
     networks:

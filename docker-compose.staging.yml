@@ -27,7 +27,7 @@ services:
     ports:
       - "8000:80"
     networks:
-      internal:
+      stack-internal:
       reversed-proxy:
         ipv4_address: 192.168.100.20
 
@@ -43,6 +43,8 @@ services:
     volumes:
       - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
       - postgres-data:/var/lib/postgresql/data
+    networks:
+      stack-internal:
 
   rmq:
     container_name: odk-rmq
@@ -54,12 +56,15 @@ services:
        - "8091:8080"
        - "3389:5672"
        - "15672:15672"
+    networks:
+      stack-internal:
 
 volumes:
   postgres-data:
 
 networks:
-  internal:
+  stack-internal:
+    internal: true
   reversed-proxy:
     external: true
     name: reversed-proxy-network

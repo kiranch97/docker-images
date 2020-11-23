@@ -7,8 +7,7 @@ services:
       context: ./odk-app
       args:
         - APP_NAME=ODK stage
-    volumes:
-      - ./odk-app/.env.staging:/app/.env.production
+        - MODE=staging
     ports:
       - "8090:80"
     networks:

@@ -8,8 +8,8 @@ services:
       args:
         - APP_NAME=ODK stage
     environment:
-      - VUE_APP_API_HTTP_URL=https://api.odk-stage.cto-tech.amsterdam
-      - VUE_APP_API_WS_URL=wss://api.odk-stage.cto-tech.amsterdam
+      - API_HTTP=https://api.odk-stage.cto-tech.amsterdam
+      - API_WS=wss://api.odk-stage.cto-tech.amsterdam
     ports:
       - "8090:80"
     networks:

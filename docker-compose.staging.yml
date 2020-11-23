@@ -15,7 +15,6 @@ services:
     container_name: odk-api
     build: ./odk-api
     env_file:
-      - ./odk-api/.env
       - ./odk-api/.global.env
       - ./odk-api/.staging.env
     ports:

@@ -28,7 +28,7 @@ services:
     ports:
       - "8080:80"
     networks:
-      stack-internal:
+      default:
       reversed-proxy:
         ipv4_address: 192.168.100.20
 
@@ -44,7 +44,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - stack-internal
+      - default
 
   rmq:
     container_name: odk-rmq
@@ -57,15 +57,12 @@ services:
        - "3389:5672"
        - "15672:15672"
     networks:
-      - stack-internal
+      - default
 
 volumes:
   postgres-data:
 
 networks:
-  stack-internal:
-    internal: true
-    attachable: true
   reversed-proxy:
     external: true
     name: reversed-proxy-network

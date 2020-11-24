@@ -38,11 +38,11 @@ services:
     environment:
       - POSTGRES_USER=odk
       - POSTGRES_PASSWORD=staging
-    ports:
-      - "5432:5432"
     volumes:
       - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
       - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     networks:
       - stack-internal
 
@@ -64,6 +64,8 @@ volumes:
 
 networks:
   stack-internal:
+    internal: true
+    attachable: true
   reversed-proxy:
     external: true
     name: reversed-proxy-network

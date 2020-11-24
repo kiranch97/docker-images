@@ -45,7 +45,6 @@ services:
       - postgres-data:/var/lib/postgresql/data
     networks:
       - stack-internal
-      - stack-external
 
   rmq:
     container_name: odk-rmq
@@ -59,16 +58,12 @@ services:
        - "15672:15672"
     networks:
       - stack-internal
-      - stack-external
 
 volumes:
   postgres-data:
 
 networks:
   stack-internal:
-    internal: true
-  stack-external:
-    external: true
   reversed-proxy:
     external: true
     name: reversed-proxy-network

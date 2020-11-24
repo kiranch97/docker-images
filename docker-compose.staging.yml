@@ -20,7 +20,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://odk:staging@db/odk
       - BROKER_URL=amqp://odk:staging@rmq
-      - SECRET_KEY=g2Izp39wTTdAlbBkfNppLSNQR9yKwtfOsT29tfJMgWs
+      - SECRET_KEY=notasecretkey
       - ADMIN_EMAIL=admin@staging.com
     env_file:
       - ./odk-api/.global.env

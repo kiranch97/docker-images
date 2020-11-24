@@ -1,4 +1,4 @@
-version: '3.5'
+version: "3.5"
 
 services:
   app:
@@ -42,7 +42,7 @@ services:
       - "5432:5432"
     volumes:
       - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
-      - postgres-data:/var/lib/postgresql/data
+      - postgis-data:/var/lib/postgresql/data
     networks:
       - stack-internal
 
@@ -53,14 +53,14 @@ services:
       - RABBITMQ_DEFAULT_USER=odk
       - RABBITMQ_DEFAULT_PASS=staging
     ports:
-       - "8090:8080"
-       - "3389:5672"
-       - "15672:15672"
+      - "8090:8080"
+      - "3389:5672"
+      - "15672:15672"
     networks:
       - stack-internal
 
 volumes:
-  postgres-data:
+  postgis-data:
 
 networks:
   stack-internal:

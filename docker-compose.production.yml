@@ -1,61 +1,50 @@
-version: '3'
+version: '3.5'
 
 services:
-  
-  proxy:
-    container_name: odk-proxy
-    image: nginx:stable-alpine
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - /etc/letsencrypt/:/etc/letsencrypt/:ro
-    ports:
-      - "80:80"
-      - "443:443"
-  
   app:
     container_name: odk-app
     build:
       context: ./odk-app
       args:
         - APP_NAME=ODK
-    depends_on:
-      - api
+        - MODE=production
     expose:
       - "80"
+    networks:
+      reversed-proxy:
+        ipv4_address: 192.168.100.10
 
   api:
     container_name: odk-api
     build: ./odk-api
-    depends_on:
-      - db
-      - rmq
-    env_file:
-      - ./odk-api/.global.env
-      - ./odk-api/.production.env
     environment:
       - DATABASE_URL
       - BROKER_URL
-      - ADMIN_EMAIL
-      - ADMIN_PASSWORD
       - SECRET_KEY
+      - ADMIN_EMAIL
+    env_file:
+      - ./odk-api/.global.env
+      - ./odk-api/.production.env
     expose:
       - "80"
+    networks:
+      stack-internal:
+      reversed-proxy:
+        ipv4_address: 192.168.100.20
 
   db:
     container_name: odk-db
-    build: ./postgres_dockerfiles
+    image: mdillon/postgis:10-alpine
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
-      - PGDATA=/pgdata
     ports:
-        - "5432:5432"
+      - "5432:5432"
     volumes:
-        - /pgdata-docker:/pgdata
-    logging:
-       options:
-         max-size: 50m
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - stack-internal
 
   rmq:
     container_name: odk-rmq
@@ -64,5 +53,17 @@ services:
       - RABBITMQ_DEFAULT_USER
       - RABBITMQ_DEFAULT_PASS
     ports:
-      - "3389:5672"
-      - "15672:15672"
+       - "3389:5672"
+       - "15672:15672"
+    networks:
+      - stack-internal
+
+volumes:
+  postgres-data:
+
+networks:
+  stack-internal:
+    internal: true
+  reversed-proxy:
+    external: true
+    name: reversed-proxy-network

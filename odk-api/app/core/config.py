@@ -10,9 +10,9 @@ from starlette.datastructures import CommaSeparatedStrings
 
 config = Config(".env")
 
-ADMIN_EMAIL:str = config("ADMIN_EMAIL")
-ADMIN_PASSWORD:str = config("ADMIN_PASSWORD", default="admin")
-ADMIN_USERNAME: str = config("ADMIN_USERNAME", default="admin")
+ADMIN_EMAIL:str = config("ADMIN_EMAIL", default="admin@odk.com")
+ADMIN_USERNAME: str = config("ADMIN_USERNAME", default="Administrator")
+ADMIN_PASSWORD:str = config("ADMIN_PASSWORD")
 
 VERSION: str = config("VERSION")
 PROJECT_NAME: str = config("PROJECT_NAME", default="ODK API")

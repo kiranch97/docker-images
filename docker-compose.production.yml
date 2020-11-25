@@ -22,6 +22,7 @@ services:
       - BROKER_URL
       - SECRET_KEY
       - ADMIN_EMAIL
+      - ADMIN_PASSWORD
     env_file:
       - ./odk-api/.global.env
       - ./odk-api/.production.env

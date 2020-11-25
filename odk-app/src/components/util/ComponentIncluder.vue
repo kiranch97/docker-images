@@ -2,7 +2,7 @@
   <component
     :is="componentData.cTag"
     v-bind="componentData.cProps"
-    :src="componentData.cSrc ? require(`../../assets/${componentData.cSrc}`) : null"
+    :src="componentData.cSrc ? require(`@/assets/${componentData.cSrc}`) : null"
     :data="componentData.cData"
   >
     <template v-if="typeof componentData.cContent !== 'string'">

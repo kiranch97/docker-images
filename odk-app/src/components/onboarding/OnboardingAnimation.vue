@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { animationData } from "../assets/animation/data";
+import { animationData } from "@/assets/animation/data";
 
 export default {
   data () {

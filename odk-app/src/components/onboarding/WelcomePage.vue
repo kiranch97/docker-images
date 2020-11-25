@@ -1,34 +1,29 @@
 <template>
   <odk-container>
     <div class="image-section">
-      <img src="../assets/pwa/trial.png" alt>
+      <img src="@/assets/pwa/intro.png" alt>
     </div>
 
     <div class="text-section">
       <div class="text-section-header">
-        <h1 class="odk-title is-4 page-title">
-          <router-link to="/welcome">
-            <img
-              svg-inline
-              svg-sprite
-              src="@/assets/ui/chevron-left.svg"
-              alt="Ga terug"
-              class="back-button"
-            >
-          </router-link>
-          ODK uitproberen
-        </h1>
-        <p class="caption-1">
-          Tijdens het uitproberen van de App worden uw scan resultaten niet opgeslagen. 
-          Als u een chauffeur van de gemeente bent, ga dan terug en log in met uw code.
-        </p>
+        <h1 class="odk-title">Object Detection Kit</h1>
+        <p class="caption-1">Houd de straten schoon door te scannen tijdens het rijden</p>
       </div>
 
       <div class="text-section-buttons">
         <!-- Login -->
-        <b-button
+        <router-link
+          to="/user"
+          tag="b-button"
           class="is-secondary is-rounded is-expanded"
-          @click="toRecommendation()"
+        >
+          Inloggen
+        </router-link>
+
+        <!-- Start trial / Demo user -->
+        <b-button
+          class="is-primary is-outlined is-rounded is-expanded"
+          @click="saveDemo()"
         >
           Nu uitproberen
         </b-button>
@@ -38,33 +33,59 @@
 </template>
 
 <script>
+import { startupCheck } from "@/mixins/startupCheck";
+
 export default {
-  name: "TrialPage",
+  name: "WelcomePage",
+
+  mixins: [ startupCheck ],
 
   data () {
     return {};
   },
 
+  mounted () {
+    // Check if the user is already logged in,
+    // if so, go to streaming client
+    this.checkUserType();
+  },
+
   methods: {
-    toRecommendation () {
-      localStorage.userType = "demo";
-      this.$router.push("/recommendation");
+    saveDemo () {
+      this.$router.push("/trial");
+    },
+
+    // --
+
+    sendToClient () {
+      this.$router.push("/client");
+    },
+
+    // --
+
+    checkUserType () {
+      // If user has type
+      if (localStorage.userType) {
+        // send to client
+        this.sendToClient();
+      } 
+      // If user has no type
+      else {
+        // clear remaining localStorage
+        localStorage.clear();
+      }
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-a::after {
-  display: none;
-}
-
 .image-section {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: center;
 
   img {
-    max-width: 105%;
     object-fit: cover;
     transform: translateX(-15%);
   }
@@ -86,18 +107,6 @@ a::after {
     margin-top: 1rem;
     width: 100%;
     text-align: left;
-
-    .page-title {
-      line-height: 1.2rem;
-      display: flex;
-
-      .back-button {
-        margin-right: 0.8rem;
-        width: 1.25rem;
-        height: 1.25rem;
-        outline: none;
-      }
-    }
   }
 
   &-buttons {
@@ -107,6 +116,10 @@ a::after {
 
     .button {
       width: 100%;
+
+      &:nth-child(1) {
+        margin-bottom: 1rem;
+      }
     }
   }
 }

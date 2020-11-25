@@ -9,7 +9,7 @@
     <header :class="$style['manual-header']">
       <img
         :class="$style['manual-header-logo']"
-        src="../../assets/manual/logo.svg"
+        src="@/assets/manual/logo.svg"
         @click="goBack"
       >
     </header>

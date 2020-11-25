@@ -1,7 +1,7 @@
 <template>
   <odk-container>
     <div class="image-section" aria-hidden="true">
-      <img src="../assets/pwa/notification.svg" alt="Object Detection Kit abstract figure">
+      <img src="@/assets/pwa/notification.svg" alt="Object Detection Kit abstract figure">
     </div>
 
     <div class="text-section">

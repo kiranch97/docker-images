@@ -5,13 +5,13 @@
       <img
         class="recommendation-img"
         :class="{ 'is-opaque': step === 0 }"
-        src="../assets/pwa/recommendation1-2.png"
+        src="@/assets/pwa/recommendation1-2.png"
         alt
       >
       <img
         class="recommendation-img"
         :class="{ 'is-opaque': step === 1 }"
-        src="../assets/pwa/recommendation2-2.png"
+        src="@/assets/pwa/recommendation2-2.png"
         alt
       >
       <!-- </div> -->
@@ -20,7 +20,7 @@
         <img
           class="recommendation-img"
           :class="{ 'is-opaque': step === 2 }"
-          src="../assets/pwa/recommendation2.png"
+          src="@/assets/pwa/recommendation2.png"
           alt
         >
       </div> -->

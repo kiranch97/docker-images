@@ -1,7 +1,7 @@
 <template>
   <odk-container>
     <div class="image-section">
-      <img src="../assets/pwa/intro.png" alt>
+      <img src="@/assets/pwa/intro.png" alt>
     </div>
 
     <div class="text-section">
@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { fetchEndpoint } from "../utils/fetchEndpoint";
+import { fetchEndpoint } from "@/utils/fetchEndpoint";
 
 export default {
   name: "CodePage",

@@ -8,7 +8,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from starlette.responses import JSONResponse
 from sqlalchemy.orm import Session
 
-from app.core.config import ACCESS_TOKEN_EXPIRE_MINUTES, QR_LOGIN_STRING
+from app.core.config import ACCESS_TOKEN_EXPIRE_MINUTES
 from app.core.security import create_access_token
 from app.db.session import get_db
 
@@ -37,30 +37,3 @@ def login(
         ),
         "token_type": "bearer",
     }
-
-
-# TODO: remove and replace with proper JWT authentication feature
-@router.get("/authorized_login")
-def check_credentials(credential_string: str) -> JSONResponse:
-    status_code: int = 500
-    content: dict = {}
-    try:
-        credentials = json.loads(credential_string)
-
-        if credentials['s'] == QR_LOGIN_STRING:
-            content = {
-                "success": "Login successful",
-                "vehicle_type": credentials['v'],
-                "user_id": credentials['u'],
-            }
-            status_code = 200
-        else:
-            content = {"error": "Login can not be verified"}
-            status_code = 400
-
-    except Exception as e:
-        status_code = 400
-        content = {"error": str(e)}
-
-    finally:
-        return JSONResponse(content=content, status_code=status_code)

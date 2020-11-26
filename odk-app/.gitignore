@@ -1,8 +1,5 @@
 # dotenv environment variables file
-.env*
-env*/
-.env*/
-env*
+.env
 
 # Node & Vuejs
 node_modules/

@@ -6,10 +6,10 @@ services:
     build:
       context: ./odk-app
       args:
-        - APP_NAME=ODK stage
-        - MODE=staging
-    ports:
-      - "8000:80"
+        - APP_NAME=ODK
+        - MODE=production
+    expose:
+      - "80"
     networks:
       reversed-proxy:
         ipv4_address: 192.168.100.10
@@ -18,16 +18,16 @@ services:
     container_name: odk-api
     build: ./odk-api
     environment:
-      - DATABASE_URL=postgresql://odk:staging@db/odk
-      - BROKER_URL=amqp://odk:staging@rmq
-      - SECRET_KEY=notasecretkey
-      - ADMIN_EMAIL=admin@staging.com
-      - ADMIN_PASSWORD=admin
+      - DATABASE_URL
+      - BROKER_URL
+      - SECRET_KEY
+      - ADMIN_EMAIL
+      - ADMIN_PASSWORD
     env_file:
       - ./odk-api/.global.env
-      - ./odk-api/.staging.env
-    ports:
-      - "8080:80"
+      - ./odk-api/.production.env
+    expose:
+      - "80"
     networks:
       stack-internal:
       reversed-proxy:
@@ -37,13 +37,14 @@ services:
     container_name: odk-db
     image: mdillon/postgis:10-alpine
     environment:
-      - POSTGRES_USER=odk
-      - POSTGRES_PASSWORD=staging
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
     ports:
       - "5432:5432"
     volumes:
       - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
-      - postgis-data:/var/lib/postgresql/data
+      - ./pgdata-docker:/var/lib/postgresql/data
+      # - postgis-data:/var/lib/postgresql/data
     networks:
       - stack-internal
 
@@ -51,10 +52,9 @@ services:
     container_name: odk-rmq
     image: rabbitmq:3-management
     environment:
-      - RABBITMQ_DEFAULT_USER=odk
-      - RABBITMQ_DEFAULT_PASS=staging
+      - RABBITMQ_DEFAULT_USER
+      - RABBITMQ_DEFAULT_PASS
     ports:
-      - "8090:8080"
       - "3389:5672"
       - "15672:15672"
     networks:

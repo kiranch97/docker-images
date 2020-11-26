@@ -10,8 +10,6 @@ This stack contains all the elements of the ODK project:
 
 - **ODK App**: Vue JS PWA for streaming frames to be analyzed
 
-- **ODK Dashboard**: Vue JS web app showing incoming frames real-time and plotting analyzed data on a map
-
 - **ODK Frame Analyzer**: Machine learning worker analyzing frames from App stream
 
 - **ODK API**: Handles streams of ODK App via websockets and sets up necessary communication channels, utilizes:
@@ -42,9 +40,7 @@ Setup virtual environment for Frame Analyzer:
 ```
 $ cd odk-frame-analyzer
 $ python3 -m venv venv
-$ source venv/bin/activate (Linux)
-$ venv\Scripts\activate (Windows)
-(venv) $ pip install -r requirements.txt
+$ source venv/bin/activate
 ```
 
 Download the model for detecting garbage:
@@ -72,19 +68,8 @@ Visit [localhost:8000]() to open the ODK App.
 
 Visit [localhost:8001]() for the ODK Dashboard.
 
-## In depth
-
-### QR code
-
-Format
-```
-{"s":"xyz123","v":"garbage_truck","u":"9102"}
-```
-
-QR code generator: https://www.the-qrcode-generator.com/
 
 ## Tools
-
 
 ### Code base
 

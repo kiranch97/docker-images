@@ -2,7 +2,7 @@
 certs/
 domains/
 logs/
-.env*
+.env
 
 # database
 pgdata/
@@ -14,3 +14,6 @@ frames/
 # ide
 .vscode/
 .idea/
+
+# macos
+.DS_Store

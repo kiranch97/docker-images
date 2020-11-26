@@ -6,6 +6,7 @@ from loguru import logger
 from fastapi import APIRouter, WebSocket, Depends, HTTPException
 from starlette.responses import JSONResponse
 from starlette.websockets import WebSocketDisconnect
+from pydantic import ValidationError
 
 from app.log.messages import JSON_DECODE_ERROR, KEY_ERROR
 from app.broker.producer import queue_raw_frame
@@ -61,6 +62,10 @@ async def stream(websocket: WebSocket) -> None:
         await websocket.send_text(message)
         logger.error(message)
 
+    except ValidationError as e:
+        await websocket.send_text(str(e))
+        logger.error(e)
+
     except Exception as e:
         await websocket.send_text(e)
         logger.error(e)
@@ -97,6 +102,10 @@ async def receive_raw_frame(
         raise HTTPException(status_code=400, detail=message)
 
     except ValueError as e:
+        logger.error(e)
+        raise HTTPException(status_code=400, detail=str(e))
+
+    except ValidationError as e:
         logger.error(e)
         raise HTTPException(status_code=400, detail=str(e))
 

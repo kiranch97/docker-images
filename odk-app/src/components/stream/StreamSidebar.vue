@@ -133,7 +133,7 @@ export default {
     align-items: center;
 
     &:active {
-      background: rgb(226, 222, 233);
+      background: $grey-90;
     }
 
     svg:first-of-type {

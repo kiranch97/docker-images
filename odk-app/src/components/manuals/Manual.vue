@@ -158,7 +158,7 @@ export default {
   margin: 0.75rem auto;
   border-radius: 6px;
   box-shadow: none;
-  background-color: var(--color-white-bis);
+  background-color: var(--color-grey-light);
 
   &-header {
     box-shadow: none;

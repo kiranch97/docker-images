@@ -38,17 +38,14 @@ export default {
 
 <style scoped>
 .animation {
-  position: relative;
-  top: 20%;
-  width: 100%;
-  height: auto;
+  height: 100%;
 }
 
 #setup-images {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  height: auto;
+  margin-left: -15%;
+  height: 95vh;
 }
 </style>

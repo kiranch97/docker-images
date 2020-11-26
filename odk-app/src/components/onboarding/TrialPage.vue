@@ -18,7 +18,7 @@
           </router-link>
           ODK uitproberen
         </h1>
-        <p class="caption-1">
+        <p class="body-1">
           Tijdens het uitproberen van de App worden uw scan resultaten niet opgeslagen. 
           Als u een chauffeur van de gemeente bent, ga dan terug en log in met uw code.
         </p>
@@ -61,12 +61,13 @@ a::after {
 
 .image-section {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
 
   img {
-    max-width: 105%;
-    object-fit: cover;
-    transform: translateX(-15%);
+    object-fit: contain;
+    max-width: 104%;
+    max-height: 95vh;
+    margin-left: -8%;
   }
 }
 
@@ -75,7 +76,7 @@ a::after {
   flex-direction: column;
   justify-content: space-between;
   align-self: center;
-  padding: 2.5rem;
+  padding: 2.5rem 5%;
   height: 50%;
 
   &-header {
@@ -113,12 +114,13 @@ a::after {
 
 @media (orientation: landscape) {
   .image-section {
-    width: 45%;
-    height: auto;
+    width: 50%;
+    height: 100%;
+    max-height: 414px;
   }
 
   .text-section {
-    width: 55%;
+    width: 50%;
     height: 100%;
     max-height: 414px;
   }

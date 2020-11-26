@@ -1,17 +1,20 @@
 <template>
   <odk-container>
-    <div class="image-section" aria-hidden="true">
-      <img src="@/assets/pwa/notification.svg" alt="Object Detection Kit abstract figure">
+    <div class="image-section">
+      <img src="@/assets/pwa/notification.png" alt>
     </div>
 
     <div class="text-section">
-      <h1>Clear data to continue</h1>
-      <p>You have probably denied access to your GPS location or camera. As this app is a progressive web app you will have to clear the data stored to continue.</p>
-      <p>
+      <div class="text-section-header">
+        <h1 class="odk-title">Verwijder sitegegevens</h1>
+        <p class="body-1">U heeft waarschijnlijk geen toegang verleend tot het gebruik van uw locatie en/of camera. Aangezien deze app een PWA is, zou u de sitegegevens moeten verwijderen om de app te gebruiken.</p>
+      </div>
+
+      <div class="text-section-footer">
         <router-link :to="{ name:'reset-manual', params: { openCard: 'android' } }">
           How to clear stored data?
         </router-link>
-      </p>
+      </div>
     </div>
   </odk-container>
 </template>
@@ -28,41 +31,50 @@ export default {
 .image-section {
   display: flex;
   align-items: center;
-  justify-content: center;
-  height: 50%;
 
   img {
-    width: 85%;
-    max-height: 426px;
     object-fit: contain;
+    max-width: 105%;
+    max-height: 95vh;
+    margin-left: -5%;
   }
 }
 
 .text-section {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 0 2rem;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2.5rem 5%;
   height: 50%;
-  min-height: 20rem;
-  text-align: left;
+
+  &-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin-top: 1rem;
+    width: 100%;
+    text-align: left;
+  }
+
+  &-footer {
+    width: 100%;
+    text-align: left;
+  }
 }
 
 @media (orientation: landscape) {
   .image-section {
-    width: 45%;
-    height: auto;
-
-    img {
-      transform: translate(-20%, -5%);
-      width: 100%;
-    }
+    width: 50%;
+    height: 100%;
+    max-height: 414px;
   }
 
   .text-section {
-    width: 55%;
-    height: auto;
+    width: 50%;
+    height: 100%;
+    max-height: 414px;
   }
 }
 </style>

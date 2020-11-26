@@ -71,8 +71,6 @@ export default {
         Authorization: "No Auth",
       },
       // eslint-disable-next-line no-undef
-      apiHttpUrl: process.env.VUE_APP_API_HTTP_URL,
-      countFetchRate: 1000,
       fetchResults: null,
       streamId: null,
     };

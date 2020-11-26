@@ -7,7 +7,7 @@
     <div class="text-section">
       <div class="text-section-header">
         <h1 class="odk-title">Object Detection Kit</h1>
-        <p class="caption-1">Houd de straten schoon door te scannen tijdens het rijden</p>
+        <p class="body-1">Houd de straten schoon door te scannen tijdens het rijden</p>
       </div>
 
       <div class="text-section-buttons">
@@ -83,11 +83,12 @@ export default {
 .image-section {
   display: flex;
   align-items: center;
-  justify-content: center;
 
   img {
-    object-fit: cover;
-    transform: translateX(-15%);
+    object-fit: contain;
+    max-width: 110%;
+    max-height: 95vh;
+    margin-left: -10%;
   }
 }
 
@@ -96,7 +97,7 @@ export default {
   flex-direction: column;
   justify-content: space-between;
   align-self: center;
-  padding: 2.5rem;
+  padding: 2.5rem 5%;
   height: 50%;
 
   &-header {
@@ -126,12 +127,13 @@ export default {
 
 @media (orientation: landscape) {
   .image-section {
-    width: 45%;
-    height: auto;
+    width: 50%;
+    height: 100%;
+    max-height: 414px;
   }
 
   .text-section {
-    width: 55%;
+    width: 50%;
     height: 100%;
     max-height: 414px;
   }

@@ -18,7 +18,7 @@
           </router-link>
           Inloggen
         </h1>
-        <p class="caption-1">Deze login is voor medewerkers van Gemeente Amsterdam.</p>
+        <p class="body-1">Deze login is voor medewerkers van Gemeente Amsterdam.</p>
       </div>
 
       <div class="text-section-dropdown">
@@ -128,11 +128,12 @@ a::after {
 .image-section {
   display: flex;
   align-items: center;
-  justify-content: center;
 
   img {
-    object-fit: cover;
-    transform: translateX(-15%);
+    object-fit: contain;
+    max-width: 110%;
+    max-height: 95vh;
+    margin-left: -10%;
   }
 }
 
@@ -141,7 +142,7 @@ a::after {
   flex-direction: column;
   justify-content: space-between;
   align-self: center;
-  padding: 2.5rem;
+  padding: 2.5rem 5%;
   height: 50%;
 
   &-header {
@@ -192,7 +193,7 @@ a::after {
           width: 100%;
 
           &::after {
-            border-color: var(--color-black);
+            border-color: var(--color-dark);
           }
 
           select {
@@ -217,12 +218,13 @@ a::after {
 
 @media (orientation: landscape) {
   .image-section {
-    width: 45%;
-    height: auto;
+    width: 50%;
+    height: 100%;
+    max-height: 414px;
   }
 
   .text-section {
-    width: 55%;
+    width: 50%;
     height: 100%;
     max-height: 414px;
   }

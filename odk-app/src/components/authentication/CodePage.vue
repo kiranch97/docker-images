@@ -19,7 +19,7 @@
           Welkom {{ username }}
         </h1>
 
-        <p class="caption-1">Voer uw pincode in</p>
+        <p class="body-1">Voer uw pincode in</p>
 
         <div class="input-wrapper">
           <div 
@@ -380,7 +380,7 @@ a::after {
       }
     }
 
-    .caption-1 {
+    .body-1 {
       margin-left: 0.25rem;
     }
 
@@ -463,7 +463,7 @@ a::after {
       align-items: center;
 
       &:active {
-        background: var(--color-grey);
+        background: var(--color-grey-90);
       }
     }
   }

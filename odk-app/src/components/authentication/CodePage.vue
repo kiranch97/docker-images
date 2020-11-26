@@ -245,8 +245,14 @@ export default {
         field.classList.add("wrong");
       }
 
-      // Remove 'wrong-code' styling (after animation + 0.5s)
       setTimeout(() => {
+        // Clear input 
+        this.formData.forEach(el => {
+          el.nr = "";
+        });
+        this.passwordList = [];
+
+        // Remove 'wrong-code' styling
         for (let f = 0; f < fields.length; f++) {
           const field = fields[f];
           field.classList.remove("wrong");

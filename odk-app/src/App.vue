@@ -44,7 +44,7 @@ export default {
   height: 100%;
   text-align: center;
   line-height: 1.5;
-  color: var(--color-blue-dark);
+  color: var(--color-dark);
   font-family: $family-sans-serif;
   font-size: $size-6;
   font-weight: 400;
@@ -55,7 +55,7 @@ export default {
 h1,
 .odk-title {
   line-height: 1.5;
-  color: var(--color-blue-dark);
+  color: var(--color-dark);
   font-size: $size-5;
   font-weight: $weight-bold;
 }
@@ -63,27 +63,32 @@ h1,
 h2,
 .title-2 {
   line-height: 2;
-  color: var(--color-blue-dark);
+  color: var(--color-dark);
   font-size: 1.125rem;
   font-weight: $weight-bold;
 }
 
-p,
-.body-1 {
+p {
   margin-top: 0.75rem;
+}
+
+.body-1 {
+  color: var(--color-grey-40);
+  font-size: $size-6;
+  font-weight: $weight-normal;
 }
 
 .body-2 {
   line-height: 1.875;
-  color: var(--color-blue-dark);
+  color: var(--color-dark);
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: $weight-semibold;
 }
 
 .caption-1 {
-  color: var(--color-blue-dark);
-  font-size: 0.85em;
-  font-weight: 400;
+  color: var(--color-dark);
+  font-size: 0.75em;
+  font-weight: $weight-normal;
 }
 
 .fade-enter-active,

@@ -5,13 +5,13 @@
       <img
         class="recommendation-img"
         :class="{ 'is-opaque': step === 0 }"
-        src="../assets/pwa/recommendation1-2.png"
+        src="@/assets/pwa/recommendation1-2.png"
         alt
       >
       <img
         class="recommendation-img"
         :class="{ 'is-opaque': step === 1 }"
-        src="../assets/pwa/recommendation2-2.png"
+        src="@/assets/pwa/recommendation2-2.png"
         alt
       >
       <!-- </div> -->
@@ -20,7 +20,7 @@
         <img
           class="recommendation-img"
           :class="{ 'is-opaque': step === 2 }"
-          src="../assets/pwa/recommendation2.png"
+          src="@/assets/pwa/recommendation2.png"
           alt
         >
       </div> -->
@@ -34,7 +34,7 @@
         <h1 class="odk-title">
           {{ content.steps[step].title }}
         </h1>
-        <p class="caption-1">
+        <p class="body-1">
           {{ content.steps[step].body }}
         </p>
       </div>
@@ -131,7 +131,8 @@ export default {
 
   .recommendation-img {
     position: absolute;
-    max-height: 175px;
+    max-height: 60vh;
+    max-width: 60%;
     object-fit: contain;
     opacity: 0.5;
     margin: 1rem;
@@ -160,7 +161,7 @@ export default {
   flex-direction: column;
   align-self: center;
   justify-content: space-between;
-  padding: 2.5rem;
+  padding: 2.5rem 5%;
   height: 50%;
 
   &-header {
@@ -203,13 +204,13 @@ export default {
 
 @media (orientation: landscape) {
   .image-section {
-    width: 45%;
-    height: auto;
+    width: 50%;
+    height: 100%;
+    max-height: 414px;
   }
 
   .text-section {
-    padding: 2.5rem;
-    width: 55%;
+    width: 50%;
     height: 100%;
     max-height: 414px;
   }

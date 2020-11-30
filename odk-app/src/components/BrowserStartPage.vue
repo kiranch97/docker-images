@@ -4,7 +4,7 @@
     :fullheight="true"
   >
     <div class="image-section" aria-hidden="true">
-      <img src="../assets/pwa/intro.png" alt="Object Detection Kit abstract figure">
+      <img src="@/assets/pwa/intro.png" alt="Object Detection Kit abstract figure">
     </div>
 
     <div class="text-section">
@@ -19,49 +19,49 @@
         outlined
         @click.native="clickAddAppButton"
       >
-        Add to home screen
+        App installeren
       </b-button>
 
       <!-- SUPPORTED BROWSERS MANUAL -->
       <div v-if="activeVendor === 'chrome' || activeVendor === 'edgeAndroid' || activeVendor === 'firefoxAndroid'">
         <p>
-          <strong>Add to homescreen</strong> to continue
+          Om door te gaan moet u de <strong>app installeren</strong>
         </p>
 
         <p>
           <router-link :to="{ name:'installation-manual', params: { openCard: activeVendor } }">
-            How to install a PWA?
+            Hoe installeer ik een PWA?
           </router-link>
         </p>
       </div>
 
       <!-- UNSUPPORTED BROWSERS MANUAL -->
       <div v-else-if="activeVendor === 'iOS'">
-        <p>Not supported by iOS</p>
+        <p>iOS wordt niet ondersteund</p>
 
         <p>
           <router-link :to="{ name:'installation-manual', params: { openCard: activeVendor } }">
-            Why?
+            Waarom?
           </router-link>
         </p>
       </div>
 
       <div v-else-if="activeVendor === 'othersAndroid'">
-        <p>Please use another browser</p>
+        <p>Gebruik een andere browser</p>
 
         <p>
           <router-link :to="{ name:'installation-manual', params: { openCard: activeVendor } }">
-            Which one?
+            Welke browser?
           </router-link>
         </p>
       </div>
 
       <div v-else>
-        <p>This app is intended for Android phones</p>
+        <p>Deze app is gemaakt voor Android telefoons</p>
 
         <p>
           <router-link :to="{ name:'installation-manual', params: { openCard: activeVendor } }">
-            Why?
+            Waarom?
           </router-link>
         </p>
       </div>
@@ -70,8 +70,8 @@
 </template>
 
 <script>
-import { startupCheck } from "../mixins/startupCheck";
-import { isChrome, isFirefox, isMSEdge, isAndroid, isiOS } from "../utils/detect";
+import { startupCheck } from "@/mixins/startupCheck";
+import { isChrome, isFirefox, isMSEdge, isAndroid, isiOS } from "@/utils/detect";
 
 export default {
   name: "BrowserStartPage",
@@ -162,7 +162,6 @@ export default {
   height: 50%;
 
   img {
-    transform: translate(-15%, -5%);
     transition: transform 150ms ease;
     width: 100%;
     object-fit: contain;
@@ -189,7 +188,8 @@ export default {
     height: auto;
 
     img {
-      transform: scale(1.1);
+      height: 100%;
+      transform: translateX(-15%);
     }
   }
 

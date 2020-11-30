@@ -1,14 +1,24 @@
+// Startpage
 import BrowserStartPage from "./components/BrowserStartPage.vue";
-import WelcomePage from "./components/WelcomePage.vue";
-import UserPage from "./components/UserPage.vue";
-import CodePage from "./components/CodePage.vue";
-import TrialPage from "./components/TrialPage.vue";
-import RecommendationPage from "./components/RecommendationPage.vue";
-import ChecklistPage from "./components/ChecklistPage.vue";
-import StreamingClient from "./components/StreamingClient";
-import NotifyClearStorage from "./components/NotifyClearStorage";
-import ManualInstall from "./components/manuals/ManualInstall";
-import ManualReset from "./components/manuals/ManualReset";
+
+// Login
+import UserPage from "./components/authentication/UserPage.vue";
+import CodePage from "./components/authentication/CodePage.vue";
+
+// Onboarding
+import WelcomePage from "./components/onboarding/WelcomePage.vue";
+import TrialPage from "./components/onboarding/TrialPage.vue";
+import RecommendationPage from "./components/onboarding/RecommendationPage.vue";
+import ChecklistPage from "./components/onboarding/ChecklistPage.vue";
+import NotifyClearStorage from "./components/onboarding/ClearStoragePage.vue";
+
+// Manuals
+import ManualInstall from "./components/manuals/ManualInstall.vue";
+import ManualReset from "./components/manuals/ManualReset.vue";
+
+// Stream
+import StreamingClient from "./components/stream/StreamingClient.vue";
+
 
 export const routes = [
   {

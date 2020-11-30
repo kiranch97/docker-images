@@ -9,7 +9,7 @@
     <header :class="$style['manual-header']">
       <img
         :class="$style['manual-header-logo']"
-        src="../../assets/manual/logo.svg"
+        src="@/assets/manual/logo.svg"
         @click="goBack"
       >
     </header>
@@ -158,7 +158,7 @@ export default {
   margin: 0.75rem auto;
   border-radius: 6px;
   box-shadow: none;
-  background-color: var(--color-white-bis);
+  background-color: var(--color-grey-light);
 
   &-header {
     box-shadow: none;

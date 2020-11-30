@@ -39,7 +39,6 @@ a,
       }
     }
   }
-
 }
 
 .button {
@@ -65,13 +64,13 @@ a,
 
     // &:hover,
     // &.is-hovered {
-    //   background-color: lighten($primary, 15%);
+    //   background-color: lighten($purple, 15%);
     // }
 
     &:focus,
     &.is-focused {
-      border-color: darken($primary, 8%);
-      background-color: lighten($primary, 8%);
+      border-color: darken($purple, 8%);
+      background-color: lighten($purple, 8%);
     }
   }
 
@@ -80,13 +79,13 @@ a,
 
     // &:hover,
     // &.is-hovered {
-    //   background-color: lighten($secondary, 15%);
+    //   background-color: lighten($purple, 15%);
     // }
 
     &:focus,
     &.is-focused {
-      border-color: darken($secondary, 8%);
-      background-color: lighten($secondary, 8%);
+      border-color: darken($yellow, 8%);
+      background-color: lighten($yellow, 8%);
     }
   }
 
@@ -94,8 +93,8 @@ a,
   &.is-secondary {
     &[disabled] {
       border-color: transparent;
-      background-color: scale-color($primary, $lightness: 75%, $saturation: -50%);
-      color: scale-color($primary, $lightness: 30%, $saturation: -50%);
+      background-color: scale-color($purple, $lightness: 75%, $saturation: -50%);
+      color: scale-color($purple, $lightness: 30%, $saturation: -50%);
     }
   }
 
@@ -104,9 +103,9 @@ a,
     &.is-primary,
     &.is-secondary {
       &[disabled] {
-        border-color: scale-color($primary, $lightness: 50%, $saturation: -50%);
+        border-color: scale-color($purple, $lightness: 50%, $saturation: -50%);
         background-color: transparent;
-        color: scale-color($primary, $lightness: 30%, $saturation: -50%);
+        color: scale-color($purple, $lightness: 30%, $saturation: -50%);
       }
     }
 
@@ -114,15 +113,15 @@ a,
 
       // &:hover,
       // &.is-hovered {
-      //   background-color: scale-color($primary, $lightness: 70%, $saturation: -50%);
-      //   color: $primary;
+      //   background-color: scale-color($purple, $lightness: 70%, $saturation: -50%);
+      //   color: $purple;
       // }
 
       &:focus,
       &.is-focused {
-        border-color: darken($primary, 8%);
-        background-color: scale-color($primary, $lightness: 55%, $saturation: -60%);
-        color: $primary;
+        border-color: darken($purple, 8%);
+        background-color: scale-color($purple, $lightness: 55%, $saturation: -60%);
+        color: $purple;
       }
     }
   }

@@ -56,6 +56,7 @@ import StreamSidebar from "./StreamSidebar";
 import * as NoSleep from "nosleep.js";
 import { v4 as uuidv4 } from "uuid";
 import { eventBus } from "@/main";
+import { checkLoggedIn } from "../../utils/loggedInCheck";
 
 export default {
   name: "StreamingClient",
@@ -562,8 +563,10 @@ export default {
     // ----
 
     checkUserType () {
-      // If localStorage.UserType exists (change streamId for new session)
-      if (localStorage.userType) {
+      const loggedIn = checkLoggedIn();
+      if (!loggedIn) {
+        this.$router.push("/welcome");
+      } else {
         // Get uuid
         const uuid = uuidv4();
 
@@ -572,10 +575,6 @@ export default {
 
         // Send new streamId to other components
         eventBus.$emit("newStreamId", uuid);
-      }
-      // if user has no localStorage.userType (send to (first) welcome page)
-      else {
-        this.$router.push("/welcome");
       }
     },
   },

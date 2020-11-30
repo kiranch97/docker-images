@@ -63,7 +63,8 @@
 </template>
 
 <script>
-import OnboardingAnimation from "./OnboardingAnimation.vue";
+import { checkLoggedIn } from "../../utils/loggedInCheck";
+import OnboardingAnimation from "./OnboardingAnimation";
 
 export default {
   name: "ChecklistPage",
@@ -94,6 +95,8 @@ export default {
   },
 
   mounted () {
+    this.checkUserType();
+
     // Check if locationPermission, camPermission en landscape orientation are active.
     this.checkAppOrientation();
 
@@ -115,6 +118,8 @@ export default {
       this.checkAllPermission();
     },
 
+    // ----
+
     askLocPermission () {
       if (this.blockProgress) return;
 
@@ -132,6 +137,8 @@ export default {
       this.checkAllPermission();
     },
 
+    // ----
+
     locationAccessDenied (error) {
       if (error.code == error.PERMISSION_DENIED) {
         this.locationPermission = false;
@@ -140,10 +147,14 @@ export default {
       }
     },
 
+    // ----
+
     updatePosition: function (position) {
       this.positionLa = position.coords.latitude;
       this.positionLo = position.coords.longitude;
     },
+
+    // ----
 
     askCamPermission () {
       if (this.blockProgress) return;
@@ -180,6 +191,8 @@ export default {
       ;
     },
 
+    // ----
+
     checkAllPermission () {
       if (
         this.locationPermission &&
@@ -190,6 +203,8 @@ export default {
       }
     },
 
+    // ----
+
     goToNextView (route) {
       this.blockProgress = true;
 
@@ -197,6 +212,15 @@ export default {
         this.blockProgress = false;
         this.$router.push(route);
       }, 1000);
+    },
+
+    // ----
+
+    checkUserType () {
+      const loggedIn = checkLoggedIn();
+      if (!loggedIn) {
+        this.$router.push("/welcome");
+      }
     },
   },
 };

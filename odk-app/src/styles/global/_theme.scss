@@ -8,50 +8,48 @@
 // -- Prime colours
 $white: rgb(255, 255, 255);
 $white-invert: findColorInvert($white);
-$black: rgb(0, 0, 0);
-$black-invert: findColorInvert($black);
-$white-bis: rgb(249, 248, 250);
-$white-bis-invert: findColorInvert($white-bis);
-$grey-light: rgb(244, 243, 246);
+$dark: rgb(21, 21, 34);
+$dark-invert: findColorInvert($dark);
+$grey-light: rgb(249, 248, 250);
 $grey-light-invert: findColorInvert($grey-light);
-$grey: rgb(226, 222, 233);
-$grey-invert: findColorInvert($grey);
-$grey-dark: rgb(25, 21, 32);
-$grey-dark-invert: findColorInvert($grey);
+
+$grey-40: rgb(79, 70, 94);
+$grey-40-invert: findColorInvert($grey-40);
+$grey-60: rgb(115, 115, 122);
+$grey-60-invert: findColorInvert($grey-60);
+$grey-90: rgb(226, 222, 233);
+$grey-90-invert: findColorInvert($grey-90);
+
 $yellow: rgb(246, 211, 101);
 $yellow-invert: findColorInvert($yellow);
-$pink: rgb(200, 55, 96);
-$pink-invert: findColorInvert($pink);
-$red: rgb(225, 82, 74);
-$red-invert: findColorInvert($red);
 $purple: rgb(58, 34, 93);
 $purple-invert: findColorInvert($purple);
-$purple-dark: rgb(47, 28, 80);
-$purple-dark-invert: findColorInvert($purple-dark);
-$blue-dark: rgb(21, 21, 34);
-$blue-dark-invert: findColorInvert($blue-dark);
+$pink: rgb(200, 55, 96);
+$pink-invert: findColorInvert($pink);
+$orange: rgb(225, 82, 74);
+$orange-invert: findColorInvert($orange);
 
 // -- Semantic colours
-$primary: $purple;
-$primary-invert: findColorInvert($primary);
-$secondary: $yellow;
-$secondary-invert: findColorInvert($secondary);
-$success: rgb(55, 200, 139);
-$success-invert: findColorInvert($success);
-$danger: rgb(200, 55, 55);
-$danger-invert: findColorInvert($danger);
+$blue: rgb(55, 93, 200);
+$blue-invert: findColorInvert($blue);
+$green: rgb(55, 200, 139);
+$green-invert: findColorInvert($green);
+$gold: rgb(200, 148, 55);
+$gold-invert: findColorInvert($gold);
+$red: rgb(200, 55, 55);
+$red-invert: findColorInvert($red);
 
 // -- Setup $colors to use as bulma classes (e.g. 'is-primary')
-$colors: ("white": ($white, $black),
-  "black": ($black, $white),
+$colors: ("white": ($white, $dark),
+  "black": ($dark, $white),
   "light": ($light, $light-invert),
   "dark": ($dark, $dark-invert),
-  "primary": ($primary, $primary-invert),
-  "secondary": ($secondary, $secondary-invert),
-  "info": ($info, $info-invert),
-  "success": ($success, $success-invert),
-  "warning": ($warning, $warning-invert),
-  "danger": ($danger, $danger-invert),
+  "primary": ($purple, $purple-invert),
+  "secondary": ($yellow, $yellow-invert),
+  "info": ($blue, $blue-invert),
+  "success": ($green, $green-invert),
+  "warning": ($gold, $gold-invert),
+  "danger": ($red, $red-invert),
 );
 
 

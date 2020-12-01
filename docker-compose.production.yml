@@ -1,4 +1,4 @@
-version: '3.5'
+version: "3.5"
 
 services:
   app:
@@ -22,6 +22,7 @@ services:
       - BROKER_URL
       - SECRET_KEY
       - ADMIN_EMAIL
+      - ADMIN_PASSWORD
     env_file:
       - ./odk-api/.global.env
       - ./odk-api/.production.env
@@ -42,7 +43,8 @@ services:
       - "5432:5432"
     volumes:
       - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
-      - postgres-data:/var/lib/postgresql/data
+      - ./pgdata-docker:/var/lib/postgresql/data
+      # - postgis-data:/var/lib/postgresql/data
     networks:
       - stack-internal
 
@@ -53,13 +55,13 @@ services:
       - RABBITMQ_DEFAULT_USER
       - RABBITMQ_DEFAULT_PASS
     ports:
-       - "3389:5672"
-       - "15672:15672"
+      - "3389:5672"
+      - "15672:15672"
     networks:
       - stack-internal
 
 volumes:
-  postgres-data:
+  postgis-data:
 
 networks:
   stack-internal:

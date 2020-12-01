@@ -1,7 +1,7 @@
 <template>
   <odk-container>
     <div class="image-section">
-      <img src="../assets/pwa/intro.png" alt>
+      <img src="@/assets/pwa/intro.png" alt>
     </div>
 
     <div class="text-section">
@@ -19,7 +19,7 @@
           Welkom {{ username }}
         </h1>
 
-        <p class="caption-1">Voer uw pincode in</p>
+        <p class="body-1">Voer uw pincode in</p>
 
         <div class="input-wrapper">
           <div 
@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { fetchEndpoint } from "../utils/fetchEndpoint";
+import { fetchEndpoint } from "@/utils/fetchEndpoint";
 
 export default {
   name: "CodePage",
@@ -245,8 +245,14 @@ export default {
         field.classList.add("wrong");
       }
 
-      // Remove 'wrong-code' styling (after animation + 0.5s)
       setTimeout(() => {
+        // Clear input 
+        this.formData.forEach(el => {
+          el.nr = "";
+        });
+        this.passwordList = [];
+
+        // Remove 'wrong-code' styling
         for (let f = 0; f < fields.length; f++) {
           const field = fields[f];
           field.classList.remove("wrong");
@@ -380,7 +386,7 @@ a::after {
       }
     }
 
-    .caption-1 {
+    .body-1 {
       margin-left: 0.25rem;
     }
 
@@ -463,7 +469,7 @@ a::after {
       align-items: center;
 
       &:active {
-        background: var(--color-grey);
+        background: var(--color-grey-90);
       }
     }
   }

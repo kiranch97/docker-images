@@ -22,6 +22,7 @@ services:
       - BROKER_URL=amqp://odk:staging@rmq
       - SECRET_KEY=notasecretkey
       - ADMIN_EMAIL=admin@staging.com
+      - ADMIN_PASSWORD=admin
     env_file:
       - ./odk-api/.global.env
       - ./odk-api/.staging.env
@@ -40,7 +41,7 @@ services:
       - POSTGRES_PASSWORD=staging
     volumes:
       - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
-      - postgres-data:/var/lib/postgresql/data
+      - postgis-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     networks:
@@ -60,7 +61,7 @@ services:
       - default
 
 volumes:
-  postgres-data:
+  postgis-data:
 
 networks:
   reversed-proxy:

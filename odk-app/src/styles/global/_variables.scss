@@ -1,19 +1,21 @@
 :root {
   // Prime colours
   --color-white: #{$white};
-  --color-black: #{$black};
-  --color-white-bis: #{$white-bis};
+  --color-dark: #{$dark};
   --color-grey-light: #{$grey-light};
-  --color-grey: #{$grey};
-  --color-grey-dark: #{$grey-dark};
+
+  --color-grey-40: #{$grey-40};
+  --color-grey-60: #{$grey-60};
+  --color-grey-90: #{$grey-90};
+
   --color-yellow: #{$yellow};
   --color-pink: #{$pink};
-  --color-red: #{$red};
   --color-purple: #{$purple};
-  --color-purple-dark: #{$purple-dark};
-  --color-blue-dark: #{$blue-dark};
+  --color-orange: #{$orange};
 
   // Semantic colours
-  --color-success: #{$success};
-  --color-error: #{$danger};
+  --color-info: #{$blue};
+  --color-success: #{$green};
+  --color-warning: #{$gold};
+  --color-error: #{$red};
 }

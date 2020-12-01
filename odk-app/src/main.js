@@ -40,7 +40,7 @@ Vue.use(Select);
 Vue.use(Vuelidate);
 Vue.use(VueSpinnersCss);
 Vue.use(VueScrollTo);
-Vue.use(VueAwesomeSwiper, /* { default global options } */);
+Vue.use(VueAwesomeSwiper);
 
 // Global ODK components.
 Vue.component("odk-container", () => import("@/components/elements/Container.vue"));

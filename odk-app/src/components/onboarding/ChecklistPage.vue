@@ -4,7 +4,7 @@
       class="image-section"
       aria-hidden="true"
     >
-      <onboarding-animation style="transform: translateX(-15%)" />
+      <onboarding-animation />
     </div>
 
     <div class="text-section">
@@ -21,33 +21,8 @@
           :class="{ 'check-item-complete' : landscapeOrientation}"
         >
           <div>
-            <div style="width: 32px;">
-              <svg
-                v-if="landscapeOrientation"
-                class="check-icon"
-                width="24px"
-                height="24px"
-                viewBox="0 0 24 24"
-                version="1.1"
-                xmlns="http://www.w3.org/2000/svg"
-                xmlns:xlink="http://www.w3.org/1999/xlink"
-              >
-                <g
-                  class="Icons/Check"
-                  stroke="none"
-                  stroke-width="1"
-                  fill="none"
-                  fill-rule="evenodd"
-                >
-                  <path
-                    class="Path-3"
-                    d="M18.3050227,6.62611652 C18.7931781,6.13796116 19.5846343,6.13796116 20.0727897,6.62611652 C20.5284013,7.0817282 20.5587755,7.80154862 20.163912,8.29238813 L20.0727897,8.39388348 L11.2351441,17.2315291 C10.5919276,17.8747456 9.57257605,17.9125818 8.88510839,17.3450379 L8.76027032,17.2315291 L4.91611652,13.3873753 C4.42796116,12.8992199 4.42796116,12.1077637 4.91611652,11.6196083 C5.3717282,11.1639967 6.09154862,11.1336225 6.58238813,11.528486 L6.68388348,11.6196083 L9.997,14.933 L18.3050227,6.62611652 Z"
-                    fill="#2F1C50"
-                  />
-                </g>
-              </svg>
-            </div>
-            <span>Houd uw telefoon liggend</span>
+            <img v-if="landscapeOrientation" class="checkmark" src="@/assets/ui/checkmark.svg">
+            <span :class="{ 'buttonspan-margin' : !landscapeOrientation }">Houd uw telefoon liggend</span>
           </div>
         </b-button>
 
@@ -61,33 +36,8 @@
           @click="askLocPermission()"
         >
           <div>
-            <div style="width: 32px;">
-              <svg
-                v-if="locationPermission"
-                class="check-icon"
-                width="24px"
-                height="24px"
-                viewBox="0 0 24 24"
-                version="1.1"
-                xmlns="http://www.w3.org/2000/svg"
-                xmlns:xlink="http://www.w3.org/1999/xlink"
-              >
-                <g
-                  class="Icons/Check"
-                  stroke="none"
-                  stroke-width="1"
-                  fill="none"
-                  fill-rule="evenodd"
-                >
-                  <path
-                    class="Path-3"
-                    d="M18.3050227,6.62611652 C18.7931781,6.13796116 19.5846343,6.13796116 20.0727897,6.62611652 C20.5284013,7.0817282 20.5587755,7.80154862 20.163912,8.29238813 L20.0727897,8.39388348 L11.2351441,17.2315291 C10.5919276,17.8747456 9.57257605,17.9125818 8.88510839,17.3450379 L8.76027032,17.2315291 L4.91611652,13.3873753 C4.42796116,12.8992199 4.42796116,12.1077637 4.91611652,11.6196083 C5.3717282,11.1639967 6.09154862,11.1336225 6.58238813,11.528486 L6.68388348,11.6196083 L9.997,14.933 L18.3050227,6.62611652 Z"
-                    fill="#2F1C50"
-                  />
-                </g>
-              </svg>
-            </div>
-            <span class="buttonspan">GPS-locatie inschakelen</span>
+            <img v-if="locationPermission" class="checkmark" src="@/assets/ui/checkmark.svg">
+            <span :class="{ 'buttonspan-margin' : !locationPermission }" class="buttonspan">GPS-locatie inschakelen</span>
           </div>
         </b-button>
 
@@ -102,33 +52,8 @@
           @click="askCamPermission()"
         >
           <div>
-            <div style="width: 32px;">
-              <svg
-                v-if="camPermission"
-                class="check-icon"
-                width="24px"
-                height="24px"
-                viewBox="0 0 24 24"
-                version="1.1"
-                xmlns="http://www.w3.org/2000/svg"
-                xmlns:xlink="http://www.w3.org/1999/xlink"
-              >
-                <g
-                  class="Icons/Check"
-                  stroke="none"
-                  stroke-width="1"
-                  fill="none"
-                  fill-rule="evenodd"
-                >
-                  <path
-                    class="Path-3"
-                    d="M18.3050227,6.62611652 C18.7931781,6.13796116 19.5846343,6.13796116 20.0727897,6.62611652 C20.5284013,7.0817282 20.5587755,7.80154862 20.163912,8.29238813 L20.0727897,8.39388348 L11.2351441,17.2315291 C10.5919276,17.8747456 9.57257605,17.9125818 8.88510839,17.3450379 L8.76027032,17.2315291 L4.91611652,13.3873753 C4.42796116,12.8992199 4.42796116,12.1077637 4.91611652,11.6196083 C5.3717282,11.1639967 6.09154862,11.1336225 6.58238813,11.528486 L6.68388348,11.6196083 L9.997,14.933 L18.3050227,6.62611652 Z"
-                    fill="#2F1C50"
-                  />
-                </g>
-              </svg>
-            </div>
-            <span class="buttonspan2">Camera inschakelen</span>
+            <img v-if="camPermission" class="checkmark" src="@/assets/ui/checkmark.svg">
+            <span :class="{ 'buttonspan-margin' : !camPermission }" class="buttonspan2">Camera inschakelen</span>
           </div>
         </b-button>
       </div>
@@ -281,7 +206,6 @@ export default {
 .image-section {
   display: flex;
   align-items: center;
-  justify-content: center;
   height: 50%;
 }
 
@@ -290,7 +214,7 @@ export default {
   flex-direction: column;
   align-self: center;
   justify-content: space-between;
-  padding: 2.5rem;
+  padding: 2.5rem 5%;
   height: 50%;
 
   &-header {
@@ -310,10 +234,18 @@ export default {
     .button {
       margin-bottom: .75rem;
 
-      div:first-of-type {
+      div {
         display: flex;
         align-items: center;
         width: 100%;
+
+        .checkmark {
+          width: 1rem;
+        }
+
+        .buttonspan-margin {
+          margin-left: 1rem;
+        }
       }
     }
   }
@@ -321,10 +253,6 @@ export default {
 
 .check-item-complete {
   background: rgba(105, 89, 133, 0.6) !important;
-}
-
-.check-icon {
-  margin-right: 0.25rem;
 }
 
 .tip {
@@ -335,12 +263,13 @@ export default {
 
 @media (orientation: landscape) {
   .image-section {
-    width: 45%;
-    height: auto;
+    width: 50%;
+    height: 100%;
+    max-height: 414px;
   }
 
   .text-section {
-    width: 55%;
+    width: 50%;
     height: 100%;
     max-height: 414px;
   }

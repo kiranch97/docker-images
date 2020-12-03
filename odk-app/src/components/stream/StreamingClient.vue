@@ -36,10 +36,23 @@
       <stream-sidebar />
 
       <!-- TEMP GPS -->
-      <div id="temp-gps">
-        <p>Lat: {{ location.lat }}</p>
-        <p>Lng: {{ location.lng }}</p>
+      <div v-if="developMode && developMode != 'production'" class="temp-gps">
         <p>Speed: {{ location.speed }} km/h</p>
+        <div class="temp-gps-numberinput">
+          <div 
+            class="temp-gps-numberinput-speed-up"
+            @click="changeMinSpeedDev('down')" 
+          >
+            <img src="@/assets/ui/minus.svg">
+          </div>
+          <span>{{ location.minimumDrvingSpeedDev }}</span>
+          <div 
+            class="temp-gps-numberinput-speed-down"
+            @click="changeMinSpeedDev('up')" 
+          >
+            <img src="@/assets/ui/plus.svg">
+          </div>
+        </div>
       </div>
       <!--  -->
     </div>
@@ -72,8 +85,9 @@ export default {
     return {
       // -- 
       // Env properties
+      developMode: process.env.VUE_APP_APP_MODE || null, // development or production mode
+
       apiWebSocketUrl: process.env.VUE_APP_API_WS_URL, // WebSocket connection URL
-      minimumDrivingSpeed: process.env.VUE_APP_MINIMUM_DRIVING_SPEED, // minimum speed user should be driving to send frames
       minimumAnalyzeFrameHeight: process.env.VUE_APP_MINIMUM_ANALYZE_FRAME_HEIGHT, // minimum pixels frame should have when going through analyzer
       prefCameraOption: process.env.VUE_APP_DEFAULT_CAMERA_DIRECTION, // "environment" or "user"
       captureFrameIntervalTime: process.env.VUE_APP_CAPTURE_INTERVAL, // time between sending frames
@@ -125,6 +139,8 @@ export default {
         lat: null,
         lng: null,
         speed: null, // km/h (m/s * 3.6)
+        minimumDrivingSpeed: process.env.VUE_APP_MINIMUM_DRIVING_SPEED, // minimum speed user should be driving to send frames
+        minimumDrvingSpeedDev: 5, // DEVELOPMENT TEMP GPS SPEED CONTROL
       },
     };
   },
@@ -371,11 +387,32 @@ export default {
 
     checkDrivingSpeed () {
       // Check if vehicle is moving (above minimum driving speed)
-      if (this.location.speed > this.minimumDrivingSpeed) {
-        return true;
+      if (this.developMode && this.developMode != "production") {
+        if (this.location.speed > this.location.minimumDrvingSpeedDev) {
+          return true;
+        }
+        console.debug(`Speed must me above ${this.location.minimumDrvingSpeedDev} km/h, but isn't`);
+        return false;
       }
 
+      if (this.location.speed > this.location.minimumDrivingSpeed) {
+        return true;
+      }
+      console.debug(`Speed must me above ${this.location.minimumDrivingSpeed} km/h, but isn't`);
       return false;
+    },
+
+    // ---- TEMP GPS
+
+    changeMinSpeedDev (direction) {
+      if (direction === "down") {
+        if (this.location.minimumDrvingSpeedDev > 0) {
+          this.location.minimumDrvingSpeedDev -= 1;
+        }
+        return;
+      }
+
+      this.location.minimumDrvingSpeedDev += 1;
     },
 
     // ----
@@ -646,12 +683,39 @@ video {
 }
 
 // TEMP GPS
-#temp-gps {
+.temp-gps {
   position: absolute;
   bottom: 0;
   padding: 0 1rem;
   background: #fff;
   font-size: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  &-numberinput {
+    width: 10rem;
+    height: 2rem;
+    margin: 0.75rem 0;
+    background: var(--color-grey-90);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &-speed-up, &-speed-down {
+      width: 2rem;
+      height: 2rem;
+      background: var(--color-warning);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      img {
+        height: 60%;
+      }
+    }
+  }
 }
 // 
 </style>

@@ -14,7 +14,7 @@
     <div id="stream-start-settings">
       <div v-if="!isAuto">
         <button
-          v-if="recordToggle"
+          v-if="!isStreaming"
           class="play-stop-circle"
           @click="startStreamClicked()"
         >
@@ -69,9 +69,9 @@ export default {
       type: Boolean,
       default: null,
     },
-    recordToggle: {
+    isStreaming: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     cameraIconActive: {
       type: Boolean,

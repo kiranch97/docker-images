@@ -15,13 +15,12 @@
       <!-- Stream timer -->
       <stream-time
         :web-socket-disconnected="webSocketDisconnected"
-        :record-toggle="recordToggle"
+        :is-streaming="isStreaming"
       />
 
       <!-- Stream controls -->
       <stream-controls
-        :is-auto="isAuto"
-        :record-toggle="recordToggle"
+        :is-streaming="isStreaming"
         :camera-icon-active="cameraIconActive"
       />
 
@@ -71,42 +70,44 @@ export default {
 
   data () {
     return {
-      // -- ??? TODO
-      photo: null,
-
       // -- 
-      // Settings
-      SETTINGS: {
-        minImageWidth: 608,
-        minImageHeight: 608,
-        TAKE_PICTURE_EVERY_MS: process.env.VUE_APP_CAPTURE_INTERVAL,
-      },
-      apiWebSocketUrl: process.env.VUE_APP_API_WS_URL,
+      // Env properties
+      apiWebSocketUrl: process.env.VUE_APP_API_WS_URL, // WebSocket connection URL
+      minimumDrivingSpeed: process.env.VUE_APP_MINIMUM_DRIVING_SPEED, // minimum speed user should be driving to send frames
+      minimumAnalyzeFrameHeight: process.env.VUE_APP_MINIMUM_ANALYZE_FRAME_HEIGHT, // minimum pixels frame should have when going through analyzer
+      prefCameraOption: process.env.VUE_APP_DEFAULT_CAMERA_DIRECTION, // "environment" or "user"
+      captureFrameIntervalTime: process.env.VUE_APP_CAPTURE_INTERVAL, // time between sending frames
 
       // -- 
       // UI properties
-      recordToggle: true, // play/stop button, true = not streaming
-      isAuto: null, // manual/auto mode
       // switchIconActive: false, // manual/auto switch
       cameraIconActive: true, // flip camera button, true = visible
-      streamError: false, // error, true = error occured
-      streamErrorMessage: null, // error message
+
+      // --
+      // Network properties
       hasNetworkConnection: navigator.onLine, // network state, true = online
 
       // -- 
       // Stream properties
-      video: null, // camera feed
-      canvas: null, // camera feed overlay to take screenshots
-      width: null,
-      height: null,
-      currentStream: null, // camera feed livestream
-      intervalSendPicture: null, // interval func
-      prefCameraOption: process.env.VUE_APP_DEFAULT_CAMERA_OPTION, // "environment" or "user"
-      minCamQuality: {
-        width: 1280,
-        height: 720,
-      }, // minimum quality of image, lower quality cameras can't stream
-      pausedStream: false,
+      camQuality: {
+        min: {
+          width: 1280,
+          height: 720,
+        }, // minimum quality of frame, lower quality cameras can't stream
+        ideal: {
+          width: 1280,
+          height: 720,
+        }, // ideal quality of frame
+      },
+      video: null, // camera feed, HTML element
+      videoLivestream: null, // camera feed, livestream
+      canvas: null, // camera feed overlay to capture frame
+      intervalCaptureFrame: null, // interval func
+      isStreaming: false, // determine if stream started, true = streaming
+      pausedStream: false, // whether stream is interrupted, true = paused
+      intervalReconnectStream: null, // interval reconnect to WebSocket func 
+      streamError: false, // error, true = error occured
+      streamErrorMessage: null, // error message
 
       // -- 
       // WebSocket properties
@@ -128,6 +129,24 @@ export default {
     };
   },
 
+  watch: {
+    pausedStream (isPaused) {
+      // Check when paused / unpaused
+      // If paused, try to reconnect
+      if (isPaused) {
+        this.intervalReconnectStream = setInterval(
+          this.startStream,
+          5000,
+        );
+        return;
+      }
+
+      // If unpaused, stop interval
+      clearInterval(this.intervalReconnectStream);
+      return;
+    },
+  },
+
   mounted () {
     // Check if the user is already logged in,
     // if so, create uuid streamId
@@ -146,14 +165,6 @@ export default {
     eventBus.$on("flipCameraEmitted", () => {
       this.flipCamera();
     });
-
-    //Set interval when connection is offline
-    //Change stream state to OFF and close webSocket connection
-    //When user has access to internet again. and iniates a new webSocket stream, Clear the interval
-    //Check the user stream state. If user was streaming, restart stream. If not dont do anything.
-
-    // this.webSocketStreamState = this.streamState.OFF;
-    // setInterval(this.checkInternetState, 3000);
   },
 
   methods: {
@@ -163,7 +174,6 @@ export default {
       // localStorage.userType === "waste_department"
       //   ? (this.isAuto = true)
       //   : (this.isAuto = false);
-      this.isAuto = false;
 
       // Initialize and activate noSleep to prevent sleep modus
       const noSleep = new NoSleep();
@@ -172,70 +182,15 @@ export default {
       // Set vars
       this.video = document.getElementById("video");
       this.canvas = document.getElementById("canvas");
-      this.photo = document.getElementById("photo");
 
       // Show camera feed
-      this.showCameraFeed();
+      this.startCameraFeed();
 
       // Get and watch GPS position
       this.startLocation();
 
-      // Add network eventlistener
-      this.addNetworkEventListener();
-
-      // Check current (initial) network connection
-      this.handleNetworkStateChange();
-    },
-
-    // ----
-    // Network state
-    // ----
-
-    addNetworkEventListener () {
-      window.addEventListener("online", this.handleNetworkStateChange);
-      window.addEventListener("offline", this.handleNetworkStateChange);
-    },
-
-    // ----
-
-    handleNetworkStateChange () {
-      // Retreive current network state
-      this.hasNetworkConnection = navigator.onLine;
-
-      // If network connection
-      if (this.hasNetworkConnection) {
-        // Delete error
-        this.streamError = false;
-        this.streamErrorMessage = null;
-      }
-
-      // If state went from online to offline while streaming
-      if (this.webSocketStreamState === this.streamState.ON && !this.hasNetworkConnection) {
-        // Pause stream
-        this.pauseStream();
-
-        return;
-      }
-
-      // If network connection is restored and stream was paused
-      if (this.pausedStream && this.hasNetworkConnection) {
-        // Try to make WebSocket connection again
-        this.startStream();
-
-        // Reset pausedStream var
-        this.pausedStream = false;
-
-        return;
-      }
-
-      // If initial state is "offline"
-      if (!this.hasNetworkConnection) {
-        // Set error
-        const message = "Geen internetverbinding";
-        this.errorHandling(message, false);
-
-        return;
-      }
+      // Check and track network state
+      this.checkNetworkState();
     },
 
     // ----
@@ -251,18 +206,20 @@ export default {
       }
 
       // Stop current camera feed
-      this.stopMediaTracks(this.currentStream);
+      this.stopCameraFeed(this.videoLivestream);
 
       // Start new feed with different camera
-      this.showCameraFeed();
+      this.startCameraFeed();
     },
 
     // ----
 
     errorHandling (message, timeout) {
+      // Set error message and bool to true
       this.streamErrorMessage = message;
       this.streamError = true;
 
+      // Add removal process of error message if needed
       if (timeout) {
         setTimeout(() => {
           this.streamError = false;
@@ -272,10 +229,56 @@ export default {
     },
 
     // ----
+    // Network state funcs
+    // ----
+
+    checkNetworkState () {
+      // Add network eventlistener
+      this.addNetworkEventListener();
+
+      // Check current (initial) network connection
+      this.handleNetworkStateChange();
+    },
+
+    // ----
+
+    addNetworkEventListener () {
+      // Event listners for going online / offline
+      window.addEventListener("online", this.handleNetworkStateChange);
+      window.addEventListener("offline", this.handleNetworkStateChange);
+    },
+
+    // ----
+
+    handleNetworkStateChange () {
+      // Retreive current network state
+      this.hasNetworkConnection = navigator.onLine;
+
+      // If network connection
+      if (this.hasNetworkConnection) {
+        // Delete error
+        this.streamError = false;
+        this.streamErrorMessage = null;
+        return;
+      }
+
+      // Set network error
+      const message = "Geen internetverbinding";
+      this.errorHandling(message, false);
+
+      // If state went from online to offline while streaming
+      if (this.isStreaming && !this.hasNetworkConnection) {
+        // Pause stream
+        this.pauseStream();
+        return;
+      }
+    },
+
+    // ----
     // Start and Stop camera feed
     // ----
 
-    showCameraFeed () {
+    startCameraFeed () {
       // Get camera feed
       const video = this.video;
 
@@ -283,8 +286,8 @@ export default {
       const currentConstraints = {
         video: {
           facingMode: this.prefCameraOption,
-          width: this.minCamQuality.width,
-          height: this.minCamQuality.height,
+          width: { min: this.camQuality.min.width, ideal: this.camQuality.ideal.width },
+          height: { min: this.camQuality.min.height, ideal: this.camQuality.ideal.height },
         },
         audio: false,
       };
@@ -295,25 +298,41 @@ export default {
       navigator.mediaDevices
         .getUserMedia(currentConstraints)
         .then(function (stream) {
-          curScope.currentStream = stream;
+          curScope.videoLivestream = stream;
           video.srcObject = stream;
           video.play();
         })
         .catch(function (err) {
-          console.log("==> Error occured in 'showCameraFeed':");
+          console.log("Something went wrong with setup of camera feed");
           console.error(err);
         });
 
-      video.addEventListener("canplay", this.onStartedStream, false);
+      video.addEventListener("canplay", this.setVideoCanvasDimensions, false);
     },
 
     // ----
 
-    stopMediaTracks (stream) {
+    stopCameraFeed (stream) {
       // Stop every track (a/v)
       stream.getTracks().forEach(track => {
         track.stop();
       });
+    },
+
+    // ----
+    // Set video and canvas dimensions
+    // ----
+
+    setVideoCanvasDimensions () {
+      // Get dimensions of current camera feed
+      const streamFeedWidth = this.video.videoWidth;
+      const streamFeedHeight = this.video.videoHeight;
+
+      // Set dimensions to both video and canvas
+      this.video.setAttribute("width", streamFeedWidth);
+      this.video.setAttribute("height", streamFeedHeight);
+      this.canvas.setAttribute("width", streamFeedWidth);
+      this.canvas.setAttribute("height", streamFeedHeight);
     },
 
     // ----
@@ -349,60 +368,38 @@ export default {
     },
 
     // ----
-    // Start, onStart. Stop and Pause stream
+
+    checkDrivingSpeed () {
+      // Check if vehicle is moving (above minimum driving speed)
+      if (this.location.speed > this.minimumDrivingSpeed) {
+        return true;
+      }
+
+      return false;
+    },
+
+    // ----
+    // Start, Stop and Pause stream funcs
     // ----
 
     startStream () {
-      // Setup connection with WebSocket server and
-      // start stream
+      // Setup connection with WebSocket server and start stream
+      if (!this.hasNetworkConnection) {
+        console.debug("Not trying to setup WebSocket without network connection");
+        return;
+      }
+
       this.setupWebSocket();
     },
 
     // ----
 
-    onStartedStream () {
-      // resize video
-      this.height = this.SETTINGS.minImageHeight;
-      this.width = (this.video.videoWidth / this.video.videoHeight) * this.height;
-
-      this.video.setAttribute("width", this.width);
-      this.video.setAttribute("height", this.height);
-      this.canvas.setAttribute("width", this.width);
-      this.canvas.setAttribute("height", this.height);
-
-      this.streaming = true;
-    },
-
-    // ----
-
-    pauseStream () {
-      // Close WebSocket connection
-      this.webSocketConnection.close();
-
-      // Stop making and sending screenshots
-      clearInterval(this.intervalSendPicture);
-
-      // Set var
-      this.pausedStream = true;
-      
-      // Pause timer
-      eventBus.$emit("pauseStreamTimer");
-    },
-
-    // ----
-
     stopStream () {
-      // Set webSocket stream state to "off"
-      this.webSocketStreamState = this.streamState.OFF;
-
       // Close webSocket connection
       this.webSocketConnection.close();
 
-      // Stop making and sending screenshots
-      clearInterval(this.intervalSendPicture);
-
       // Set Play/Stop button to inital state
-      this.recordToggle = true;
+      this.isStreaming = false;
 
       // Show camera flip icon
       this.cameraIconActive = true;
@@ -412,53 +409,59 @@ export default {
     },
 
     // ----
-    // Interval take picture
+
+    pauseStream () {
+      // Delete WebSocket connection
+      this.webSocketConnection = null;
+
+      // Set pausedStream to true
+      this.pausedStream = true;
+      
+      // Pause timer
+      eventBus.$emit("pauseStreamTimer");
+    },
+
+    // ----
+    // Capture frame funcs
     // ----
 
-    startTimeTrigger () {
-      // Interval function to take screenshots of Video stream canvas
-      this.intervalSendPicture = setInterval(
-        this.takePicture,
-        this.SETTINGS.TAKE_PICTURE_EVERY_MS
+    startCaptureFrameInterval () {
+      // Interval function to capture frame from video feed
+      this.intervalCaptureFrame = setInterval(
+        this.captureFrame,
+        this.captureFrameIntervalTime
       );
     },
 
     // ----
-    // Take and Clear picture funcs
-    // ----
 
-    takePicture () {
-      if (this.width && this.height) {
-        // Check if vehicle is moving (minimum of 2.5km/h)
-        // send image if so
-        if (this.location.speed > 2.5) {
-          const context = this.canvas.getContext("2d");
-          this.canvas.width = this.width;
-          this.canvas.height = this.height;
-          context.drawImage(this.video, 0, 0, this.width, this.height);
-
-          const screenshot = this.canvas.toDataURL("image/jpeg");
-          this.sendImage(screenshot);
-        } else {
-          console.debug(`Not sending frame. Car is moving too slow (${this.location.speed} km/h)`);
-        }
-      } 
-      
-      else {
-        // what TODO ??
-        this.clearPhoto();
-      }
+    stopCaptureFrameInterval () {
+      // Stop nterval function to capture frame from video feed
+      clearInterval(this.intervalCaptureFrame);
     },
 
     // ----
 
-    clearPhoto () { // what TODO ??
-      const context = this.canvas.getContext("2d");
-      context.fillStyle = "#AAA";
-      context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    captureFrame () {
+      // Check if car is moving faster than minimum speed
+      const isDriving = this.checkDrivingSpeed() || false;
 
-      const screenshot = this.canvas.toDataURL("image/jpeg");
-      this.photo.setAttribute("src", screenshot);
+      if (!isDriving) {
+        console.debug(`Not capturing frame. Car is moving too slow (${this.location.speed.toFixed(2)} km/h)`);
+        return;
+      }
+
+      // Get canvas to 'draw' frame on
+      const context = this.canvas.getContext("2d");
+
+      // Draw frame on canvas
+      context.drawImage(this.video, 0, 0, this.video.videoWidth, this.video.videoHeight);
+
+      // Convert 'drawing' to dataURL (base64)
+      const frame = this.canvas.toDataURL("image/jpeg");
+
+      // Send frame as WebSocket message
+      this.sendWebSocketMsg(frame);
     },
 
     // ----
@@ -484,11 +487,14 @@ export default {
     receiveWebSocketMsgOnOpen () {
       console.debug("WebSocket connection established");
 
-      // StreamState = ON
+      // Set webSocket stream state to "on"
       this.webSocketStreamState = this.streamState.ON;
 
+      // Set pausedStream to default, stream started again
+      this.pausedStream = false;
+
       // Set Play/Stop button to streaming
-      this.recordToggle = false;
+      this.isStreaming = true;
 
       // Hide camera flip icon
       this.cameraIconActive = false;
@@ -496,8 +502,8 @@ export default {
       // Start timer
       eventBus.$emit("startStreamTimer");
 
-      // Start taking screenshots
-      this.startTimeTrigger();
+      // Start capture frames
+      this.startCaptureFrameInterval();
     },
 
     // ----
@@ -505,14 +511,11 @@ export default {
     receiveWebSocketMsgOnClose () {
       console.debug("WebSocket connection closed");
 
-      // Set Play/Stop button to inital state
-      this.recordToggle = true;
+      // Set webSocket stream state to "off"
+      this.webSocketStreamState = this.streamState.OFF;
 
-      // Show camera flip icon
-      this.cameraIconActive = true;
-
-      // Reset timer
-      eventBus.$emit("resetStreamTimer");
+      // Stop capturing and sending frames
+      this.stopCaptureFrameInterval();
 
       // Delete webSocket connection
       this.webSocketConnection = null;
@@ -520,12 +523,12 @@ export default {
 
     // ----
 
-    receiveWebSocketMsg (e) {
+    receiveWebSocketMsg (msg) {
       console.debug("WebSocket message received");
 
       // WebSocket event when Message sent by the server
-      console.log(e);
-      // console.log(e.data);
+      console.log(msg);
+      // console.log(msg.data);
     },
 
     // ----
@@ -540,12 +543,12 @@ export default {
 
     // ----
 
-    sendImage (base64Img) {
+    sendWebSocketMsg (frame) {
       console.debug("WebSocket send message");
 
       // Set message to send
       const message = {
-        img: base64Img,
+        img: frame,
         stream_id: localStorage.streamId,
         user_type: localStorage.userType,
         user_id: localStorage.userId || "demo",

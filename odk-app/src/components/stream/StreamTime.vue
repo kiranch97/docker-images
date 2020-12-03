@@ -1,7 +1,7 @@
 <template>
   <div id="stream-timer">
-    <div id="status-box" :class="{ 'is-recording': !recordToggle }">
-      <div v-if="!recordToggle && !webSocketDisconnected" class="blink-icon" />
+    <div id="status-box" :class="{ 'is-streaming': isStreaming }">
+      <div v-if="isStreaming && !webSocketDisconnected" class="blink-icon" />
       <DefaultLoader
         id="loader"
         :loading="webSocketDisconnected"
@@ -40,7 +40,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    recordToggle: {
+    isStreaming: {
       type: Boolean,
       default: true,
     },
@@ -149,7 +149,7 @@ export default {
     justify-content: center;
     align-items: center;
 
-    &.is-recording {
+    &.is-streaming {
       background-color: var(--color-error);
     }
 

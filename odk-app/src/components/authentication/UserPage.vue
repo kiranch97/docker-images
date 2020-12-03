@@ -41,6 +41,7 @@
 </template>
 
 <script>
+import { checkLoggedIn } from "../../utils/loggedInCheck";
 import { fetchEndpoint } from "@/utils/fetchEndpoint";
 
 export default {
@@ -87,10 +88,7 @@ export default {
   },
 
   mounted () {
-    // Clear localStorage,
-    // if for example chose wrong user,
-    // clear its temporary values
-    localStorage.clear();
+    this.checkUserType();
 
     // Get list of users
     this.getUsers();
@@ -115,6 +113,17 @@ export default {
           });
         }
       });
+    },
+
+    // ----
+
+    checkUserType () {
+      const loggedIn = checkLoggedIn();
+      if (loggedIn) {
+        this.$router.push("/client");
+      } else {
+        localStorage.clear();
+      }
     },
   },
 };

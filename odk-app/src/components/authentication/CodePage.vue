@@ -86,6 +86,7 @@
 </template>
 
 <script>
+import { checkLoggedIn } from "../../utils/loggedInCheck";
 import { fetchEndpoint } from "@/utils/fetchEndpoint";
 
 export default {
@@ -174,6 +175,8 @@ export default {
   },
 
   mounted () {
+    this.checkUserType();
+
     setTimeout(() => {
       this.showNumpad();
     }, 750);
@@ -193,7 +196,7 @@ export default {
       }
     },
 
-    // --
+    // ----
 
     deleteNumber () {
       // Get last added number (array-wise)
@@ -223,7 +226,7 @@ export default {
       }
     },
 
-    // --
+    // ----
 
     showNumpad () {
       const imageSection = document.getElementsByClassName("image-section")[0];
@@ -233,7 +236,7 @@ export default {
       numpadSection.style = "left: 55%;";
     },
 
-    // --
+    // ----
 
     wrongCode () {
       // Get all input fields
@@ -260,7 +263,7 @@ export default {
       }, 1500);
     },
 
-    // --
+    // ----
 
     async sendCode () {
       // Retreive code
@@ -287,7 +290,7 @@ export default {
       this.$router.push("/recommendation");
     },
 
-    // --
+    // ----
 
     async login (email, code) {
       // Set FormData
@@ -320,7 +323,7 @@ export default {
       return false;
     },
 
-    // --
+    // ----
 
     async getUserData () {
       // Fetch data
@@ -332,6 +335,15 @@ export default {
       }
 
       return data;
+    },
+
+    // ----
+
+    checkUserType () {
+      const loggedIn = checkLoggedIn();
+      if (loggedIn) {
+        this.$router.push("/client");
+      }
     },
   },
 };

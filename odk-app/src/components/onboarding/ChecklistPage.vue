@@ -63,7 +63,8 @@
 </template>
 
 <script>
-import OnboardingAnimation from "./OnboardingAnimation.vue";
+import { checkLoggedIn } from "../../utils/loggedInCheck";
+import OnboardingAnimation from "./OnboardingAnimation";
 
 export default {
   name: "ChecklistPage",
@@ -74,7 +75,10 @@ export default {
 
   data () {
     return {
-      /// UI properties.
+      // Env properties
+      prefCameraOption: process.env.VUE_APP_DEFAULT_CAMERA_DIRECTION, // "environment" or "user"
+
+      /// UI properties
       landscapeOrientation: false,
       locationPermission: false,
       camPermission: false,
@@ -85,15 +89,23 @@ export default {
       positionLo: null,
       currentCameraOption: null,
 
-      // Front camera resolution.
-      rearCamResolution: {
-        width: 1280,
-        height: 720,
+      // Camera properties
+      camQuality: {
+        min: {
+          width: 1280,
+          height: 720,
+        }, // minimum quality of frame, lower quality cameras can't stream
+        ideal: {
+          width: 1280,
+          height: 720,
+        }, // ideal quality of frame
       },
     };
   },
 
   mounted () {
+    this.checkUserType();
+
     // Check if locationPermission, camPermission en landscape orientation are active.
     this.checkAppOrientation();
 
@@ -115,6 +127,8 @@ export default {
       this.checkAllPermission();
     },
 
+    // ----
+
     askLocPermission () {
       if (this.blockProgress) return;
 
@@ -132,6 +146,8 @@ export default {
       this.checkAllPermission();
     },
 
+    // ----
+
     locationAccessDenied (error) {
       if (error.code == error.PERMISSION_DENIED) {
         this.locationPermission = false;
@@ -140,27 +156,31 @@ export default {
       }
     },
 
+    // ----
+
     updatePosition: function (position) {
       this.positionLa = position.coords.latitude;
       this.positionLo = position.coords.longitude;
     },
+
+    // ----
 
     askCamPermission () {
       if (this.blockProgress) return;
 
       const curScope = this;
 
-      this.currentConstraints = {
+      const currentConstraints = {
         video: {
-          facingMode: this.currentCameraOption,
-          width: this.rearCamResolution.width,
-          height: this.rearCamResolution.height,
+          facingMode: this.prefCameraOption,
+          width: { min: this.camQuality.min.width, ideal: this.camQuality.ideal.width },
+          height: { min: this.camQuality.min.height, ideal: this.camQuality.ideal.height },
         },
         audio: false,
       };
 
       navigator.mediaDevices
-        .getUserMedia(this.currentConstraints)
+        .getUserMedia(currentConstraints)
         .then(mediaStream => {
           // Stop the stream
           const tracks = mediaStream.getTracks();
@@ -173,12 +193,14 @@ export default {
           curScope.checkAllPermission();
         })
         .catch((err) => {
-          console.log("==> Error occured in 'showStream':/ Permission denied");
+          console.log("Camera permission was denied or camera quality is under minimum.");
           console.error(err);
           this.goToNextView("/clear-storage");
         })
       ;
     },
+
+    // ----
 
     checkAllPermission () {
       if (
@@ -190,6 +212,8 @@ export default {
       }
     },
 
+    // ----
+
     goToNextView (route) {
       this.blockProgress = true;
 
@@ -197,6 +221,15 @@ export default {
         this.blockProgress = false;
         this.$router.push(route);
       }, 1000);
+    },
+
+    // ----
+
+    checkUserType () {
+      const loggedIn = checkLoggedIn();
+      if (!loggedIn) {
+        this.$router.push("/welcome");
+      }
     },
   },
 };

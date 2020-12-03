@@ -38,6 +38,8 @@
 </template>
 
 <script>
+import { checkLoggedIn } from "../../utils/loggedInCheck";
+
 export default {
   name: "TrialPage",
 
@@ -45,10 +47,23 @@ export default {
     return {};
   },
 
+  mounted () {
+    this.checkUserType();
+  },
+
   methods: {
     toRecommendation () {
       localStorage.userType = "demo";
       this.$router.push("/recommendation");
+    },
+
+    // ----
+
+    checkUserType () {
+      const loggedIn = checkLoggedIn();
+      if (loggedIn) {
+        this.$router.push("/client");
+      }
     },
   },
 };

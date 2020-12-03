@@ -1,44 +1,64 @@
-### Tasks
+# ODK API
 
-| Description                           | Status      | Prio     | Comments |
-| ------------------------------------- | ----------- | -------- | -------- |
-| Build app in gunicorn container       | Done        | Must     | |
-| Adapt the ODK app to send right format| Done        | Must     | |
-| Adapt frame analyser                  | Done        | Must     | |
-| Deploy new API + app on staging       | Done        | Must     | Not functional yet though |
-| Get WSS connection on staging server  | Done        | Must     | |
-| Fix timezone offset for results       | In progress | Must     | Set TZ env var to my timezone + `time.tzset()` |
+This API is the backbone of the ODK kit, receiving images from the eyes (scan app) and sending it to the brain (frame analyzer). Its a simple application exposing a hand full of endpoints (WebSocket and REST) for the app to talk to, next to some endpoints for other processes to communicate images through.
 
+Apart from exposing endpoints it also manages the connection to the PostgreSQL database and initiates the needed queues on the RabbitMQ message broker.
 
-### Features
+Written using [FastAPI](https://fastapi.tiangolo.com/)!
 
-| Description                           | Status | Prio     | Comments |
-| ------------------------------------- | ------ | -------- |--------------- |
-| Receive raw frames                    | Done   | Must     | |
-| Put raw frame on queue                | Done   | Must     | |
-| Receive analysed frames               | Done   | Must     | |
-| Save analysed frame in database       | Done   | Must     | |
-| Create detected objects count         | Done   | Must     | |
-| Current QR check function             | Done   | Medium   | |
-| JWT authentication                    | -      | Should   | |
-| User management dashboard             | -      | Could    | Already build by Tiangolo [here](https://github.com/tiangolo/full-stack-fastapi-postgresql) |
-| CORS allowed hosts                    | Done   | Medium   | |
+## Data flow
 
-### Issues
+The data flow goes as follows:
 
-- When starting up API in Docker with Gunicorn app keeps trying connection in endless loop, for every worker (core)
-- Naming a folder `logging` with an `__init__.py` broke the docker proces, since it replaces the python `logging` package
+1. App captures image
+2. App send image + meta data to API
+3. API validates data and places it on a queue
+3. Frame analyzer reads the data from the queue
+4. FA (possibly) detects object(s) on image
+5. FA places meta data on queue
+6. API reads queue from FA and persists data on database
 
-### Gunicorn
+## Architecture
 
-- Using the [uvicorn-gunicorn](https://github.com/tiangolo/uvicorn-gunicorn-docker) Dockerfile a worker is spawned for every core in the system.
-- It has some more features settings, highly recommended to read through the [config file](https://github.com/tiangolo/uvicorn-gunicorn-docker/blob/master/docker-images/gunicorn_conf.py)
-- There is an option to run some code only once with `--preload`, but didn't get that working. Now the initialization is happening for every worker again, which is not needed, but also doesn't hurt (I think). Could be improved in the future.
+![ODK Architecture Image](odk-architecture.png)
 
-### Sources
+## Getting started
 
-- https://github.com/nsidnev/fastapi-realworld-example-app
-- https://github.com/tiangolo/full-stack-fastapi-postgresql
-- https://www.starlette.io/config/
-- https://fastapi.tiangolo.com/tutorial/bigger-applications/
-- https://medium.com/@ageitgey/learn-how-to-use-static-type-checking-in-python-3-6-in-10-minutes-12c86d72677b
+### Services
+```
+$ docker-compose -f ../docker-compose.yml up -d db rmq
+```
+
+### Docker
+
+```
+$ docker-compose up -d api
+```
+
+### Python
+
+Setup virtual environment:
+```
+$ python3 -m venv venv
+$ source venv/bin/activate
+$ pip install -r requirements.txt
+```
+
+Run single worker:
+```
+$ ./uvicorn_run.sh
+```
+
+Run multiple workers:
+```
+$ ./gunicorn_run.sh
+```
+
+## Usage
+
+Since its build with FastAPI two forms of documentation are included:
+- `http://localhost:8080/docs`
+- `http://localhost:8080/redoc`
+
+For easier user management there is modified version of [Tiangolo's user dashboard](https://github.com/tiangolo/full-stack-fastapi-postgresql):
+https://gitlab.com/odk/user-management-dashboard

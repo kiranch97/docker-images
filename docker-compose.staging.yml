@@ -29,7 +29,7 @@ services:
     ports:
       - "8080:80"
     networks:
-      stack-internal:
+      default:
       reversed-proxy:
         ipv4_address: 192.168.100.20
 
@@ -39,13 +39,13 @@ services:
     environment:
       - POSTGRES_USER=odk
       - POSTGRES_PASSWORD=staging
-    ports:
-      - "5432:5432"
     volumes:
       - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
       - postgis-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     networks:
-      - stack-internal
+      - default
 
   rmq:
     container_name: odk-rmq
@@ -58,14 +58,12 @@ services:
       - "3389:5672"
       - "15672:15672"
     networks:
-      - stack-internal
+      - default
 
 volumes:
   postgis-data:
 
 networks:
-  stack-internal:
-    internal: true
   reversed-proxy:
     external: true
     name: reversed-proxy-network

@@ -31,7 +31,7 @@ def _create_raw_frame(data_incoming: Dict) -> schemas.RawFrame:
         - stream_id
 
     Returns:
-        schemas.RawFrame: Standard object format, shared with frame analyzer
+        schemas.RawFrame: Standard object format, shared with frame analyzer.
     """
 
     if stream_meta := data_incoming.get("stream_meta"):

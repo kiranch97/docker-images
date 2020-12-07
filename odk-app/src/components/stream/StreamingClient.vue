@@ -587,11 +587,14 @@ export default {
       const message = {
         img: frame,
         stream_id: localStorage.streamId,
-        user_type: localStorage.userType,
-        user_id: localStorage.userId || "demo",
         lat: this.location.lat,
         lng: this.location.lng,
         timestamp: this.$moment().format("YYYY-MM-DD HH:mm:ss.SSS"),
+        stream_meta: {
+          user_type: localStorage.userType,
+          user_id: localStorage.userId || "demo",
+          velocity: this.location.speed
+        }
       };
 
       // Send message to webSocket API

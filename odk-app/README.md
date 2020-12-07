@@ -2,6 +2,8 @@
 
 This app is the eyes of the ODK kit. Its easy to install on a Android phone without having to go through an app store since its a Progressive Web App (PWA). Its works best and it continuously tested in Chrome.
 
+![ODK Scan App streaming](../images/odk-app-screenshot-streaming-1.jpg)
+
 After installing the app and opening it, there is an option to log in. This way its easy to verify to validity of frames coming in. During the setup process the user is made aware of the high amount of data usage streaming can cause. After the the user accepts the sharing of the devices location and camera, the user can start a stream. There are a few features build in to get the highest quality of data:
 
 - High GPS accuracy is enabled

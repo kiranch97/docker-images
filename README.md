@@ -1,8 +1,8 @@
-# ODK [Object Detection Kit]
+# Object Detection Kit (ODK)
 
-ODK is a easy way to start detecting trained objects on images. By using the scanning app, frames can be captured and send to a central hub. From there they can be sent to the brains of the kit, the frame analyser. Using the open source [YOLO technology by Ultralytics](https://github.com/ultralytics/yolov5) desired objects can be recognized, this information will end up in a database in real-time. Now its ready to be used for e.g. real-time analytics.
+ODK is a easy way to start detecting trained objects on images. By using the Scan App, frames can be captured and send to a central hub. From there they can be sent to the brains of the kit, the Frame Analyzer. Using the open source [YOLO technology by Ultralytics](https://github.com/ultralytics/yolov5) desired objects can be recognized, this information will end up in a database in real-time. The data is then ready to be used for e.g. real-time analytics.
 
-ODK is a project by the [City of Amsterdam](https://www.amsterdam.nl/wonen-leefomgeving/innovatie/). For more information about the project check [odk.ai](http://www.odk.ai).
+ODK is a project by the innovation team of the [City of Amsterdam](https://www.amsterdam.nl/wonen-leefomgeving/innovatie/). For more information about the project check [odk.ai](https://www.odk.ai).
 
 ## Contents
 
@@ -10,7 +10,7 @@ This repository contains the core elements of the ODK project:
 
 - **ODK Scan App**: VueJS PWA for streaming frames to the API
 
-- **ODK API**: Handles incoming via WebSocket and REST and sets up necessary communication channels with the frame analyzer, supported by:
+- **ODK API**: Handles incoming via WebSocket and REST, sets up necessary communication channels with the frame analyzer and sends data to the database, supported by:
 	- RabbitMQ message broker
 	- PostgreSQL database
 
@@ -38,7 +38,7 @@ $ git submodule update --init --recursive
 _(TODO)_ Get sample trained model:
 ```
 $ cd odk-frame-analyzer
-$ ./download_model.sh
+$ ./download_sample_model.sh
 ```
 
 ### Running locally
@@ -53,7 +53,9 @@ Then start up the app and API:
 $ docker-compose up -d app api
 ```
 
-Finally start the frame analyzer:
+Run `docker ps` to check the port bindings for each element.
+
+Then start the frame analyzer:
 ```
 $ cd odk-frame-analyzer
 $ python3 -m venv venv
@@ -61,6 +63,10 @@ $ source venv/bin/activate
 $ pip install -r requirements.txt
 $ python MlWorker.py
 ```
+
+Scan App can now be accessed here: [localhost:8000/pwa](http://localhost:8000/pwa)
+ 
+API documentation & testing: [localhost:8080/docs](http://localhost:8080/docs)
 
 ## Tools
 

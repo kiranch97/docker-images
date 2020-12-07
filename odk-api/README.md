@@ -20,7 +20,7 @@ The data flow goes as follows:
 
 ## Architecture
 
-![ODK Architecture Image](odk-architecture.png)
+![ODK Architecture Image](../images/odk-stack-architecture-2.png)
 
 ## Getting started
 

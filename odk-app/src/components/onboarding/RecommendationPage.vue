@@ -70,6 +70,8 @@
 </template>
 
 <script>
+import { checkLoggedIn } from "../../utils/loggedInCheck";
+
 export default {
   name: "RecommendationPage",
 
@@ -96,7 +98,9 @@ export default {
     };
   },
 
-  mounted () {},
+  mounted () {
+    this.checkUserType();
+  },
 
   methods: {
     switchRmd () {
@@ -107,6 +111,15 @@ export default {
       setTimeout(() => {
         this.$refs.buttonNext.$el.blur();
       }, 250);
+    },
+
+    // ----
+
+    checkUserType () {
+      const loggedIn = checkLoggedIn();
+      if (!loggedIn) {
+        this.$router.push("/welcome");
+      }
     },
   },
 };

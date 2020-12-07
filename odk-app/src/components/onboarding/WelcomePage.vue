@@ -23,7 +23,7 @@
         <!-- Start trial / Demo user -->
         <b-button
           class="is-primary is-outlined is-rounded is-expanded"
-          @click="saveDemo()"
+          @click="toTrial()"
         >
           Nu uitproberen
         </b-button>
@@ -33,6 +33,7 @@
 </template>
 
 <script>
+import { checkLoggedIn } from "../../utils/loggedInCheck";
 import { startupCheck } from "@/mixins/startupCheck";
 
 export default {
@@ -45,33 +46,21 @@ export default {
   },
 
   mounted () {
-    // Check if the user is already logged in,
-    // if so, go to streaming client
     this.checkUserType();
   },
 
   methods: {
-    saveDemo () {
+    toTrial () {
       this.$router.push("/trial");
     },
 
-    // --
-
-    sendToClient () {
-      this.$router.push("/client");
-    },
-
-    // --
+    // ----
 
     checkUserType () {
-      // If user has type
-      if (localStorage.userType) {
-        // send to client
-        this.sendToClient();
-      } 
-      // If user has no type
-      else {
-        // clear remaining localStorage
+      const loggedIn = checkLoggedIn();
+      if (loggedIn) {
+        this.$router.push("/client");
+      } else {
         localStorage.clear();
       }
     },

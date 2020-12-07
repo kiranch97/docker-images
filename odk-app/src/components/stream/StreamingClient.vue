@@ -593,8 +593,8 @@ export default {
         stream_meta: {
           user_type: localStorage.userType,
           user_id: localStorage.userId || "demo",
-          velocity: this.location.speed
-        }
+          velocity: this.location.speed,
+        },
       };
 
       // Send message to webSocket API

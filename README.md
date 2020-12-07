@@ -1,6 +1,6 @@
 # Object Detection Kit (ODK)
 
-![ODK Scan App streaming](images/odk-artwork-1.png)
+<img src="./images/odk-artwork-1.png" height="400">
 
 ODK is a easy way to start detecting trained objects on images. By using the Scan App, frames can be captured and send to a central hub. From there they can be sent to the brains of the kit, the Frame Analyzer. Using the open source [YOLO technology by Ultralytics](https://github.com/ultralytics/yolov5) desired objects can be recognized, this information will end up in a database in real-time. The data is then ready to be used for e.g. real-time analytics.
 

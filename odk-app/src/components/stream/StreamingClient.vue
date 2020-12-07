@@ -45,7 +45,7 @@
           >
             <img src="@/assets/ui/minus.svg">
           </div>
-          <span>{{ location.minimumDrvingSpeedDev }}</span>
+          <span>{{ location.minimumDrivingSpeedDev }}</span>
           <div 
             class="temp-gps-numberinput-speed-down"
             @click="changeMinSpeedDev('up')" 
@@ -140,7 +140,7 @@ export default {
         lng: null,
         speed: null, // km/h (m/s * 3.6)
         minimumDrivingSpeed: process.env.VUE_APP_MINIMUM_DRIVING_SPEED, // minimum speed user should be driving to send frames
-        minimumDrvingSpeedDev: 5, // DEVELOPMENT TEMP GPS SPEED CONTROL
+        minimumDrivingSpeedDev: 5, // DEVELOPMENT TEMP GPS SPEED CONTROL
       },
     };
   },
@@ -388,14 +388,14 @@ export default {
     checkDrivingSpeed () {
       // Check if vehicle is moving (above minimum driving speed)
       if (this.developMode && this.developMode != "production") {
-        if (this.location.speed > this.location.minimumDrvingSpeedDev) {
+        if (this.location.speed >= this.location.minimumDrivingSpeedDev) {
           return true;
         }
-        console.debug(`Speed must me above ${this.location.minimumDrvingSpeedDev} km/h, but isn't`);
+        console.debug(`Speed must me above ${this.location.minimumDrivingSpeedDev} km/h, but isn't`);
         return false;
       }
 
-      if (this.location.speed > this.location.minimumDrivingSpeed) {
+      if (this.location.speed >= this.location.minimumDrivingSpeed) {
         return true;
       }
       console.debug(`Speed must me above ${this.location.minimumDrivingSpeed} km/h, but isn't`);
@@ -406,13 +406,13 @@ export default {
 
     changeMinSpeedDev (direction) {
       if (direction === "down") {
-        if (this.location.minimumDrvingSpeedDev > 0) {
-          this.location.minimumDrvingSpeedDev -= 1;
+        if (this.location.minimumDrivingSpeedDev > 0) {
+          this.location.minimumDrivingSpeedDev -= 1;
         }
         return;
       }
 
-      this.location.minimumDrvingSpeedDev += 1;
+      this.location.minimumDrivingSpeedDev += 1;
     },
 
     // ----

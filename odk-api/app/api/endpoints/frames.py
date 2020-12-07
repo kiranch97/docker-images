@@ -18,16 +18,37 @@ router = APIRouter()
 
 
 def _create_raw_frame(data_incoming: Dict) -> schemas.RawFrame:
+    """Creates an RawFrame object from incoming data.
+    If the field `stream_meta` is present, its directly used in the RawFrame object.
+    If not a new dict will be created looking for `user_type`, `vehicle_type` and `user_id`.
+
+    Args:
+        data_incoming (Dict): needs a least these fields:
+        - img
+        - timestamp
+        - lat
+        - lng
+        - stream_id
+
+    Returns:
+        schemas.RawFrame: Standard object format, shared with frame analyzer.
+    """
+
+    if stream_meta := data_incoming.get("stream_meta"):
+        pass
+    else:
+        stream_meta = {
+            "user_type": data_incoming.get("user_type") or "",
+            "vehicle_type": data_incoming.get("vehicle_type") or "",
+            "user_id": data_incoming.get("user_id") or "",
+        }
+
     raw_frame = schemas.RawFrame(
         img=data_incoming["img"],
         taken_at=data_incoming["timestamp"],
         lat_lng={"lat": data_incoming["lat"], "lng": data_incoming["lng"]},
         stream_id=data_incoming["stream_id"],
-        stream_meta={
-            "user_type": data_incoming.get("user_type") or "",
-            "vehicle_type": data_incoming.get("vehicle_type") or "",
-            "user_id": data_incoming.get("user_id") or "",
-        },
+        stream_meta=stream_meta
     )
     return raw_frame
 
@@ -43,7 +64,8 @@ async def stream(websocket: WebSocket) -> None:
 
             # 2) Build RawFrame object
             raw_frame = _create_raw_frame(stream_data)
-            logger.debug("Received frame taken at: {}".format(raw_frame.taken_at))
+            logger.debug("Received frame taken at: {}".format(
+                raw_frame.taken_at))
 
             # 3) Queue RawFrame to be analysed
             await queue_raw_frame(raw_frame)
@@ -75,7 +97,7 @@ async def stream(websocket: WebSocket) -> None:
 @router.post("/raw_frame")
 async def receive_raw_frame(
     frame_dict: dict,
-    current_user = Depends(get_current_active_user),
+    current_user=Depends(get_current_active_user),
 ) -> JSONResponse:
     response_status_code: int = 500
     response_content: dict = {}

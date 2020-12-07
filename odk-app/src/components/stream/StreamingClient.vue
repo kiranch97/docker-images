@@ -35,24 +35,7 @@
       <stream-sidebar />
 
       <!-- TEMP GPS -->
-      <div v-if="developMode && developMode != 'production'" id="temp-gps">
-        <p>Speed: {{ location.speedHTMLDev }} km/h</p>
-        <div id="temp-gps-numberinput">
-          <div 
-            id="temp-gps-numberinput-speed-up"
-            @click="changeMinSpeedDev('down')" 
-          >
-            <img src="@/assets/ui/minus.svg">
-          </div>
-          <span>{{ location.minimumDrvingSpeedDev }}</span>
-          <div 
-            id="temp-gps-numberinput-speed-down"
-            @click="changeMinSpeedDev('up')" 
-          >
-            <img src="@/assets/ui/plus.svg">
-          </div>
-        </div>
-      </div>
+      <stream-speed />
       <!--  -->
     </div>
   </div>
@@ -64,6 +47,7 @@ import StreamControls from "./StreamControls";
 import StreamTime from "./StreamTime";
 import StreamError from "./StreamError";
 import StreamSidebar from "./StreamSidebar";
+import StreamSpeed from "./StreamSpeed";
 import * as NoSleep from "nosleep.js";
 import { v4 as uuidv4 } from "uuid";
 import { eventBus } from "@/main";
@@ -78,6 +62,7 @@ export default {
     StreamControls,
     StreamError,
     StreamSidebar,
+    StreamSpeed,
   },
 
   data () {
@@ -136,9 +121,8 @@ export default {
         lat: null,
         lng: null,
         speed: null, // km/h (m/s * 3.6)
-        speedHTMLDev: null,
-        minimumDrivingSpeed: process.env.VUE_APP_MINIMUM_DRIVING_SPEED, // minimum speed user should be driving to send frames
-        minimumDrvingSpeedDev: 5, // DEVELOPMENT TEMP GPS SPEED CONTROL
+        minDrivingSpeed: process.env.VUE_APP_MINIMUM_DRIVING_SPEED, // minimum speed user should be driving to send frames
+        maxDrivingSpeed: process.env.VUE_APP_MAXIMUM_DRIVING_SPEED, // maximum speed user should be driving to send frames        
       },
     };
   },
@@ -178,6 +162,14 @@ export default {
     });
     eventBus.$on("flipCameraEmitted", () => {
       this.flipCamera();
+    });
+
+    // EventBus for receiving min / max speed changes
+    eventBus.$on("minSpeedChanged", (val) => {
+      this.location.minDrivingSpeed = val;
+    });
+    eventBus.$on("maxSpeedChanged", (val) => {
+      this.location.maxDrivingSpeed = val;
     });
   },
 
@@ -374,8 +366,8 @@ export default {
       this.location.lng = position.coords.longitude;
       this.location.speed = position.coords.speed * 3.6 || 0; // m/s to km/h = x * 3.6
 
-      // Dev only
-      this.location.speedHTMLDev = (position.coords.speed * 3.6).toFixed(4) || 0;
+      // Send new speed to StreamSpeed.vue
+      eventBus.$emit("speedUpdated", (this.location.speed).toFixed(4));
     },
 
     // ----
@@ -387,33 +379,13 @@ export default {
     // ----
 
     checkDrivingSpeed () {
-      // Check if vehicle is moving (above minimum driving speed)
-      if (this.developMode && this.developMode != "production") {
-        if (this.location.speed > this.location.minimumDrvingSpeedDev) {
-          return true;
-        }
-        console.debug(`Speed must me above ${this.location.minimumDrvingSpeedDev} km/h, but isn't`);
-        return false;
-      }
-
-      if (this.location.speed > this.location.minimumDrivingSpeed) {
+      // Check if vehicle is moving (above minimum driving speed & below maximum driving speed)
+      if (this.location.speed >= this.location.minDrivingSpeed && this.location.speed <= this.location.maxDrivingSpeed) {
         return true;
       }
-      console.debug(`Speed must me above ${this.location.minimumDrivingSpeed} km/h, but isn't`);
+
+      console.debug(`Speed must me above ${this.location.minDrivingSpeed} km/h, but isn't`);
       return false;
-    },
-
-    // ---- TEMP GPS
-
-    changeMinSpeedDev (direction) {
-      if (direction === "down") {
-        if (this.location.minimumDrvingSpeedDev > 0) {
-          this.location.minimumDrvingSpeedDev -= 1;
-        }
-        return;
-      }
-
-      this.location.minimumDrvingSpeedDev += 1;
     },
 
     // ----
@@ -704,41 +676,4 @@ video {
     opacity: 1;
   }
 }
-
-// TEMP GPS
-#temp-gps {
-  position: absolute;
-  bottom: 0;
-  padding: 0 1rem;
-  background: #fff;
-  font-size: 0.75rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  &-numberinput {
-    width: 10rem;
-    height: 2rem;
-    margin: 0.75rem 0;
-    background: var(--color-grey-90);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    &-speed-up, &-speed-down {
-      width: 2rem;
-      height: 2rem;
-      background: var(--color-warning);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      img {
-        height: 60%;
-      }
-    }
-  }
-}
-// 
 </style>

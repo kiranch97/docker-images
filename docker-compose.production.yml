@@ -39,11 +39,13 @@ services:
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
+      - PGDATA=/pgdata      
     ports:
       - "5432:5432"
     volumes:
       - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./pgdata-docker:/var/lib/postgresql/data
+      - /pgdata-docker:/pgdata
+      # - ./pgdata-docker:/var/lib/postgresql/data
       # - postgis-data:/var/lib/postgresql/data
     networks:
       - stack-internal

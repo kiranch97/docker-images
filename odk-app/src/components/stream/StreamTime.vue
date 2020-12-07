@@ -1,10 +1,10 @@
 <template>
   <div id="stream-timer">
-    <div id="status-box" :class="{ 'is-streaming': isStreaming }">
-      <div v-if="isStreaming && !webSocketDisconnected" class="blink-icon" />
+    <div id="status-box" :class="{ 'is-streaming': wsStreamState.open }">
+      <div v-if="wsStreamState.open && !wsStreamState.paused" class="blink-icon" />
       <DefaultLoader
         id="loader"
-        :loading="webSocketDisconnected"
+        :loading="wsStreamState.paused"
         :size="25"
         color="white"
       />
@@ -36,13 +36,16 @@ export default {
   },
 
   props: {
-    webSocketDisconnected: {
-      type: Boolean,
-      default: false,
-    },
-    isStreaming: {
-      type: Boolean,
-      default: true,
+    wsStreamState: {
+      type: Object,
+      default () {
+        return {
+        connecting: false,
+        open: false,
+        closed: true,
+        paused: false,
+        };
+      },
     },
   },
 

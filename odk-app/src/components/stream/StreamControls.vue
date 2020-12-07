@@ -13,20 +13,28 @@
     <!-- PLAY/STOP BUTTON -->
     <div id="stream-start-settings">
       <div v-if="!isAuto">
-        <button
-          v-if="!isStreaming"
-          class="play-stop-circle"
+        <!-- Not streaming -->
+        <div
+          v-if="!wsStreamState.open"
+          id="play-stop-circle"
           @click="startStreamClicked()"
         >
-          <div class="inner-circle" />
-        </button>
-        <button
+          <RingLoader
+            id="loader"
+            :loading="wsStreamState.connecting"
+            color="#e2dee9"
+          />
+          <div id="inner-circle" />
+        </div>
+
+        <!-- Streaming -->
+        <div
           v-else
-          class="stop-box"
+          id="stop-box"
           @click="stopStreamClicked()"
         >
-          <div class="inner-button" />
-        </button>
+          <div id="inner-button" />
+        </div>
       </div>
     </div>
 
@@ -34,7 +42,7 @@
     <div id="stream-camera-flip">
       <svg
         v-if="cameraIconActive"
-        class="stream-flip"
+        id="stream-camera-flip-icon"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         @click="flipCameraClicked()"
@@ -59,19 +67,31 @@
 </template>
 
 <script>
+import { RingLoader } from "vue-spinners-css";
 import { eventBus } from "@/main";
 
 export default {
   name: "StreamControls",
 
+  components: {
+    RingLoader,
+  },
+
   props: {
+    wsStreamState: {
+      type: Object,
+      default () {
+        return {
+        connecting: false,
+        open: false,
+        closed: true,
+        paused: false,
+        };
+      },
+    },
     isAuto: {
       type: Boolean,
       default: null,
-    },
-    isStreaming: {
-      type: Boolean,
-      default: false,
     },
     cameraIconActive: {
       type: Boolean,
@@ -95,7 +115,9 @@ export default {
     // ----
 
     startStreamClicked () {
-      eventBus.$emit("startStreaming");
+      if (!this.wsStreamState.connecting) {
+        eventBus.$emit("startStreaming");
+      }
     },
 
     // ----
@@ -134,11 +156,17 @@ export default {
 
   #stream-start-settings {
     height: 40%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 
-    .play-stop-circle {
+    div {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #play-stop-circle {
+      position: relative;
       width: 3.5rem;
       height: 3.5rem;
       background: none;
@@ -146,13 +174,17 @@ export default {
       border-radius: 50%;
       outline: none;
       transition: all 0.5s;
-      display: flex;
-      justify-content: center;
-      align-items: center;
 
-      .inner-circle {
-        width: calc(2rem + 1px);
-        height: calc(2rem + 1px);
+      #loader {
+        position: absolute;
+        width: calc(100% + 0.75rem) !important;
+        height: calc(100% + 0.75rem) !important;
+      }
+
+      #inner-circle {
+        position: absolute;
+        width: calc(100% - 0.75rem);
+        height: calc(100% - 0.75rem);
         background: var(--color-white);
         border-radius: 50%;
         outline: none;
@@ -160,7 +192,7 @@ export default {
       }
     }
 
-    .stop-box {
+    #stop-box {
       position: relative;
       width: 3.5rem;
       height: 3.5rem;
@@ -173,9 +205,9 @@ export default {
       align-items: center;
       transition: all 0.5s;
 
-      .inner-button {
-        width: calc(1.5rem + 1px);
-        height: calc(1.5rem + 1px);
+      #inner-button {
+        width: 1.5rem;
+        height: 1.5rem;
         background: var(--color-error);
         border-radius: 20%;
         transition: all 0.5s;
@@ -189,7 +221,7 @@ export default {
     justify-content: center;
     align-items: center;
 
-    .stream-flip {
+    &-icon {
       width: 2.25rem;
       height: 2.25rem;
     }

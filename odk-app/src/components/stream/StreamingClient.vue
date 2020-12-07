@@ -1,26 +1,25 @@
 <template>
-  <div class="container">
+  <div id="container">
     <!-- Stream camera feed -->
-    <div class="stream">
-      <video id="video" class="stream-video" autoplay="true" />
+    <div id="stream">
+      <video id="video" autoplay="true" />
       <canvas id="canvas" style="display: none;" />
     </div>
 
     <div id="hud">
       <!-- Stream counter -->
       <stream-count
-        :web-socket-stream-state="webSocketStreamState"
+        :ws-stream-state="wsStreamState"
       />
 
       <!-- Stream timer -->
       <stream-time
-        :web-socket-disconnected="webSocketDisconnected"
-        :is-streaming="isStreaming"
+        :ws-stream-state="wsStreamState"
       />
 
       <!-- Stream controls -->
       <stream-controls
-        :is-streaming="isStreaming"
+        :ws-stream-state="wsStreamState"
         :camera-icon-active="cameraIconActive"
       />
 
@@ -36,18 +35,18 @@
       <stream-sidebar />
 
       <!-- TEMP GPS -->
-      <div v-if="developMode && developMode != 'production'" class="temp-gps">
-        <p>Speed: {{ location.speed }} km/h</p>
-        <div class="temp-gps-numberinput">
+      <div v-if="developMode && developMode != 'production'" id="temp-gps">
+        <p>Speed: {{ location.speedHTMLDev }} km/h</p>
+        <div id="temp-gps-numberinput">
           <div 
-            class="temp-gps-numberinput-speed-up"
+            id="temp-gps-numberinput-speed-up"
             @click="changeMinSpeedDev('down')" 
           >
             <img src="@/assets/ui/minus.svg">
           </div>
           <span>{{ location.minimumDrvingSpeedDev }}</span>
           <div 
-            class="temp-gps-numberinput-speed-down"
+            id="temp-gps-numberinput-speed-down"
             @click="changeMinSpeedDev('up')" 
           >
             <img src="@/assets/ui/plus.svg">
@@ -117,21 +116,19 @@ export default {
       videoLivestream: null, // camera feed, livestream
       canvas: null, // camera feed overlay to capture frame
       intervalCaptureFrame: null, // interval func
-      isStreaming: false, // determine if stream started, true = streaming
-      pausedStream: false, // whether stream is interrupted, true = paused
       intervalReconnectStream: null, // interval reconnect to WebSocket func 
       streamError: false, // error, true = error occured
       streamErrorMessage: null, // error message
 
       // -- 
       // WebSocket properties
-      webSocketConnection: null, // WebSocket live connection
-      webSocketStreamState: null, // WebSocket state of streaming
-      streamState: {
-        ON: "on",
-        OFF: "off",
-      }, // possible stream states
-      webSocketDisconnected: false, // whether WebSocket connection is lost with server
+      wsConnection: null, // WebSocket live connection
+      wsStreamState: {
+        connecting: false,
+        open: false,
+        closed: true,
+        paused: false,
+      }, // WebSocket Stream States
 
       // -- 
       // GPS based properties
@@ -139,6 +136,7 @@ export default {
         lat: null,
         lng: null,
         speed: null, // km/h (m/s * 3.6)
+        speedHTMLDev: null,
         minimumDrivingSpeed: process.env.VUE_APP_MINIMUM_DRIVING_SPEED, // minimum speed user should be driving to send frames
         minimumDrvingSpeedDev: 5, // DEVELOPMENT TEMP GPS SPEED CONTROL
       },
@@ -146,10 +144,10 @@ export default {
   },
 
   watch: {
-    pausedStream (isPaused) {
+    wsStreamState (obj) {
       // Check when paused / unpaused
       // If paused, try to reconnect
-      if (isPaused) {
+      if (obj.paused) {
         this.intervalReconnectStream = setInterval(
           this.startStream,
           5000,
@@ -283,7 +281,7 @@ export default {
       this.errorHandling(message, false);
 
       // If state went from online to offline while streaming
-      if (this.isStreaming && !this.hasNetworkConnection) {
+      if (this.wsStreamState.open && !this.hasNetworkConnection) {
         // Pause stream
         this.pauseStream();
         return;
@@ -375,6 +373,9 @@ export default {
       this.location.lat = position.coords.latitude;
       this.location.lng = position.coords.longitude;
       this.location.speed = position.coords.speed * 3.6 || 0; // m/s to km/h = x * 3.6
+
+      // Dev only
+      this.location.speedHTMLDev = (position.coords.speed * 3.6).toFixed(4) || 0;
     },
 
     // ----
@@ -433,10 +434,15 @@ export default {
 
     stopStream () {
       // Close webSocket connection
-      this.webSocketConnection.close();
+      this.wsConnection.close();
 
-      // Set Play/Stop button to inital state
-      this.isStreaming = false;
+      // Set WebSocket state
+      this.wsStreamState = {
+        connecting: false,
+        open: false,
+        closed: true,
+        paused: false,
+      };
 
       // Show camera flip icon
       this.cameraIconActive = true;
@@ -449,10 +455,15 @@ export default {
 
     pauseStream () {
       // Delete WebSocket connection
-      this.webSocketConnection = null;
+      this.wsConnection = null;
 
-      // Set pausedStream to true
-      this.pausedStream = true;
+      // Set Websocket state 'paused' to true
+      this.wsStreamState = {
+        connecting: false,
+        open: false,
+        closed: false,
+        paused: true,
+      };
       
       // Pause timer
       eventBus.$emit("pauseStreamTimer");
@@ -484,7 +495,7 @@ export default {
       const isDriving = this.checkDrivingSpeed() || false;
 
       if (!isDriving) {
-        console.debug(`Not capturing frame. Car is moving too slow (${this.location.speed.toFixed(2)} km/h)`);
+        console.debug(`Not capturing frame. Car is moving too slow (${this.location.speed.toFixed(4)} km/h)`);
         return;
       }
 
@@ -508,30 +519,37 @@ export default {
     setupWebSocket () {
       console.debug("Try to establish WebSocket connection");
 
+      // Set WebSocket state
+      this.wsStreamState = {
+        connecting: true,
+        open: false,
+        closed: false,
+        paused: false,
+      };
+
       // Setup connection with WebSocket server URL:PORT/ENDPOINT
       const webSocketUrl = this.apiWebSocketUrl + "/stream";
-      this.webSocketConnection = new WebSocket(webSocketUrl);
+      this.wsConnection = new WebSocket(webSocketUrl);
 
       // WebSocket events
-      this.webSocketConnection.onopen = this.receiveWebSocketMsgOnOpen;
-      this.webSocketConnection.onclose = this.receiveWebSocketMsgOnClose;
-      this.webSocketConnection.onmessage = this.receiveWebSocketMsg;
-      this.webSocketConnection.onerror = this.receiveWebSocketMsgOnError;
+      this.wsConnection.onopen = this.receiveWebSocketMsgOnOpen;
+      this.wsConnection.onclose = this.receiveWebSocketMsgOnClose;
+      this.wsConnection.onmessage = this.receiveWebSocketMsg;
+      this.wsConnection.onerror = this.receiveWebSocketMsgOnError;
     },
 
     // ----
 
     receiveWebSocketMsgOnOpen () {
       console.debug("WebSocket connection established");
-
-      // Set webSocket stream state to "on"
-      this.webSocketStreamState = this.streamState.ON;
-
-      // Set pausedStream to default, stream started again
-      this.pausedStream = false;
-
-      // Set Play/Stop button to streaming
-      this.isStreaming = true;
+      
+      // Set WebSocket state
+      this.wsStreamState = {
+        connecting: false,
+        open: true,
+        closed: false,
+        paused: false,
+      };
 
       // Hide camera flip icon
       this.cameraIconActive = false;
@@ -548,14 +566,11 @@ export default {
     receiveWebSocketMsgOnClose () {
       console.debug("WebSocket connection closed");
 
-      // Set webSocket stream state to "off"
-      this.webSocketStreamState = this.streamState.OFF;
-
       // Stop capturing and sending frames
       this.stopCaptureFrameInterval();
 
       // Delete webSocket connection
-      this.webSocketConnection = null;
+      this.wsConnection = null;
     },
 
     // ----
@@ -572,6 +587,14 @@ export default {
 
     receiveWebSocketMsgOnError () {
       console.debug("WebSocket connection failed to establish");
+
+      // Set WebSocket state
+      this.wsStreamState = {
+        connecting: false,
+        open: false,
+        closed: true,
+        paused: false,
+      };
 
       // Set error
       const message = "Verbinding met server mislukt";
@@ -595,7 +618,7 @@ export default {
       };
 
       // Send message to webSocket API
-      this.webSocketConnection.send(JSON.stringify(message));
+      this.wsConnection.send(JSON.stringify(message));
     },
 
     // ----
@@ -622,7 +645,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.container {
+#container {
   display: flex;
   position: relative;
   align-items: center;
@@ -637,11 +660,11 @@ export default {
   }
 }
 
-.stream {
+#stream {
   position: relative;
   width: 100%;
 
-  &-video {
+  #video {
     width: 100%;
     height: auto;
   }
@@ -683,7 +706,7 @@ video {
 }
 
 // TEMP GPS
-.temp-gps {
+#temp-gps {
   position: absolute;
   bottom: 0;
   padding: 0 1rem;

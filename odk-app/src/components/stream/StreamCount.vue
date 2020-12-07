@@ -36,20 +36,27 @@ export default {
   name: "StreamCount",
 
   props: {
-    websocketStreamState: {
-      type: String,
-      default: "off",
+    wsStreamState: {
+      type: Object,
+      default () {
+        return {
+        connecting: false,
+        open: false,
+        closed: true,
+        paused: false,
+        };
+      },
     },
   },
 
   data () {
     return {
-      // ---- settings ----
-      SETTINGS: {
-        REQUEST_COUNTS_EVERY_MS: process.env.VUE_APP_RESULT_INTERVAL,
-      },
-      // ---- end settings ----
-      // ----
+      // -- 
+      // Env properties
+      fetchCountIntervalTime: process.env.VUE_APP_RESULT_INTERVAL,
+
+      // -- 
+      // UI properties
       swiperOption: {
         direction: "vertical",
         slidesPerView: 5,
@@ -57,8 +64,14 @@ export default {
         freeMode: true,
       },
       bounce: false,
-      // ----
-      //Detectable objects counts
+
+      // --
+      // Functional page properties
+      fetchResults: null,
+      streamId: null,
+
+      // --
+      // Detectable objects count properties
       binCount: 0,
       trashCount: 0,
       cardboardCount: 0,
@@ -66,13 +79,6 @@ export default {
       constructionBinCount: 0,
       matrasCount: 0,
       totalCount: 0,
-      requestHeaders: {
-        "Content-Type": "application/json",
-        Authorization: "No Auth",
-      },
-      // eslint-disable-next-line no-undef
-      fetchResults: null,
-      streamId: null,
     };
   },
 
@@ -110,19 +116,23 @@ export default {
   },
 
   watch: {
-    // Fetch results (counts) when websocket connection
-    websocketStreamState () {
-      if (
-        this.websocketStreamState == null ||
-        this.websocketStreamState === "off"
-      ) {
-        clearInterval(this.fetchResults);
-      } else if (this.websocketStreamState == "on") {
-        this.fetchResults = setInterval(
-          this.fetchAnalysedResults,
-          this.SETTINGS.REQUEST_COUNTS_EVERY_MS
-        );
+    wsStreamState (obj) {
+      // Do nothing while connecting
+      if (obj.connecting) {
+        return;
       }
+
+      // Clear interval if no connection
+      if (!obj.open || obj.closed || obj.paused) {
+        clearInterval(this.fetchResults);
+        return;
+      }
+
+      // Start interval fetch if connection
+      this.fetchResults = setInterval(
+        this.fetchAnalysedResults,
+        this.fetchCountIntervalTime
+      );
     },
 
     totalCount (newCount, oldCount) {
@@ -160,20 +170,20 @@ export default {
       // Set data
       if (data.length == 0) return;
 
-        this.binCount = data.container_small || 0;
-        this.trashCount = data.garbage_bag || 0;
-        this.cardboardCount = data.cardboard || 0;
-        this.matrasCount = data.matras || 0;
-        // this.christmasTreeCount = data.christmas_tree || 0;
-        // this.constructionBinCount = data.construction_container || 0;
+      this.binCount = data.container_small || 0;
+      this.trashCount = data.garbage_bag || 0;
+      this.cardboardCount = data.cardboard || 0;
+      this.matrasCount = data.matras || 0;
+      // this.christmasTreeCount = data.christmas_tree || 0;
+      // this.constructionBinCount = data.construction_container || 0;
 
-        this.totalCount =
-          this.binCount +
-          this.trashCount +
-          this.cardboardCount +
-          this.matrasCount;
-          // this.christmasTreeCount +
-          // this.constructionBinCount +
+      this.totalCount =
+        this.binCount +
+        this.trashCount +
+        this.cardboardCount +
+        this.matrasCount;
+        // this.christmasTreeCount +
+        // this.constructionBinCount +
     },
   },
 };

@@ -5,11 +5,12 @@ This app is the eyes of the ODK kit. Its easy to install on a Android phone with
 <img src="../images/odk-app-screenshot-streaming-1.jpg" width="800">
 
 
-After installing the app and opening it, there is an option to log in. This way its easy to verify to validity of frames coming in. During the setup process the user is made aware of the high amount of data usage streaming can cause. After the the user accepts the sharing of the devices location and camera, the user can start a stream. There are a few features build in to get the highest quality of data:
+After installing the app and opening it, there is an option to log in. This way its easy to verify to validity of frames coming in. During the setup process the user is made aware of the high amount of data usage streaming can cause. After the the user accepts the sharing of the devices location and camera, the user can start a stream. There are a few cool features build in:
 
-- High GPS accuracy is enabled
-- When streaming in a car, a minimal speed for capturing frames can be set
+- When streaming in e.g. a car, the user can set a minimal and maximum speed for sending frames
+- High GPS accuracy
 - The screen stays active so the streaming doesn't stop
+- Login feature for verifying incoming frames
 
 ## Getting started
 

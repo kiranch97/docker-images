@@ -463,6 +463,8 @@ export default {
     // ----
 
     startCaptureFrameInterval () {
+      console.debug("startCaptureFrameInterval called");
+      clearInterval(this.intervalCaptureFrame);
       // Interval function to capture frame from video feed
       this.intervalCaptureFrame = setInterval(
         this.captureFrame,

@@ -2,9 +2,9 @@
 
 <img src="./images/odk-artwork-1.png" height="400">
 
-ODK is a easy way to start detecting trained objects on images. By using the Scan App, frames can be captured and send to a central hub. From there they can be sent to the brains of the kit, the Frame Analyzer. Using the open source [YOLO technology by Ultralytics](https://github.com/ultralytics/yolov5) desired objects can be recognized, this information will end up in a database in real-time. The data is then ready to be used for e.g. real-time analytics.
+ODK is a easy way to start detecting trained objects on images. By using the Scan App, frames can be captured and send to a central hub. From there they can be sent to the brains of the kit, the Frame Analyzer. Using the open source [YOLO technology by Ultralytics](https://github.com/ultralytics/yolov5) desired objects can be recognized, this information will end up in a database in real-time. The data is then ready to be used for e.g. daily operational tasks or real-time analytics.
 
-ODK is a project by the innovation team of the [City of Amsterdam](https://www.amsterdam.nl/wonen-leefomgeving/innovatie/). For more information about the project check [odk.ai](https://www.odk.ai).
+ODK is a project by innovation teams within the [City of Amsterdam](https://www.amsterdam.nl/innovatie). Currently ODK is actively used to scan the public space for garbage, this helps the departments related to the public space to keep the streets of Amsterdam clean and safe. The software is written genericaly so it can be used for scanning other types of objects as well, though the use of this software is limited to GDPR friendly use cases only. For more information about the project check [odk.ai](https://www.odk.ai).
 
 ## Contents
 
@@ -26,7 +26,7 @@ To get the whole stack up and running quickly follow these steps. To run/debug e
 
 - Docker (Node, Python, Postgres, RabbitMQ)
 - Python 3 (python3-venv)
-- [CUDA Toolkit](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/) (optional for faster object detection, when you have a NVIDIA GPU)
+- [CUDA toolkit](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/) (optional for faster object detection, when you have a NVIDIA GPU)
 
 ### Setup
 
@@ -50,14 +50,14 @@ First start the database and message broker, wait a few seconds until their star
 $ docker-compose up -d db rmq
 ```
 
-Then start up the app and API:
+Then start up the Scan App and API:
 ```
 $ docker-compose up -d app api
 ```
 
-Run `docker ps` to check the port bindings for each element.
+Run `docker ps` to check the port bindings for each service.
 
-Then start the frame analyzer:
+Finally start the Frame Analyzer:
 ```
 $ cd odk-frame-analyzer
 $ python3 -m venv venv
@@ -94,6 +94,6 @@ _TODO_
 
 ### Infrastructure
 
-- [Docker](https://www.docker.com/) for deployment of services
+- [Docker](https://www.docker.com/) for development & deployment
 - [PostgreSQL](https://www.postgresql.org) database
 - [RabbitMQ](https://www.rabbitmq.com/) message broker

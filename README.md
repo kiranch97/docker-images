@@ -10,13 +10,13 @@ ODK is a project by the innovation team of the [City of Amsterdam](https://www.a
 
 This repository contains the core elements of the ODK project: 
 
-- **ODK Scan App**: VueJS PWA for streaming frames to the API
+- **[ODK Scan App](odk-app/README.md)**: VueJS PWA for streaming frames to the API
 
-- **ODK API**: Handles incoming via WebSocket and REST, sets up necessary communication channels with the frame analyzer and sends data to the database, supported by:
+- **[ODK API](odk-api/README.md)**: Handles incoming via WebSocket and REST, sets up necessary communication channels with the frame analyzer and sends data to the database, supported by:
 	- RabbitMQ message broker
 	- PostgreSQL database
 
-- **ODK Frame Analyzer**: Worker with a trained YOLO model for recognized specific objects and returning relevant data to a queue
+- **[ODK Frame Analyzer](https://gitlab.com/odk/odk-frame-analyzer)**: Worker with a trained YOLO model for recognized specific objects and returning relevant data to a queue
 
 ## Getting started
 
@@ -66,7 +66,7 @@ $ pip install -r requirements.txt
 $ python MlWorker.py
 ```
 
-Scan App can now be accessed here: [localhost:8000/pwa](http://localhost:8000/pwa)
+Scan App can now be accessed here: [localhost:8000/pwa](http://localhost:8000/client)
  
 API documentation & testing: [localhost:8080/docs](http://localhost:8080/docs)
 

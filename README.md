@@ -10,9 +10,9 @@ ODK is a project by the innovation team of the [City of Amsterdam](https://www.a
 
 This repository contains the core elements of the ODK project: 
 
-- **[ODK Scan App](odk-app/README.md)**: VueJS PWA for streaming frames to the API
+- **[ODK Scan App](odk-app/)**: VueJS PWA for streaming frames to the API
 
-- **[ODK API](odk-api/README.md)**: Handles incoming via WebSocket and REST, sets up necessary communication channels with the frame analyzer and sends data to the database, supported by:
+- **[ODK API](odk-api/)**: Handles incoming via WebSocket and REST, sets up necessary communication channels with the frame analyzer and sends data to the database, supported by:
 	- RabbitMQ message broker
 	- PostgreSQL database
 
@@ -26,7 +26,7 @@ To get the whole stack up and running quickly follow these steps. To run/debug e
 
 - Docker (Node, Python, Postgres, RabbitMQ)
 - Python 3 (python3-venv)
-- (optional) [CUDA Toolkit](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/)
+- [CUDA Toolkit](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/) (optional for faster object detection, when you have a NVIDIA GPU)
 
 ### Setup
 

@@ -395,7 +395,7 @@ export default {
       this.location.speed = position.coords.speed * 3.6 || 0; // m/s to km/h = x * 3.6
 
       // Send new speed to StreamSpeed.vue
-      eventBus.$emit("speedUpdated", (this.location.speed).toFixed(4));
+      eventBus.$emit("speedUpdated", (this.location.speed).toFixed(1));
     },
 
     // ----
@@ -531,7 +531,7 @@ export default {
       const isDriving = this.checkDrivingSpeed() || false;
 
       if (!isDriving) {
-        console.debug(`Not capturing frame. Car is moving too slow (${this.location.speed.toFixed(4)} km/h)`);
+        console.debug(`Not capturing frame. Car is moving too slow (${this.location.speed.toFixed(1)} km/h)`);
         return;
       }
 

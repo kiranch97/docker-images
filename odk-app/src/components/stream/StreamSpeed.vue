@@ -52,7 +52,7 @@ export default {
     return {
       minDrivingSpeed: process.env.VUE_APP_MINIMUM_DRIVING_SPEED,
       maxDrivingSpeed: process.env.VUE_APP_MAXIMUM_DRIVING_SPEED,
-      speedReadout: 0.0000,
+      speedReadout: "0.0",
     };
   },
 

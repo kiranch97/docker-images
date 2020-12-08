@@ -16,9 +16,7 @@ export default {
     this.setViewportHeight();
 
     window.addEventListener("resize", this._.debounce(this.setViewportHeight, 250));
-  },
 
-  mounted () {
     pwaDiscardDetection();
   },
 

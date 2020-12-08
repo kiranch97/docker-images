@@ -84,7 +84,7 @@ export default {
 
   watch: {
     devToolsSpeed () {
-      eventBus.$emit("showSpeed");
+      eventBus.$emit("toggleSpeed");
     },
   },
 

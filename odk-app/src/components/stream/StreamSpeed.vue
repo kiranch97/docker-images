@@ -57,8 +57,7 @@ export default {
   },
 
   mounted () {
-    this.minDrivingSpeed = parseInt(this.minDrivingSpeed);
-    this.maxDrivingSpeed = parseInt(this.maxDrivingSpeed);
+    this.setSpeed();
 
     eventBus.$on("speedUpdated", (val) => {
       this.speedReadout = val;
@@ -66,6 +65,29 @@ export default {
   },
 
   methods: {
+    setSpeed () {
+      if (localStorage.minSpeed && localStorage.maxSpeed) {
+        this.minDrivingSpeed = parseInt(localStorage.minSpeed);
+        this.maxDrivingSpeed = parseInt(localStorage.maxSpeed);
+        return;
+      }
+
+      if (localStorage.minSpeed) {
+        this.minDrivingSpeed = parseInt(localStorage.minSpeed);
+        return;
+      }
+
+      if (localStorage.maxSpeed) {
+        this.maxDrivingSpeed = parseInt(localStorage.maxSpeed);
+        return;
+      }
+
+      this.minDrivingSpeed = parseInt(this.minDrivingSpeed);
+      this.maxDrivingSpeed = parseInt(this.maxDrivingSpeed);
+    },
+
+    // ----
+
     changeSpeed (minOrMax, upOrDown) {
       // min up
       if (minOrMax === "min" && upOrDown === "up") {

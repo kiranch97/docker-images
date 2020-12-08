@@ -40,10 +40,10 @@ export default {
       type: Object,
       default () {
         return {
-        connecting: false,
-        open: false,
-        closed: true,
-        paused: false,
+          connecting: false,
+          open: false,
+          closed: true,
+          paused: false,
         };
       },
     },

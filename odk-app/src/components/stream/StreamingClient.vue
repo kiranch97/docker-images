@@ -25,9 +25,8 @@
 
       <!-- Stream error handling -->
       <transition name="fade">
-        <stream-error
-          v-if="streamError"
-          :stream-error-message="streamErrorMessage"
+        <stream-error-banner
+          :stream-error="streamError"
         />
       </transition>
 
@@ -47,7 +46,7 @@
 import StreamCount from "./StreamCount";
 import StreamControls from "./StreamControls";
 import StreamTime from "./StreamTime";
-import StreamError from "./StreamError";
+import StreamErrorBanner from "./StreamError";
 import StreamSidebar from "./StreamSidebar";
 import StreamSpeed from "./StreamSpeed";
 import * as NoSleep from "nosleep.js";
@@ -62,7 +61,7 @@ export default {
     StreamCount,
     StreamTime,
     StreamControls,
-    StreamError,
+    StreamErrorBanner,
     StreamSidebar,
     StreamSpeed,
   },
@@ -104,9 +103,15 @@ export default {
       videoLivestream: null, // camera feed, livestream
       canvas: null, // camera feed overlay to capture frame
       intervalCaptureFrame: null, // interval func
-      intervalReconnectStream: null, // interval reconnect to WebSocket func 
-      streamError: false, // error, true = error occured
-      streamErrorMessage: null, // error message
+      intervalReconnectStream: null, // interval reconnect to WebSocket funcs
+
+      // --
+      // Stream error properties
+      streamError: {
+        state: false, // true = error occured
+        message: null, // error message to display
+        level: 1, // 1 = error, 2 = warning
+      },
 
       // -- 
       // WebSocket properties
@@ -125,7 +130,8 @@ export default {
         lng: null,
         speed: null, // km/h (m/s * 3.6)
         minDrivingSpeed: process.env.VUE_APP_MINIMUM_DRIVING_SPEED, // minimum speed user should be driving to send frames
-        maxDrivingSpeed: process.env.VUE_APP_MAXIMUM_DRIVING_SPEED, // maximum speed user should be driving to send frames        
+        maxDrivingSpeed: process.env.VUE_APP_MAXIMUM_DRIVING_SPEED, // maximum speed user should be driving to send frames
+        currentSpeedGood: false, // determine if current speed is okay (within min/max speed limits)
       },
     };
   },
@@ -176,8 +182,13 @@ export default {
     });
 
     // Eventbus for receiving sidebar dev tools switches
-    eventBus.$on("showSpeed", () => {
+    eventBus.$on("toggleSpeed", () => {
       this.streamSpeed = !this.streamSpeed;
+      // Set localStogage speed to keep speed that has been set
+      if (!this.streamSpeed) {
+        localStorage.minSpeed = this.location.minDrivingSpeed;
+        localStorage.maxSpeed = this.location.maxDrivingSpeed;
+      }
     });
   },
 
@@ -228,17 +239,23 @@ export default {
 
     // ----
 
-    errorHandling (message, timeout) {
+    errorHandling (message, level, timeout, time = 0) {
       // Set error message and bool to true
-      this.streamErrorMessage = message;
-      this.streamError = true;
+      this.streamError = {
+        state: true,
+        message: message,
+        level: level,
+      };
 
       // Add removal process of error message if needed
       if (timeout) {
         setTimeout(() => {
-          this.streamError = false;
-          this.streamErrorMessage = null;
-        }, 5000);
+          this.streamError = {
+            state: false,
+            message: null,
+            level: 1,
+          };
+        }, time);
       }
     },
 
@@ -271,14 +288,17 @@ export default {
       // If network connection
       if (this.hasNetworkConnection) {
         // Delete error
-        this.streamError = false;
-        this.streamErrorMessage = null;
+        this.streamError = {
+          state: false,
+          message: null,
+          level: 1,
+        };
         return;
       }
 
       // Set network error
       const message = "Geen internetverbinding";
-      this.errorHandling(message, false);
+      this.errorHandling(message, 1, false);
 
       // If state went from online to offline while streaming
       if (this.wsStreamState.open && !this.hasNetworkConnection) {
@@ -389,10 +409,44 @@ export default {
     checkDrivingSpeed () {
       // Check if vehicle is moving (above minimum driving speed & below maximum driving speed)
       if (this.location.speed >= this.location.minDrivingSpeed && this.location.speed <= this.location.maxDrivingSpeed) {
+        // Current speed is okay
+        this.location.currentSpeedGood = true;
+
+        // Remove speed warning
+        this.streamError = {
+          state: false,
+          message: null,
+          level: 1,
+        };
+
         return true;
       }
 
-      console.debug(`Speed must me above ${this.location.minDrivingSpeed} km/h, but isn't`);
+      // Current speed is beyond limits
+      this.location.currentSpeedGood = false;
+
+      // If driving too slow
+      if (this.location.speed < this.location.minDrivingSpeed) {
+        console.debug(`Speed must me above ${this.location.minDrivingSpeed} km/h, but isn't`);
+
+        // Set speed warning
+        if (!this.streamError.state) {
+          const message = "U rijdt te traag om beelden te versturen";
+          this.errorHandling(message, 2, false);
+        }
+
+        return false;
+      }
+
+      // If driving too fast
+      console.debug(`Speed must me below ${this.location.maxDrivingSpeed} km/h, but isn't`);
+      
+      // Set speed warning
+      if (!this.streamError.state) {
+        const message = "U rijdt te snel om beelden te versturen";
+        this.errorHandling(message, 2, false);
+      }
+
       return false;
     },
 
@@ -546,6 +600,15 @@ export default {
     receiveWebSocketMsgOnClose () {
       console.debug("WebSocket connection closed");
 
+      // Remove speed warning if speed warning
+      if (!this.location.currentSpeedGood) {
+        this.streamError = {
+          state: false,
+          message: null,
+          level: 1,
+        };
+      }
+
       // Stop capturing and sending frames
       this.stopCaptureFrameInterval();
 
@@ -578,7 +641,7 @@ export default {
 
       // Set error
       const message = "Verbinding met server mislukt";
-      this.errorHandling(message, true);
+      this.errorHandling(message, 1, true, 5000);
     },
 
     // ----
@@ -612,16 +675,17 @@ export default {
       const loggedIn = checkLoggedIn();
       if (!loggedIn) {
         this.$router.push("/welcome");
-      } else {
-        // Get uuid
-        const uuid = uuidv4();
-
-        // Set localStorage
-        localStorage.streamId = uuid;
-
-        // Send new streamId to other components
-        eventBus.$emit("newStreamId", uuid);
+        return;
       }
+
+      // Get uuid
+      const uuid = uuidv4();
+
+      // Set localStorage
+      localStorage.streamId = uuid;
+
+      // Send new streamId to other components
+      eventBus.$emit("newStreamId", uuid);
     },
   },
 };

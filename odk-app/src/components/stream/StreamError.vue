@@ -1,6 +1,7 @@
 <template>
   <div id="stream-error">
-    <p>{{ streamErrorMessage }}</p>
+    <div id="stream-error-indicator" />
+    <p>{{ streamError.message }}</p>
   </div>
 </template>
 
@@ -9,10 +10,48 @@ export default {
   name: "StreamError",
 
   props: {
-    streamErrorMessage: {
-      type: String,
-      default: "Fout opgetreden! (418)",
+    streamError: {
+      type: Object,
+      default () {
+        return {
+          state: false, // true = error occured
+          message: null, // error message to display
+          level: 1, // 1 = error, 2 = warning
+        };
+      },
     },
+  },
+
+  data () {
+    return {
+      streamErrorDiv: null,
+      streamErrorIndicator: null,
+    };
+  },
+
+  watch: {
+    streamError (obj) {
+      if (!obj.state) {
+        this.streamErrorDiv.style = "display: none;";
+        return;
+      }
+
+      if (obj.level === 1) {
+        // Error (red (is-error))
+        this.streamErrorDiv.style = "display: flex; color: rgb(200, 55, 55);";
+        this.streamErrorIndicator.style = "background: rgb(200, 55, 55);";
+        return;
+      }
+
+      // Warning (gold (is-warning))
+      this.streamErrorDiv.style = " display: flex; color: rgb(200, 148, 55);";
+      this.streamErrorIndicator.style = "background: rgb(200, 148, 55);";
+    },
+  },
+
+  mounted () {
+    this.streamErrorDiv = document.getElementById("stream-error");
+    this.streamErrorIndicator = document.getElementById("stream-error-indicator");
   },
 };
 </script>
@@ -21,17 +60,17 @@ export default {
 #stream-error {
   position: absolute;
   top: 4.5rem;
-  width: 18rem;
+  max-width: 65%;
   height: 2.5rem;
   background: var(--color-white);
   border-radius: 6px;
   color: var(--color-error);
   font-weight: $weight-semibold;
-  display: flex;
+  display: none;
   justify-content: center;
   align-items: center;
 
-  &::before {
+  &-indicator {
     position: absolute;
     top: 0;
     left: 0;
@@ -40,11 +79,10 @@ export default {
     background: var(--color-error);
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
-    content: "";
   }
 
   p {
-    margin: 0 0 0 0.5rem;
+    margin: 0 1rem 0 1.5rem;
   }
 }
 </style>

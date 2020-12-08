@@ -66,7 +66,7 @@ $ pip install -r requirements.txt
 $ python MlWorker.py
 ```
 
-Scan App can now be accessed here: [localhost:8000/pwa](http://localhost:8000/client)
+Scan App can now be accessed here: [localhost:8000/client](http://localhost:8000/client)
  
 API documentation & testing: [localhost:8080/docs](http://localhost:8080/docs)
 

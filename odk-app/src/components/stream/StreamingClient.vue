@@ -35,7 +35,9 @@
       <stream-sidebar />
 
       <!-- TEMP GPS -->
-      <stream-speed />
+      <stream-speed
+        v-if="streamSpeed"
+      />
       <!--  -->
     </div>
   </div>
@@ -80,6 +82,7 @@ export default {
       // UI properties
       // switchIconActive: false, // manual/auto switch
       cameraIconActive: true, // flip camera button, true = visible
+      streamSpeed: false, // show / hide speed controls, true = show
 
       // --
       // Network properties
@@ -170,6 +173,11 @@ export default {
     });
     eventBus.$on("maxSpeedChanged", (val) => {
       this.location.maxDrivingSpeed = val;
+    });
+
+    // Eventbus for receiving sidebar dev tools switches
+    eventBus.$on("showSpeed", () => {
+      this.streamSpeed = !this.streamSpeed;
     });
   },
 

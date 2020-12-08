@@ -26,6 +26,19 @@
       >
     </div>
 
+    <div 
+      v-if="!showManualOptions"
+      class="stream-sidebar-option"
+    >
+      <img svg-inline src="@/assets/ui/cog.svg" alt="Snelheid">
+      <p>Snelheid</p>
+      <b-switch 
+        v-model="devToolsSpeed"
+        type="is-primary"
+        class="stream-sidebar-option-switch"
+      />
+    </div>
+
     <div
       v-if="!showManualOptions"
       class="stream-sidebar-option"
@@ -57,13 +70,22 @@
 </template>
 
 <script>
+import { eventBus } from "@/main";
+
 export default {
   name: "StreamSidebar",
 
   data () {
     return {
       showManualOptions: false,
+      devToolsSpeed: false,
     };
+  },
+
+  watch: {
+    devToolsSpeed () {
+      eventBus.$emit("showSpeed");
+    },
   },
 
   methods: {
@@ -150,6 +172,15 @@ export default {
       position: absolute;
       right: 1rem;
       outline: none;
+    }
+
+    &-switch {
+      position: absolute;
+      right: 0;
+
+      ::v-deep .check {
+        box-shadow: none;
+      }
     }
   }
 }

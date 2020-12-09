@@ -502,7 +502,6 @@ export default {
     // ----
 
     startCaptureFrameInterval () {
-      console.debug("startCaptureFrameInterval called");
       clearInterval(this.intervalCaptureFrame);
       // Interval function to capture frame from video feed
       this.intervalCaptureFrame = setInterval(
@@ -616,10 +615,18 @@ export default {
 
     receiveWebSocketMsg (msg) {
       console.debug("WebSocket message received");
+      const ws_message = JSON.parse(msg.data);
 
-      // WebSocket event when Message sent by the server
-      console.log(msg);
-      // console.log(msg.data);
+      if (ws_message.type == "error") {
+        console.error(ws_message.error, ws_message.content);
+
+        const message = "Data fout opgetreden, probeer opnieuw";
+        this.errorHandling(message, 1, true, 3000);
+        this.stopStream();
+      }
+      else {
+        console.log(ws_message);
+      }
     },
 
     // ----

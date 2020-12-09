@@ -75,21 +75,39 @@ async def stream(websocket: WebSocket) -> None:
         logger.info(message)
 
     except json.JSONDecodeError:
-        message = JSON_DECODE_ERROR
-        await websocket.send_text(message)
-        logger.error(JSON_DECODE_ERROR)
+        message = {
+            "type": "error",
+            "error": "JSONDecodeError",
+            "content": JSON_DECODE_ERROR
+        }
+        await websocket.send_json(message)
+        logger.error("[JSONDecodeError]", JSON_DECODE_ERROR)
 
     except KeyError as e:
-        message = KEY_ERROR.format(e)
-        await websocket.send_text(message)
-        logger.error(message)
+        message = {
+            "type": "error",
+            "error": "KeyError",
+            "content": KEY_ERROR.format(e)
+        }
+        await websocket.send_json(message)
+        logger.error("[KeyError]", message)
 
     except ValidationError as e:
-        await websocket.send_text(str(e))
+        message = {
+            "type": "error",
+            "error": "ValidationError",
+            "content": str(e)
+        }
+        await websocket.send_json(message)
         logger.error(e)
 
     except Exception as e:
-        await websocket.send_text(e)
+        message = {
+            "type": "error",
+            "error": "Exception",
+            "content": str(e)
+        }
+        await websocket.send_json(message)
         logger.error(e)
         raise e
 
@@ -115,12 +133,12 @@ async def receive_raw_frame(
 
     except json.JSONDecodeError:
         message = JSON_DECODE_ERROR
-        logger.error(message)
+        logger.error("[JSONDecodeError]", message)
         raise HTTPException(status_code=400, detail=message)
 
     except KeyError as e:
         message = KEY_ERROR.format(e)
-        logger.error(message)
+        logger.error("[KeyError]", message)
         raise HTTPException(status_code=400, detail=message)
 
     except ValueError as e:

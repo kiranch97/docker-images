@@ -194,12 +194,6 @@ export default {
 
   methods: {
     setup () {
-      //Check User_Type . If "waste_department" -> Automode, if testuser -> Manual mode
-      // @todo Fix confusing issue with automatically switching mode depending on user type. (-RJS)
-      // localStorage.userType === "waste_department"
-      //   ? (this.isAuto = true)
-      //   : (this.isAuto = false);
-
       // Initialize and activate noSleep to prevent sleep modus
       const noSleep = new NoSleep();
       noSleep.enable();
@@ -553,7 +547,7 @@ export default {
     // ----
 
     setupWebSocket () {
-      console.debug("Try to establish WebSocket connection");
+      console.debug("Trying to establish WebSocket connection");
 
       // Set WebSocket state
       this.wsStreamState = {
@@ -661,7 +655,9 @@ export default {
         stream_meta: {
           user_type: localStorage.userType,
           user_id: localStorage.userId || "demo",
-          velocity: this.location.speed,
+          speed_kph: this.location.speed,
+          set_min_speed_kph: this.location.minDrivingSpeed,
+          set_max_speed_kph: this.location.maxDrivingSpeed,
         },
       };
 

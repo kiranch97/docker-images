@@ -2,7 +2,8 @@
   <div id="stream-sidebar">
     <div 
       id="stream-sidebar-header"
-      @click="hideSidebar()">
+      @click="hideSidebar()"
+    >
       <img
         svg-inline
         src="@/assets/ui/chevron-left.svg"

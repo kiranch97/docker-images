@@ -170,7 +170,7 @@ export default {
         );
       }
 
-      // Sort array
+      // Sort objects
       this.objects = objects;
 
       // Set total

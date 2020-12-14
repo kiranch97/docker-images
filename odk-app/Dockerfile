@@ -5,6 +5,7 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 ARG MODE=${MODE}
+RUN if [ "$MODE" = "development" ] ; then mv .env.development .env.production ; fi
 RUN if [ "$MODE" = "staging" ] ; then mv .env.staging .env.production ; fi
 ARG APP_NAME=${APP_NAME}
 RUN node update-manifest.js

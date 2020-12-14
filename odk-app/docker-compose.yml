@@ -1,0 +1,12 @@
+version: '3.5'
+
+services:
+  app:
+    container_name: odk-app
+    build:
+      context: .
+      args:
+        - MODE=development
+        - APP_NAME=ODK dev
+    ports:
+      - "9090:80"

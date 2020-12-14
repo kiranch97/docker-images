@@ -8,21 +8,17 @@
     </div>
 
     <swiper
-      v-show="false"
       id="swiper"
       :options="swiperOption"
-      style="overflow: visible;"
     >
       <swiper-slide
-        v-for="item in orderSwiperItems"
-        :key="item.id"
+        v-for="obj in orderSwiperItems"
+        :key="obj.name"
         class="swiper-item"
       >
-        <img class="icons" :src="require(`@/assets/objects/${item.itemPicture}.png`)">
-
-        <p v-if="item.count > 0" class="count">{{ item.count }}</p>
-
-        <div :class="{ 'count-fade': item.count }" />
+        <img class="icons" :src="require(`@/assets/objects/${obj.name}.svg`)">
+        <p class="count">{{ obj.count }}</p>
+        <div :class="{ 'count-fade': obj.count }" />
       </swiper-slide>
     </swiper>
   </div>
@@ -72,46 +68,24 @@ export default {
 
       // --
       // Detectable objects count properties
-      binCount: 0,
-      trashCount: 0,
-      cardboardCount: 0,
-      christmasTreeCount: 0,
-      constructionBinCount: 0,
-      matrasCount: 0,
+      objects: [],
       totalCount: 0,
     };
   },
 
   computed: {
-    orderSwiperItems: function () {
-      const swiperItems = [
-        {
-          itemPicture: "Cardboard",
-          count: this.cardboardCount,
-        },
-        {
-          itemPicture: "Garbage-bag",
-          count: this.trashCount,
-        },
-        {
-          itemPicture: "Garbage-bins",
-          count: this.binCount,
-        },
-        // {
-        //   itemPicture: "Christmas-tree",
-        //   count: this.christmasTreeCount
-        // },
-        // {
-        //   itemPicture: "Construction-container",
-        //   count: this.constructionBinCount,
-        // },
-        {
-          itemPicture: "Matresses",
-          count: this.matrasCount,
-        },
-      ];
+    orderSwiperItems: function () {      
+      const items = [];
 
-      return this._.orderBy(swiperItems, "count", "desc");
+      // Only use objects where count > 1
+      this.objects.forEach(object => {
+        if (object.count > 0) {
+          items.push(object);
+        }
+      });
+
+      const orderedItems = this._.orderBy(items, "count", "desc");
+      return orderedItems;
     },
   },
 
@@ -160,30 +134,47 @@ export default {
   methods: {
     async fetchAnalysedResults () {
       // Fetch data
-      const data = await fetchEndpoint("/detected_objects", "GET", true, `?stream_id=${this.streamId}&day=${this.$moment().format("YYYY-MM-DD")}`);
+      const data = await fetchEndpoint(
+        "/detected_objects",
+        "GET",
+        true,
+        `?stream_id=${this.streamId}&day=${this.$moment().format("YYYY-MM-DD")}`
+      );
 
       // Check for potential fetch error
       if (data.status && data.status == "error") {
         return;
       }
 
+      // Check if data is empty
+      if (this._.isEmpty(data)) {
+        console.debug("Fetched with 0 counts");
+        return;
+      }
+
+      // Remove privacy filter counts
+      delete data.face_privacy_filter;
+      delete data.license_plate_privacy_filter;
+
       // Set data
-      if (data.length == 0) return;
+      const objects = [];
+      let totalObjects = 0;
 
-      this.binCount = data.container_small || 0;
-      this.trashCount = data.garbage_bag || 0;
-      this.cardboardCount = data.cardboard || 0;
-      this.matrasCount = data.matras || 0;
-      // this.christmasTreeCount = data.christmas_tree || 0;
-      // this.constructionBinCount = data.construction_container || 0;
+      for (const [key, value] of Object.entries(data)) {
+        totalObjects += value;
+        objects.push(
+          {
+            name: key,
+            count: value,
+          }
+        );
+      }
 
-      this.totalCount =
-        this.binCount +
-        this.trashCount +
-        this.cardboardCount +
-        this.matrasCount;
-        // this.christmasTreeCount +
-        // this.constructionBinCount +
+      // Sort objects
+      this.objects = objects;
+
+      // Set total
+      this.totalCount = totalObjects;
     },
   },
 };
@@ -222,8 +213,9 @@ export default {
   #swiper {
     position: absolute;
     height: 100vh;
-    top: 4rem;
+    top: 5rem;
     z-index: 1;
+    overflow: visible;
 
     .swiper-item {
       width: 2.875rem !important;
@@ -243,9 +235,10 @@ export default {
         position: absolute;
         left: 0;
         right: 0;
+        margin: 0;
+        color: var(--color-white);
         font-weight: 700;
         font-size: 1.5rem;
-        color: var(--color-white);
         z-index: 1;
       }
 

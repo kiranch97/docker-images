@@ -605,6 +605,7 @@ export default {
       }
 
       // Stop capturing and sending frames
+      this.stopStream();
       this.stopCaptureFrameInterval();
 
       // Delete webSocket connection
@@ -622,7 +623,6 @@ export default {
 
         const message = "Data fout opgetreden, probeer opnieuw";
         this.errorHandling(message, 1, true, 3000);
-        this.stopStream();
       }
       else {
         console.log(ws_message);

@@ -81,6 +81,7 @@ prod_start_database:
     - production
   script:
     - docker-compose -f docker-compose.production.yml up -d db
+    - docker-compose -f docker-compose.production.yml up -d dep-db
   rules:
     - if: '$CI_COMMIT_BRANCH == "production"'
 

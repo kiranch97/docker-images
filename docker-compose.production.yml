@@ -50,6 +50,21 @@ services:
     networks:
       - default
 
+  dep-db:
+    container_name: dep-db
+    image: mdillon/postgis:10-alpine
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - PGDATA=/pgdata
+    volumes:
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+      - /pgdata-docker:/pgdata
+      # - ./pgdata-docker:/var/lib/postgresql/data
+      # - postgis-data:/var/lib/postgresql/data
+    ports:
+      - "6432:5432" 
+
   rmq:
     container_name: odk-rmq
     image: rabbitmq:3-management

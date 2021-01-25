@@ -75,14 +75,14 @@ stag_deploy_app:
 
 # PRODUCTION
 
-# prod_start_database:
-#   stage: services
-#   tags:
-#     - production
-#   script:
-#     - docker-compose -f docker-compose.production.yml up -d db
-#   rules:
-#     - if: '$CI_COMMIT_BRANCH == "production"'
+prod_start_database:
+  stage: services
+  tags:
+    - production
+  script:
+    - docker-compose -f docker-compose.production.yml up -d db
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "production"'
 
 prod_start_rabbitmq:
   stage: services

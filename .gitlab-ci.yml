@@ -5,7 +5,7 @@ stages:
 
 # STAGING
 
-staging_start_database:
+stag_start_database:
   stage: services
   tags:
     - staging
@@ -14,7 +14,7 @@ staging_start_database:
   rules:
     - if: '$CI_COMMIT_BRANCH == "staging"'
 
-staging_start_rabbitmq:
+stag_start_rabbitmq:
   stage: services
   tags:
     - staging
@@ -23,7 +23,7 @@ staging_start_rabbitmq:
   rules:
     - if: '$CI_COMMIT_BRANCH == "staging"'
 
-staging_build_api:
+stag_build_api:
   stage: build
   tags:
     - staging
@@ -36,7 +36,7 @@ staging_build_api:
         - docker-compose.staging.yml
         - odk-api/**/*
 
-staging_build_app:
+stag_build_app:
   stage: build
   tags:
     - staging
@@ -49,7 +49,7 @@ staging_build_app:
         - docker-compose.staging.yml
         - odk-app/**/*
 
-staging_deploy_api:
+stag_deploy_api:
   stage: deploy
   tags:
     - staging
@@ -61,7 +61,7 @@ staging_deploy_api:
         - docker-compose.staging.yml
         - odk-api/**/*
 
-staging_deploy_app:
+stag_deploy_app:
   stage: deploy
   tags:
     - staging
@@ -75,4 +75,70 @@ staging_deploy_app:
 
 # PRODUCTION
 
-## TODO
+prod_start_database:
+  stage: services
+  tags:
+    - production
+  script:
+    - docker-compose -f docker-compose.production.yml up -d db
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "production"'
+
+prod_start_rabbitmq:
+  stage: services
+  tags:
+    - production
+  script:
+    - docker-compose -f docker-compose.production.yml up -d rmq
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "production"'
+
+prod_build_api:
+  stage: build
+  tags:
+    - production
+  script:
+    - docker-compose -f docker-compose.production.yml stop api
+    - docker-compose -f docker-compose.production.yml build api
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "production"'
+      changes:
+        - docker-compose.production.yml
+        - odk-api/**/*
+
+prod_build_app:
+  stage: build
+  tags:
+    - production
+  script:
+    - docker-compose -f docker-compose.production.yml stop app
+    - docker-compose -f docker-compose.production.yml build app
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "production"'
+      changes:
+        - docker-compose.production.yml
+        - odk-app/**/*
+
+prod_deploy_api:
+  stage: deploy
+  tags:
+    - production
+  script:
+    - docker-compose -f docker-compose.production.yml up -d api
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "production"'
+      changes:
+        - docker-compose.production.yml
+        - odk-api/**/*
+
+prod_deploy_app:
+  stage: deploy
+  tags:
+    - production
+  script:
+    - docker-compose -f docker-compose.production.yml up -d app
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "production"'
+      changes:
+        - docker-compose.production.yml
+        - odk-app/**/*

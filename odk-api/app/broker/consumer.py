@@ -26,6 +26,7 @@ async def handle_analysed_frame(message: IncomingMessage) -> None:
             stream_meta=analysed_frame_dict["stream_meta"],
             img_meta=analysed_frame_dict["img_meta"],
             analyser_meta=analysed_frame_dict["analyser_meta"],
+            classification=analysed_frame_dict["classification"]
         )
 
         persist_analysed_frame(get_session(), analysed_frame)

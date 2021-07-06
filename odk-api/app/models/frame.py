@@ -21,6 +21,7 @@ class AnalysedFrame(Base):
     lat_lng = Column(JSONB())
     stream_id = Column(String())
 
+    classification = Column(JSONB())
     detected_objects = Column(JSONB())
     object_count = Column(JSONB())
 

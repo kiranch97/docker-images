@@ -34,6 +34,7 @@ class AnalysedFrame(FrameBase):
     """
     id: str
 
+    classification: Dict[str, List[float]]
     detected_objects: Dict[str, str]
     object_count: Dict[str, int]
 

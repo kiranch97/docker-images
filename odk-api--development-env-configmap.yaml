@@ -1,0 +1,16 @@
+apiVersion: v1
+data:
+  ADMIN_EMAIL: admin@development.com
+  ADMIN_PASSWORD: admin
+  ALLOWED_HOSTS: http://localhost,http://localhost:8080
+  BROKER_URL: amqp://odk:development@rmq
+  DATABASE_URL: postgresql://odk:development@db:5432/odk
+  DEBUG: "1"
+  SECRET_KEY: notasecretkey
+  VERSION: 0.1.0
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: api-odk-api--development-env
+  name: odk-api--development-env

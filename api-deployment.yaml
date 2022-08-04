@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: /snap/kompose/19/kompose-linux-amd64 convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: api
+  name: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: api
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: /snap/kompose/19/kompose-linux-amd64 convert
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: api
+    spec:
+      containers:
+      - env:
+        - name: ADMIN_EMAIL
+          valueFrom:
+            configMapKeyRef:
+              key: ADMIN_EMAIL
+              name: odk-api--development-env
+        - name: ADMIN_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: ADMIN_PASSWORD
+              name: odk-api--development-env
+        - name: ALLOWED_HOSTS
+          valueFrom:
+            configMapKeyRef:
+              key: ALLOWED_HOSTS
+              name: odk-api--development-env
+        - name: BROKER_URL
+          valueFrom:
+            configMapKeyRef:
+              key: BROKER_URL
+              name: odk-api--development-env
+        - name: DATABASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: DATABASE_URL
+              name: odk-api--development-env
+        - name: DEBUG
+          valueFrom:
+            configMapKeyRef:
+              key: DEBUG
+              name: odk-api--development-env
+        - name: PROJECT_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: PROJECT_NAME
+              name: odk-api--global-env
+        - name: SECRET_KEY
+          valueFrom:
+            configMapKeyRef:
+              key: SECRET_KEY
+              name: odk-api--development-env
+        - name: TZ
+          valueFrom:
+            configMapKeyRef:
+              key: TZ
+              name: odk-api--global-env
+        - name: VERSION
+          valueFrom:
+            configMapKeyRef:
+              key: VERSION
+              name: odk-api--global-env
+        - name: VERSION
+          valueFrom:
+            configMapKeyRef:
+              key: VERSION
+              name: odk-api--development-env
+        image: api
+        imagePullPolicy: ""
+        name: odk-api
+        ports:
+        - containerPort: 80
+        resources: {}
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes: null
+status: {}

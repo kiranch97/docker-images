@@ -1,0 +1,54 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    meta.helm.sh/release-name: portainer
+    meta.helm.sh/release-namespace: portainer
+  creationTimestamp: "2022-07-08T14:05:59Z"
+  finalizers:
+  - service.kubernetes.io/load-balancer-cleanup
+  labels:
+    app.kubernetes.io/instance: portainer
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: portainer
+    app.kubernetes.io/version: ce-latest-ee-2.14.0
+    helm.sh/chart: portainer-1.0.31
+    io.portainer.kubernetes.application.stack: portainer
+  name: portainer
+  namespace: portainer
+  resourceVersion: "2327679"
+  uid: 63a4ac8f-2e76-4ea0-a317-6d5b72775453
+spec:
+  allocateLoadBalancerNodePorts: true
+  clusterIP: 10.96.20.145
+  clusterIPs:
+  - 10.96.20.145
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: https
+    nodePort: 32208
+    port: 9443
+    protocol: TCP
+    targetPort: 9443
+  - name: edge
+    nodePort: 30236
+    port: 30776
+    protocol: TCP
+    targetPort: 30776
+  selector:
+    app.kubernetes.io/instance: portainer
+    app.kubernetes.io/name: portainer
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer:
+    ingress:
+    - ip: 151.104.133.125

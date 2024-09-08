@@ -1,59 +1,51 @@
 pipeline {
-    agent {
-        kubernetes {
-            yaml '''
-                apiVersion: v1
-                kind: Pod
-                spec:
-                  containers:
-                  - name: maven
-                    image: maven:3.8.1-jdk-8
-                    command:
-                    - cat
-                    tty: true
-                  - name: docker
-                    image: docker:latest
-                    command:
-                    - cat
-                    tty: true
-                    volumeMounts:
-                    - name: dockersock
-                      mountPath: /var/run/docker.sock
-                  volumes:
-                  - name: dockersock
-                    hostPath:
-                      path: /var/run/docker.sock
-            '''
-        }
+    agent any  // This tells Jenkins to run the pipeline on any available agent
+
+    tools {
+        // Specify the Maven installation to use
+        maven 'Maven 3.8.1'  // Make sure this matches a Maven installation name in your Jenkins configuration
     }
+
     stages {
         stage('Checkout') {
             steps {
-                git credentialsId: 'github-creds', url: 'https://github.com/kiranch97/docker-images.git'
+                // Checkout your code from version control
+                checkout scm
             }
         }
+
         stage('Build') {
             steps {
-                container('maven') {
-                    sh 'mvn clean package'
-                }
+                // Run Maven build
+                sh 'mvn clean package'
             }
         }
+
         stage('Docker Build and Push') {
             steps {
-                container('docker') {
-                    withCredentials([usernamePassword(credentialsId: 'docker-registry-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin kiranch97'
-                        sh 'docker build -t kiranch97/kiran-app:$BUILD_NUMBER .'
-                        sh 'docker push kiranch97/kiran-app:$BUILD_NUMBER'
+                // Build and push Docker image
+                script {
+                    docker.withRegistry('https://hub.docker.com', 'docker-registry-credentials') {
+                        def customImage = docker.build("kiranch97/kiran-app:${env.BUILD_NUMBER}")
+                        customImage.push()
                     }
                 }
             }
         }
-        stage('Deploy to Kubernetes') {
+
+        stage('Deploy') {
             steps {
+                // Add your deployment steps here
+                // For example, you might use a shell script to deploy to your environment
                 sh 'kubectl apply -f kubernetes-deployment.yaml'
             }
+        }
+    }
+
+    post {
+        always {
+            // Clean up workspace
+            cleanWs()
         }
     }
 }

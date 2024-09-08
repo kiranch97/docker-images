@@ -29,7 +29,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git credentialsId: 'github-creds', url: 'https://github.com/your-username/your-repo.git'
+                git credentialsId: 'github-creds', url: 'https://github.com/kiranch97/docker-images.git'
             }
         }
         stage('Build') {
@@ -43,9 +43,9 @@ pipeline {
             steps {
                 container('docker') {
                     withCredentials([usernamePassword(credentialsId: 'docker-registry-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin your-docker-registry'
-                        sh 'docker build -t your-docker-registry/your-app:$BUILD_NUMBER .'
-                        sh 'docker push your-docker-registry/your-app:$BUILD_NUMBER'
+                        sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin kiranch97'
+                        sh 'docker build -t kiranch97/kiran-app:$BUILD_NUMBER .'
+                        sh 'docker push kiranch97/kiran-app:$BUILD_NUMBER'
                     }
                 }
             }

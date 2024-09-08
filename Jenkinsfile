@@ -3,7 +3,7 @@ pipeline {
 
     tools {
         // Specify the Maven installation to use
-        maven 'Maven 3.8.1'  // Make sure this matches a Maven installation name in your Jenkins configuration
+        /opt/maven/bin/mvn 'Maven 3.8.1'  // Make sure this matches a Maven installation name in your Jenkins configuration
     }
 
     stages {

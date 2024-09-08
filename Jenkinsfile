@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        REGISTRY = "your-dockerhub-username"
+        REGISTRY = "kiranch97"
         IMAGE_NAME = "sample-app"
         KUBE_NAMESPACE = "default"
     }
@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'master', url: '<your-git-repo-url>'
+                git branch: 'main', url: 'https://github.com/kiranch97/docker-images'
             }
         }
 
